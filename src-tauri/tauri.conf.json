@@ -1,22 +1,24 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "identifier": "com.divedock.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
-  "windows": [
-    {
-      "title": "divedock",
-      "width": 800,
-      "height": 600
-    }
-  ],
-  "allowlist": {
-    "media": {
-      "all": true
+  "tauri": {
+    "identifier": "com.divedock.app",
+    "windows": [
+      {
+        "title": "divedock",
+        "width": 800,
+        "height": 600
+      }
+    ],
+    "allowlist": {
+      "media": {
+        "all": true
+      }
     }
   },
   "bundle": {
