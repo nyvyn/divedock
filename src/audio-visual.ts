@@ -1,6 +1,6 @@
 const audioContext = new window.AudioContext();
 const audioElement = document.getElementById("audio") as HTMLAudioElement;
-const audioPickerElement = document.getElementById("audioPicker") as HTMLInputElement;
+const audioPickerElement = document.getElementById("audio-picker") as HTMLInputElement;
 const canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
 canvasElement.width = window.innerWidth;
 canvasElement.height = window.innerHeight;
