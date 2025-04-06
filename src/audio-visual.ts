@@ -42,5 +42,5 @@ async function initAudioAnimation() {
   }
 }
 
-initAudioAnimation();
+initAudioAnimation().then();
 
