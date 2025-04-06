@@ -1,47 +1,49 @@
-async function getAudioAnalyser(): Promise<AnalyserNode> {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  const audioCtx = new AudioContext();
-  const source = audioCtx.createMediaStreamSource(stream);
-  const analyser = audioCtx.createAnalyser();
-  source.connect(analyser);
-  return analyser;
-}
+const fileInput = document.getElementById("audioPicker") as HTMLInputElement;
+const audioElement = document.querySelector("audio") as HTMLAudioElement;
+const canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
 
-function animate(analyser: AnalyserNode, canvasElement: HTMLCanvasElement) {
-  const ctx = canvasElement.getContext("2d");
-  const dataArray = new Uint8Array(analyser.frequencyBinCount);
-  const { width, height } = canvasElement;
-  
-  function draw() {
-    analyser.getByteFrequencyData(dataArray);
-    const volume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-    const scale = volume > 0 ? (1 + volume / 128) : 1;
-    const radius = Math.min(width, height) / 4 * scale;
-    if (ctx) {
-      ctx.clearRect(0, 0, width, height);
+function initAudioFileProcessing() {
+  if (!fileInput || !audioElement || !canvasElement) {
+    console.error("Required elements not found");
+    return;
+  }
+
+  fileInput.addEventListener("change", async () => {
+    if (!fileInput.files || fileInput.files.length === 0) return;
+    const audioFile = fileInput.files[0];
+    const blobUrl = URL.createObjectURL(audioFile);
+    audioElement.src = blobUrl;
+    await audioElement.play();
+
+    const audioCtx = new AudioContext();
+    const source = audioCtx.createMediaElementSource(audioElement);
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    const ctx = canvasElement.getContext("2d");
+    const { width, height } = canvasElement;
+
+    function draw() {
+      requestAnimationFrame(draw);
+      if (!ctx) return;
+      analyser.getByteFrequencyData(dataArray);
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, width, height);
-      ctx.beginPath();
-      ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
-      ctx.fillStyle = "lime";
-      ctx.fill();
+      const barWidth = width / bufferLength;
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = (dataArray[i] / 255) * height;
+        ctx.fillStyle = "lime";
+        ctx.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
+      }
     }
-    requestAnimationFrame(draw);
-  }
-  draw();
+    draw();
+  });
 }
 
-async function initAudioAnimation() {
-  try {
-    const analyser = await getAudioAnalyser();
-    const canvasElement = document.getElementById('chatgpt-illustration') as HTMLCanvasElement;
-    if (canvasElement) {
-      animate(analyser, canvasElement);
-    }
-  } catch (err) {
-    console.error("Error initializing audio animation:", err);
-  }
-}
-
-initAudioAnimation().then();
+initAudioFileProcessing();
 
