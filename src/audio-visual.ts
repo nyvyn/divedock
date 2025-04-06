@@ -1,4 +1,4 @@
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const audioContext = new window.AudioContext();
 const audioElement = document.getElementById("audio") as HTMLAudioElement;
 const audioPickerElement = document.getElementById("audioPicker") as HTMLInputElement;
 const canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
