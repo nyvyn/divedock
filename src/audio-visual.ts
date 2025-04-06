@@ -1,22 +1,26 @@
-const fileInput = document.getElementById("audioPicker") as HTMLInputElement;
-const audioElement = document.querySelector("audio") as HTMLAudioElement;
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const audioElement = document.getElementById("audio") as HTMLAudioElement;
+const audioPickerElement = document.getElementById("audioPicker") as HTMLInputElement;
 const canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
+canvasElement.width = window.innerWidth;
+canvasElement.height = window.innerHeight;
+const canvasCtx = canvasElement.getContext("2d");
 
 function initAudioFileProcessing() {
-  if (!fileInput || !audioElement || !canvasElement) {
+  if (!audioPickerElement || !audioElement || !canvasElement || !canvasCtx) {
     console.error("Required elements not found");
     return;
   }
 
-  fileInput.addEventListener("change", async () => {
-    if (!fileInput.files || fileInput.files.length === 0) return;
-    const audioFile = fileInput.files[0];
+  audioPickerElement.addEventListener("change", async () => {
+    if (!audioPickerElement.files || audioPickerElement.files.length === 0) return;
+    const audioFile = audioPickerElement.files[0];
     const blobUrl = URL.createObjectURL(audioFile);
     audioElement.src = blobUrl;
     await audioElement.play();
 
-    const audioCtx = new AudioContext();
-    const source = audioCtx.createMediaElementSource(audioElement);
+    // Use the globally defined audioContext instead of creating a new one
+    const source = audioContext.createMediaElementSource(audioElement);
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 256;
     const bufferLength = analyser.frequencyBinCount;
