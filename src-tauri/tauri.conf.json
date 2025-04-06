@@ -9,8 +9,13 @@
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
-  "app": {
+  "tauri": {
     "withGlobalTauri": true,
+    "allowlist": {
+      "media": {
+        "all": true
+      }
+    },
     "windows": [
       {
         "title": "divedock",
