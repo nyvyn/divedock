@@ -1,8 +1,10 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "divedock",
-  "version": "0.1.0",
-  "identifier": "com.divedock.app",
+  "package": {
+    "productName": "divedock",
+    "version": "0.1.0",
+    "identifier": "com.divedock.app"
+  },
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
