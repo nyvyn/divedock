@@ -12,41 +12,54 @@ function initAudioFileProcessing() {
     return;
   }
 
-  audioPickerElement.addEventListener("change", async () => {
-    if (!audioPickerElement.files || audioPickerElement.files.length === 0) return;
-    const audioFile = audioPickerElement.files[0];
-    const blobUrl = URL.createObjectURL(audioFile);
-    audioElement.src = blobUrl;
-    await audioElement.play();
+  audioPickerElement.onchange = function () {
+    // @ts-ignore
+    const files = this.files;
+    audioElement.src = URL.createObjectURL(files[0]);
+    audioElement.load();
+    audioElement.play();
 
-    // Use the globally defined audioContext instead of creating a new one
-    const source = audioContext.createMediaElementSource(audioElement);
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
+    const track = audioContext.createMediaElementSource(audioElement);
+    track.connect(audioContext.destination);
+
+    // Analyzer node
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 128;
+    track.connect(analyser);
+
+    // Creating the array to store the frequency data
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    source.connect(analyser);
-    analyser.connect(audioCtx.destination);
+    // Some useful constants
+    const WIDTH = canvasElement.width;
+    const HEIGHT = canvasElement.height;
+    const barWidth = (WIDTH / bufferLength) * 2.5;
+    let barHeight;
+    let x = 0;
 
-    const ctx = canvasElement.getContext("2d");
-    const { width, height } = canvasElement;
+    // Colors used for plotting
+    const MATTE_BLACK = "#1A202C";
+    const WHITE = "#FFFFFF";
 
+    // The function which will get called on each repaint
     function draw() {
       requestAnimationFrame(draw);
-      if (!ctx) return;
-      analyser.getByteFrequencyData(dataArray);
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, width, height);
-      const barWidth = width / bufferLength;
-      for (let i = 0; i < bufferLength; i++) {
-        const barHeight = (dataArray[i] / 255) * height;
-        ctx.fillStyle = "lime";
-        ctx.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
+      if (canvasCtx !== null) {
+        x = 0;
+        analyser.getByteFrequencyData(dataArray);
+        canvasCtx.fillStyle = WHITE;
+        canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+        for (let i = 0; i < bufferLength; i++) {
+          barHeight = dataArray[i];
+          canvasCtx.fillStyle = MATTE_BLACK;
+          canvasCtx.fillRect(x, 0, barWidth, barHeight);
+          x += barWidth + 3;
+        }
       }
     }
     draw();
-  });
+  }
 }
 
 initAudioFileProcessing();
