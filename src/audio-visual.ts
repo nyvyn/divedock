@@ -15,7 +15,7 @@ function animate(analyser: AnalyserNode, canvasElement: HTMLCanvasElement) {
   function draw() {
     analyser.getByteFrequencyData(dataArray);
     const volume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-    const radius = Math.min(width, height) / 4 * (1 + volume / 256);
+    const radius = Math.min(width, height) / 4 * (1 + volume / 128);
     if (ctx) {
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = "black";
