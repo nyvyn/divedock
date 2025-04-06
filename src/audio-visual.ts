@@ -7,13 +7,24 @@ async function getAudioAnalyser(): Promise<AnalyserNode> {
   return analyser;
 }
 
-function animate(analyser: AnalyserNode, illustrationElement: HTMLElement) {
+function animate(analyser: AnalyserNode, canvasElement: HTMLCanvasElement) {
+  const ctx = canvasElement.getContext("2d");
   const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
+  const { width, height } = canvasElement;
+  
   function draw() {
     analyser.getByteFrequencyData(dataArray);
     const volume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-    illustrationElement.style.transform = `scale(${1 + volume / 256})`;
+    const radius = Math.min(width, height) / 4 * (1 + volume / 256);
+    if (ctx) {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, width, height);
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
+      ctx.fillStyle = "lime";
+      ctx.fill();
+    }
     requestAnimationFrame(draw);
   }
   draw();
@@ -22,9 +33,9 @@ function animate(analyser: AnalyserNode, illustrationElement: HTMLElement) {
 async function initAudioAnimation() {
   try {
     const analyser = await getAudioAnalyser();
-    const illustrationElement = document.getElementById('chatgpt-illustration');
-    if (illustrationElement) {
-      animate(analyser, illustrationElement);
+    const canvasElement = document.getElementById('chatgpt-illustration') as HTMLCanvasElement;
+    if (canvasElement) {
+      animate(analyser, canvasElement);
     }
   } catch (err) {
     console.error("Error initializing audio animation:", err);
