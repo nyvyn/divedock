@@ -12,11 +12,21 @@
         align-items: center;
         justify-content: center;
         background-color: black;
+        /* Center canvas and button */
+        flex-direction: column;
+      }
+      canvas {
+        /* Optional: Add border for visibility */
+        border: 1px solid #333;
+        background-color: #111; /* Darker background for canvas */
+        width: 80%; /* Adjust size as needed */
+        height: 60%;
+        margin-bottom: 20px; /* Space between canvas and button */
       }
     </style>
   </head>
   <body>
-    <div id="visualization" style="width:100%; height:100%;"></div>
+    <canvas id="audioCanvas"></canvas>
     <button id="mic-toggle">Start Listening</button>
     <script type="module" src="/src/audio-visual.ts"></script>
   </body>

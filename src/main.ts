@@ -1,22 +1,12 @@
-import { invoke } from "@tauri-apps/api/core";
+// This file can be used for other global initializations if needed,
+// but the greet functionality is removed as it's not used in the current index.html.
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
+// Example: You could import and initialize other modules here.
+// import './some-other-module';
 
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-    });
-  }
-}
+console.log("main.ts loaded");
 
 window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet().then();
-  });
+    console.log("DOM fully loaded and parsed");
+    // Any other initializations that depend on the DOM can go here.
 });
