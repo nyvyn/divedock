@@ -1,13 +1,13 @@
-import { MicRecorder } from "@tauri-apps/plugin-mic-recorder";
+import { startRecording, stopRecording } from "tauri-plugin-mic-recorder-api";
 
 let isListening = false;
 
-const toggleButton = document.getElementById("toggle-button");
+const toggleButton = document.getElementById("mic-toggle");
 if (toggleButton) {
   toggleButton.addEventListener("click", async () => {
     if (!isListening) {
       try {
-        await MicRecorder.start();
+        await startRecording();
         isListening = true;
         toggleButton.innerText = "Stop Listening";
         console.log("Recording started...");
@@ -16,15 +16,10 @@ if (toggleButton) {
       }
     } else {
       try {
-        const audioData = await MicRecorder.stop();
+        await stopRecording();
         isListening = false;
         toggleButton.innerText = "Start Listening";
-        console.log("Recording stopped", audioData);
-        const volume = audioData?.length ? audioData.length % 256 : 0;
-        const illustrationElement = document.getElementById("chatgpt-illustration");
-        if (illustrationElement) {
-          illustrationElement.style.transform = `scale(${1 + volume / 256})`;
-        }
+        console.log("Recording stopped");
       } catch (error) {
         console.error("Error stopping mic recorder:", error);
       }

@@ -1,5 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
+  "productName": "divedock",
+  "version": "0.1.0",
   "identifier": "com.divedock.app",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -7,27 +9,19 @@
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
-  "windows": [
-    {
-      "title": "divedock",
-      "width": 800,
-      "height": 600
-    }
-  ],
-  "allowlist": {
-    "media": {
-      "all": true
-    }
-  },
-  "bundle": {
-    "active": true,
-    "targets": "all",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
+  "app": {
+    "withGlobalTauri": true,
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; connect-src 'self'; media-src 'self' blob:;"
+    },
+    "windows": [
+      {
+        "title": "Dive Dock",
+        "width": 800,
+        "height": 600
+      }
     ]
-  }
+  },
+  "bundle": {},
+  "plugins": {}
 }
