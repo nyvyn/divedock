@@ -24,11 +24,15 @@ function animate(analyser: AnalyserNode, illustrationElement: HTMLElement) {
 }
 
 window.addEventListener('load', async () => {
-  const analyser = await getAudioAnalyser();
-  const illustrationElement = document.getElementById('chatgpt-illustration');
-  if (illustrationElement) {
-    animate(analyser, illustrationElement);
-  } else {
-    console.error('chatgpt-illustration element not found');
+  try {
+    const analyser = await getAudioAnalyser();
+    const illustrationElement = document.getElementById('chatgpt-illustration');
+    if (illustrationElement) {
+      animate(analyser, illustrationElement);
+    } else {
+      console.error('chatgpt-illustration element not found');
+    }
+  } catch (error) {
+    console.error('Error initializing audio analyser:', error);
   }
 });
