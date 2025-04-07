@@ -1,4 +1,4 @@
-import { MicRecorder } from "tauri-plugin-mic-recorder-api";
+import { MicRecorder } from "@tauri-apps/plugin-mic-recorder";
 
 let isListening = false;
 
