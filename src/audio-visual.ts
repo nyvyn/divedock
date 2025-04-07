@@ -1,25 +1,35 @@
 import { MicRecorder } from "tauri-plugin-mic-recorder-api";
 
-async function startRecordingAndVisualize() {
-    try {
-        await MicRecorder.start();
-        console.log("Recording started...");
-        // For demonstration, record for 3 seconds then stop and process the audio data.
-        setTimeout(async () => {
-            const audioData = await MicRecorder.stop();
-            console.log("Recording stopped", audioData);
-            // Apply dummy animation logic: using audioData length as a stand-in for audio volume.
-            const volume = audioData?.length ? audioData.length % 256 : 0;
-            const illustrationElement = document.getElementById("chatgpt-illustration");
-            if (illustrationElement) {
-                illustrationElement.style.transform = `scale(${1 + volume / 256})`;
-            }
-        }, 3000);
-    } catch (error) {
-        console.error("Error with mic recorder:", error);
-    }
-}
+let isListening = false;
 
-window.addEventListener("load", () => {
-    startRecordingAndVisualize();
-});
+const toggleButton = document.getElementById("toggle-button");
+if (toggleButton) {
+  toggleButton.addEventListener("click", async () => {
+    if (!isListening) {
+      try {
+        await MicRecorder.start();
+        isListening = true;
+        toggleButton.innerText = "Stop Listening";
+        console.log("Recording started...");
+      } catch (error) {
+        console.error("Error starting mic recorder:", error);
+      }
+    } else {
+      try {
+        const audioData = await MicRecorder.stop();
+        isListening = false;
+        toggleButton.innerText = "Start Listening";
+        console.log("Recording stopped", audioData);
+        const volume = audioData?.length ? audioData.length % 256 : 0;
+        const illustrationElement = document.getElementById("chatgpt-illustration");
+        if (illustrationElement) {
+          illustrationElement.style.transform = `scale(${1 + volume / 256})`;
+        }
+      } catch (error) {
+        console.error("Error stopping mic recorder:", error);
+      }
+    }
+  });
+} else {
+  console.error("Toggle button not found");
+}
