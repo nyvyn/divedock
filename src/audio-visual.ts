@@ -1,4 +1,7 @@
 async function getAudioAnalyser() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error('getUserMedia is not supported in this environment.');
+  }
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   const audioCtx = new AudioContext();
   const source = audioCtx.createMediaStreamSource(stream);
