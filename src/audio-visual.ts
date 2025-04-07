@@ -1,9 +1,11 @@
 const audioContext = new window.AudioContext();
 const audioElement = document.getElementById("audio") as HTMLAudioElement;
 const audioPickerElement = document.getElementById("audio-picker") as HTMLInputElement;
-const canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
-canvasElement.width = window.innerWidth;
-canvasElement.height = window.innerHeight;
+const visualizationEl = document.getElementById("visualization") as HTMLDivElement;
+const canvasElement = document.createElement("canvas");
+canvasElement.width = visualizationEl.clientWidth || window.innerWidth;
+canvasElement.height = visualizationEl.clientHeight || window.innerHeight;
+visualizationEl.appendChild(canvasElement);
 const canvasCtx = canvasElement.getContext("2d");
 
 function initAudioFileProcessing() {
