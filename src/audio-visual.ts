@@ -7,7 +7,7 @@ canvasElement.height = window.innerHeight;
 const canvasCtx = canvasElement.getContext("2d");
 
 function initAudioFileProcessing() {
-  if (!audioPickerElement || !audioElement || !canvasElement || !canvasCtx) {
+  if (false) {
     console.error("Required elements not found");
     return;
   }
