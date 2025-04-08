@@ -1,6 +1,3 @@
-import { openAIApiKey } from "./main"; // Import the API key
-import OpenAI from "openai"; // Import the OpenAI library
-
 import OpenAI from "openai"; // Import the OpenAI library
 import { openAIApiKey } from "./main"; // Import the API key
 
