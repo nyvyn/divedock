@@ -1,4 +1,5 @@
 import { openAIApiKey } from "./main"; // Import the API key
+import OpenAI from "openai"; // Import the OpenAI library
 
 // --- Transcription Logic ---
 export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayElement: HTMLElement | null) {
@@ -12,38 +13,41 @@ export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayEl
         return;
     }
 
-    console.log("Sending audio to OpenAI for transcription...");
+    console.log("Sending audio to OpenAI for transcription using openai library...");
     resultDisplayElement.innerText = "Transcribing..."; // Indicate processing
 
-    const formData = new FormData();
-    // OpenAI API expects a file field. Provide a filename.
-    formData.append("file", audioBlob, "audio.webm"); // Adjust filename/type if needed
-    formData.append("model", "whisper-1");
-    // Optional: Add parameters like 'language' (ISO-639-1 code) or 'prompt'
-    // formData.append("language", "en");
-
     try {
-        const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${openAIApiKey}`,
-                // 'Content-Type': 'multipart/form-data' is set automatically by fetch when using FormData
-            },
-            body: formData,
+        // Instantiate the OpenAI client with the API key
+        // IMPORTANT: Handle potential browser environment issues.
+        // The 'openai' library might have issues with certain browser features or require polyfills.
+        // It's generally recommended to make API calls from a backend for security and reliability.
+        // If running directly in the browser, ensure proper configuration.
+        const openai = new OpenAI({
+            apiKey: openAIApiKey,
+            dangerouslyAllowBrowser: true // Required for browser usage, acknowledge security implications
         });
 
-        const data = await response.json();
+        // Create a File object from the Blob, which the library expects
+        const audioFile = new File([audioBlob], "audio.webm", { type: audioBlob.type });
 
-        if (!response.ok) {
-            // Handle API errors (e.g., invalid key, rate limits)
-            console.error("OpenAI API Error:", data);
-            resultDisplayElement.innerText = `Error: ${data.error?.message || 'Failed to transcribe'}`;
-        } else {
-            console.log("Transcription successful:", data.text);
-            resultDisplayElement.innerText = data.text || "[No transcription result]";
-        }
+        // Call the transcription API using the library
+        const transcription = await openai.audio.transcriptions.create({
+            file: audioFile,
+            model: "whisper-1", // Using whisper-1 as gpt-4o-transcribe is not documented for this endpoint
+            // model: "gpt-4o-transcribe", // Use this if you are sure it's correct and supported
+        });
+
+        console.log("Transcription successful:", transcription.text);
+        resultDisplayElement.innerText = transcription.text || "[No transcription result]";
+
     } catch (error) {
-        console.error("Error sending request to OpenAI:", error);
-        resultDisplayElement.innerText = "Error: Could not connect to OpenAI API.";
+        console.error("Error during OpenAI transcription:", error);
+        let errorMessage = "An unknown error occurred during transcription.";
+        if (error instanceof OpenAI.APIError) {
+            errorMessage = `OpenAI API Error: ${error.status} ${error.name} ${error.message}`;
+        } else if (error instanceof Error) {
+            errorMessage = `Error: ${error.message}`;
+        }
+        resultDisplayElement.innerText = errorMessage;
     }
 }
