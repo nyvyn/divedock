@@ -124,43 +124,6 @@ function processAudio() {
 }
 
 function clearCanvas() {
-  for (let i = 0; i < analyser.frequencyBinCount; i++) {
-    sum += dataArray[i];
-  }
-  const averageVolume = sum / analyser.frequencyBinCount / 255; // Normalize to 0-1 range
-
-  // --- Silence Detection Logic ---
-  if (averageVolume > silenceThreshold) {
-      // Speaking detected
-      if (!isSpeaking) {
-          console.log("Speech started.");
-          isSpeaking = true;
-          stopCurrentSpeech(); // Interrupt TTS if it's playing
-          // Ensure recorder is running (should be if isProcessing is true)
-          if (mediaRecorder && mediaRecorder.state === "inactive") {
-              console.warn("Recorder was inactive while processing, restarting.");
-              startRecorder(); // Make sure recorder is going
-          }
-      }
-      // Clear the silence timer if it was running
-      if (silenceTimer) {
-          clearTimeout(silenceTimer);
-          silenceTimer = null;
-      }
-  } else {
-      // Silence detected
-      if (isSpeaking) {
-          // Just transitioned from speaking to silence
-          console.log("Potential pause detected, starting timer...");
-          if (!silenceTimer) {
-              silenceTimer = window.setTimeout(() => {
-                  console.log("Silence duration met, triggering transcription.");
-                  isSpeaking = false; // Mark as no longer speaking
-                  stopRecorder(); // Stop recording to process the utterance
-                  silenceTimer = null;
-                  // Recorder onstop will handle transcription and restarting if still processing
-              }, silenceDelay);
-          }
     if (canvas && canvasCtx) {
         canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Match background color #111
         canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
