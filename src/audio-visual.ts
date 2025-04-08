@@ -116,16 +116,28 @@ if (toggleButton && canvas && canvasCtx) {
         recordedChunks = []; // Clear previous recording chunks
         try {
             // Choose a mimeType that the browser supports and OpenAI likely accepts
-            // Common options: 'audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4'
-            // Check support: MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-            const options = { mimeType: 'audio/webm;codecs=opus' };
-            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                console.warn(`${options.mimeType} not supported, trying default.`);
-                // Fallback to default or another supported type if necessary
-                mediaRecorder = new MediaRecorder(microphoneStream);
+            // Common options: 'audio/ogg;codecs=opus', 'audio/webm;codecs=opus', 'audio/mp4', 'audio/wav'
+            // OpenAI supported: ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']
+            let options = { mimeType: 'audio/ogg;codecs=opus' }; // Try OGG Opus first
+
+            if (MediaRecorder.isTypeSupported(options.mimeType)) {
+                console.log(`Using supported mimeType: ${options.mimeType}`);
+                mediaRecorder = new MediaRecorder(microphoneStream, options);
             } else {
-                 mediaRecorder = new MediaRecorder(microphoneStream, options);
+                console.warn(`${options.mimeType} not supported. Trying audio/webm...`);
+                options.mimeType = 'audio/webm'; // Fallback to webm (browser default codec)
+                if (MediaRecorder.isTypeSupported(options.mimeType)) {
+                    console.log(`Using supported mimeType: ${options.mimeType}`);
+                    mediaRecorder = new MediaRecorder(microphoneStream, options);
+                } else {
+                     console.warn(`${options.mimeType} also not supported. Using browser default.`);
+                     // Let the browser choose the default format/codec
+                     mediaRecorder = new MediaRecorder(microphoneStream);
+                     options.mimeType = mediaRecorder.mimeType; // Store the actual used type
+                     console.log(`Using browser default mimeType: ${options.mimeType}`);
+                }
             }
+
 
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
