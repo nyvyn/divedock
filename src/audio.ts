@@ -22,32 +22,71 @@ const transcriptionResultDiv = document.getElementById("transcription-result") a
 // Dialog elements are handled in main.ts
 
 // Transcription logic moved to transcribe.ts
-import { transcribeAudioWithOpenAI } from "./transcribe";
+// TTS logic imported above
 
 
-// --- Visualization Logic ---
-function drawVisualization() {
-  if (!canvas || !canvasCtx || !analyser || !dataArray || !isListening) {
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-    }
-    // Stop drawing if not listening
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-    }
-    return;
+// --- Audio Processing Loop (includes Visualization and Silence Detection) ---
+function processAudio() {
+  if (!isProcessing || !analyser || !dataArray || !canvas || !canvasCtx) {
+      // Stop loop if not processing
+      if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+      }
+      return;
   }
 
-  // Get the time domain data
-  analyser.getByteTimeDomainData(dataArray);
+  // Get frequency data for volume analysis
+  analyser.getByteFrequencyData(dataArray); // Use frequency data for volume
 
+  // --- Calculate Average Volume ---
+  let sum = 0;
+  for (let i = 0; i < analyser.frequencyBinCount; i++) {
+    sum += dataArray[i];
+  }
+  const averageVolume = sum / analyser.frequencyBinCount / 255; // Normalize to 0-1 range
+
+  // --- Silence Detection Logic ---
+  if (averageVolume > silenceThreshold) {
+      // Speaking detected
+      if (!isSpeaking) {
+          console.log("Speech started.");
+          isSpeaking = true;
+          stopCurrentSpeech(); // Interrupt TTS if it's playing
+          // Ensure recorder is running (should be if isProcessing is true)
+          if (mediaRecorder && mediaRecorder.state === "inactive") {
+              console.warn("Recorder was inactive while processing, restarting.");
+              startRecorder(); // Make sure recorder is going
+          }
+      }
+      // Clear the silence timer if it was running
+      if (silenceTimer) {
+          clearTimeout(silenceTimer);
+          silenceTimer = null;
+      }
+  } else {
+      // Silence detected
+      if (isSpeaking) {
+          // Just transitioned from speaking to silence
+          console.log("Potential pause detected, starting timer...");
+          if (!silenceTimer) {
+              silenceTimer = window.setTimeout(() => {
+                  console.log("Silence duration met, triggering transcription.");
+                  isSpeaking = false; // Mark as no longer speaking
+                  stopRecorder(); // Stop recording to process the utterance
+                  silenceTimer = null;
+                  // Recorder onstop will handle transcription and restarting if still processing
+              }, silenceDelay);
+          }
+      }
+  }
+
+  // --- Simple Waveform Visualization (using the same frequency data) ---
   // Clear the canvas
   canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Background color
   canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Set up line style
+  // Draw based on frequency data
   canvasCtx.lineWidth = 2;
   canvasCtx.strokeStyle = "rgb(50, 200, 50)"; // Waveform color
   canvasCtx.beginPath();
@@ -56,9 +95,9 @@ function drawVisualization() {
   let x = 0;
 
   for (let i = 0; i < analyser.frequencyBinCount; i++) {
-    // dataArray values are 0-255, map to canvas height
-    const v = dataArray[i] / 128.0; // Normalize to range around 1.0
-    const y = v * canvas.height / 2;
+    // dataArray values are 0-255 (frequency)
+    const v = dataArray[i] / 128.0; // Adjust scaling as needed
+    const y = canvas.height - (v * canvas.height / 2); // Draw from bottom up
 
     if (i === 0) {
       canvasCtx.moveTo(x, y);
@@ -69,11 +108,13 @@ function drawVisualization() {
     x += sliceWidth;
   }
 
-  canvasCtx.lineTo(canvas.width, canvas.height / 2); // Line to the middle at the end
+  canvasCtx.lineTo(canvas.width, canvas.height); // Line to the bottom right
   canvasCtx.stroke(); // Draw the line
+  // --- End Visualization ---
+
 
   // Request next frame
-  animationFrameId = requestAnimationFrame(drawVisualization);
+  animationFrameId = requestAnimationFrame(processAudio);
 }
 
 function clearCanvas() {
@@ -246,6 +287,12 @@ if (toggleButton && canvas && canvasCtx) {
   if (!canvas) console.error("Canvas element not found");
   if (!canvasCtx) console.error("Canvas context not available");
   if (!transcriptionResultDiv) console.error("Transcription result div not found");
+} else {
+    // Log errors if essential elements are missing
+    if (!toggleButton) console.error("Toggle button not found");
+    if (!canvas) console.error("Canvas element not found");
+    if (!canvasCtx) console.error("Canvas context not available");
+    if (!transcriptionResultDiv) console.error("Transcription result div not found");
 }
 
-// --- API Key Dialog Logic moved to main.ts ---
+// --- API Key Dialog Logic is handled in main.ts ---
