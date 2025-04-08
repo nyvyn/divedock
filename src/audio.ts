@@ -136,21 +136,33 @@ function startRecorder() {
 
     recordedChunks = []; // Clear previous chunks
     try {
-        // Choose a mimeType
-        let options = { mimeType: 'audio/ogg;codecs=opus' };
-        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-            console.warn(`${options.mimeType} not supported. Trying audio/webm...`);
-            options.mimeType = 'audio/webm';
-            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                 console.warn(`${options.mimeType} also not supported. Using browser default.`);
-                 mediaRecorder = new MediaRecorder(microphoneStream);
-                 options.mimeType = mediaRecorder.mimeType;
-            } else {
-                 mediaRecorder = new MediaRecorder(microphoneStream, options);
-            }
+        // Choose a mimeType - Prioritize WAV for potentially better compatibility
+        let options = { mimeType: 'audio/wav' };
+
+        if (MediaRecorder.isTypeSupported(options.mimeType)) {
+            console.log(`Using supported mimeType: ${options.mimeType}`);
+            mediaRecorder = new MediaRecorder(microphoneStream, options);
         } else {
-             mediaRecorder = new MediaRecorder(microphoneStream, options);
+            console.warn(`${options.mimeType} not supported. Trying audio/ogg...`);
+            options.mimeType = 'audio/ogg;codecs=opus'; // Fallback to Ogg
+            if (MediaRecorder.isTypeSupported(options.mimeType)) {
+                 console.log(`Using supported mimeType: ${options.mimeType}`);
+                 mediaRecorder = new MediaRecorder(microphoneStream, options);
+            } else {
+                console.warn(`${options.mimeType} not supported. Trying audio/webm...`);
+                options.mimeType = 'audio/webm'; // Fallback to WebM
+                if (MediaRecorder.isTypeSupported(options.mimeType)) {
+                    console.log(`Using supported mimeType: ${options.mimeType}`);
+                    mediaRecorder = new MediaRecorder(microphoneStream, options);
+                } else {
+                    console.warn(`${options.mimeType} also not supported. Using browser default.`);
+                    mediaRecorder = new MediaRecorder(microphoneStream); // Absolute fallback
+                    options.mimeType = mediaRecorder.mimeType; // Store the actual used type
+                    console.log(`Using browser default mimeType: ${options.mimeType}`);
+                }
+            }
         }
+
 
         mediaRecorder.ondataavailable = (event) => {
             if (event.data.size > 0) {
