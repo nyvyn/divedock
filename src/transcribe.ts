@@ -1,16 +1,21 @@
 import { openAIApiKey } from "./main"; // Import the API key
 import OpenAI from "openai"; // Import the OpenAI library
 
+import OpenAI from "openai"; // Import the OpenAI library
+import { openAIApiKey } from "./main"; // Import the API key
+
 // --- Transcription Logic ---
-export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayElement: HTMLElement | null) {
+// Returns the transcribed text on success, or null on failure.
+// Updates the display element during processing and on error.
+export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayElement: HTMLElement | null): Promise<string | null> {
     if (!resultDisplayElement) {
         console.error("Transcription result display element not provided.");
-        return;
+        return null; // Return null on failure
     }
     if (!openAIApiKey) {
         console.error("OpenAI API Key is not set.");
         resultDisplayElement.innerText = "Error: OpenAI API Key is not set. Please set it via the settings icon.";
-        return;
+        return null; // Return null on failure
     }
 
     console.log("Sending audio to OpenAI for transcription using openai library...");
@@ -50,8 +55,10 @@ export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayEl
             // model: "gpt-4o-transcribe", // Use this if you are sure it's correct and supported
         });
 
-        console.log("Transcription successful:", transcription.text);
-        resultDisplayElement.innerText = transcription.text || "[No transcription result]";
+        const transcribedText = transcription.text || "";
+        console.log("Transcription successful:", transcribedText);
+        resultDisplayElement.innerText = transcribedText || "[No transcription result]";
+        return transcribedText; // Return the text on success
 
     } catch (error) {
         console.error("Error during OpenAI transcription:", error);
@@ -62,5 +69,6 @@ export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayEl
             errorMessage = `Error: ${error.message}`;
         }
         resultDisplayElement.innerText = errorMessage;
+        return null; // Return null on failure
     }
 }
