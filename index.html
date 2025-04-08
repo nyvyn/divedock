@@ -39,11 +39,96 @@
       button#mic-toggle:active {
         background-color: #004085; /* Even darker blue when clicked */
       }
+
+      /* Settings Icon */
+      #settings-icon {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 24px; /* Adjust size as needed */
+        cursor: pointer;
+        color: #ccc; /* Light gray color */
+        user-select: none; /* Prevent text selection */
+      }
+      #settings-icon:hover {
+        color: #fff; /* White on hover */
+      }
+
+      /* API Key Dialog */
+      #api-key-dialog {
+        display: none; /* Hidden by default */
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 350px;
+        padding: 25px;
+        background-color: #2a2a2a; /* Dark gray background */
+        border: 1px solid #444;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        color: #eee; /* Light text color */
+      }
+      #api-key-dialog label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+      #api-key-dialog input[type="password"] {
+        width: calc(100% - 20px); /* Account for padding */
+        padding: 8px 10px;
+        margin-bottom: 20px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        background-color: #333;
+        color: #eee;
+        font-size: 14px;
+      }
+      #api-key-dialog .dialog-buttons {
+        text-align: right;
+      }
+      #api-key-dialog button {
+        padding: 8px 16px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      #api-key-dialog button#save-api-key {
+        background-color: #007bff;
+        color: white;
+      }
+      #api-key-dialog button#save-api-key:hover {
+        background-color: #0056b3;
+      }
+      #api-key-dialog button#cancel-api-key {
+        background-color: #6c757d; /* Gray */
+        color: white;
+      }
+       #api-key-dialog button#cancel-api-key:hover {
+        background-color: #5a6268;
+      }
+
     </style>
   </head>
   <body>
+    <div id="settings-icon" title="API Key Settings">⚙️</div>
+
     <canvas id="audioCanvas"></canvas>
     <button id="mic-toggle">Start Listening</button>
+
+    <!-- API Key Input Dialog -->
+    <div id="api-key-dialog">
+      <label for="api-key-input">OpenAI API Key:</label>
+      <input type="password" id="api-key-input" placeholder="Enter your API key">
+      <div class="dialog-buttons">
+        <button id="cancel-api-key">Cancel</button>
+        <button id="save-api-key">Save</button>
+      </div>
+    </div>
+
     <script type="module" src="/src/audio-visual.ts"></script>
   </body>
 </html>
