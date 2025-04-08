@@ -21,7 +21,9 @@
     <cargoProject FILE="$PROJECT_DIR$/src-tauri/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="feat: remove unused assets and refactor OpenAI TTS implementation&#10;&#10;This commit removes redundant SVG assets and consolidates TTS logic by deleting tts.ts and migrating functionality to synthesize.ts. Additionally, minor improvements in audio processing and dependency cleanup were made for better maintainability." />
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="feat: remove unused assets and refactor OpenAI TTS implementation&#10;&#10;This commit removes redundant SVG assets and consolidates TTS logic by deleting tts.ts and migrating functionality to synthesize.ts. Additionally, minor improvements in audio processing and dependency cleanup were made for better maintainability.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -177,7 +179,7 @@
       <workItem from="1743810051889" duration="2305000" />
       <workItem from="1743812478841" duration="180000" />
       <workItem from="1743812710506" duration="2567000" />
-      <workItem from="1743898822320" duration="12344000" />
+      <workItem from="1743898822320" duration="12819000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -251,7 +253,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744074068529</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="feat: remove unused assets and refactor OpenAI TTS implementation&#10;&#10;This commit removes redundant SVG assets and consolidates TTS logic by deleting tts.ts and migrating functionality to synthesize.ts. Additionally, minor improvements in audio processing and dependency cleanup were made for better maintainability.">
+      <option name="closed" value="true" />
+      <created>1744074338889</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1744074338889</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
