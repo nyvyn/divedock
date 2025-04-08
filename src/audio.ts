@@ -1,5 +1,5 @@
-import { transcribeAudioWithOpenAI } from "./transcribe"; // Import transcription function
 import { generateAndPlaySpeech, stopCurrentSpeech } from "./synthesize"; // Import TTS functions
+import { transcribeAudioWithOpenAI } from "./transcribe"; // Import transcription function
 
 // --- State Variables ---
 let isProcessing = false; // Is the app actively processing audio? Renamed from isListening
@@ -49,11 +49,10 @@ function processAudio() {
       sumOfSquares += normalizedSample * normalizedSample;
   }
   const rms = Math.sqrt(sumOfSquares / analyser.frequencyBinCount);
-  const averageVolume = rms; // Use RMS as the volume measure (0-1 range approx)
 
-
-  // --- Silence Detection Logic ---
-  if (averageVolume > silenceThreshold) {
+   // Use RMS as the volume measure (0-1 range approx)
+    // --- Silence Detection Logic ---
+  if (rms > silenceThreshold) {
       // Speaking detected
       if (!isSpeaking) {
           console.log("Speech started.");
@@ -97,7 +96,7 @@ function processAudio() {
   canvasCtx.strokeStyle = "rgb(50, 200, 50)"; // Waveform color
   canvasCtx.beginPath();
 
-  const sliceWidth = canvas.width * 1.0 / analyser.frequencyBinCount;
+  const sliceWidth = canvas.width / analyser.frequencyBinCount;
   let x = 0;
 
   for (let i = 0; i < analyser.frequencyBinCount; i++) {
