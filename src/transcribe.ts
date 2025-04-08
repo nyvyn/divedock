@@ -27,8 +27,21 @@ export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayEl
             dangerouslyAllowBrowser: true // Required for browser usage, acknowledge security implications
         });
 
-        // Create a File object from the Blob, which the library expects
-        const audioFile = new File([audioBlob], "audio.webm", { type: audioBlob.type });
+        // Determine filename extension based on blob type
+        let fileExtension = 'webm'; // Default
+        if (audioBlob.type.includes('ogg')) {
+            fileExtension = 'ogg';
+        } else if (audioBlob.type.includes('wav')) {
+            fileExtension = 'wav';
+        } else if (audioBlob.type.includes('mp4')) {
+            fileExtension = 'mp4';
+        } // Add more mappings if other types are recorded
+        const fileName = `audio.${fileExtension}`;
+        console.log(`Using filename for OpenAI: ${fileName} (type: ${audioBlob.type})`);
+
+
+        // Create a File object from the Blob, using the dynamic filename
+        const audioFile = new File([audioBlob], fileName, { type: audioBlob.type });
 
         // Call the transcription API using the library
         const transcription = await openai.audio.transcriptions.create({
