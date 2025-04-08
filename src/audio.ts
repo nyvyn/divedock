@@ -35,11 +35,95 @@ function processAudio() {
       return;
   }
 
-  // Get frequency data for volume analysis
-  analyser.getByteFrequencyData(dataArray); // Use frequency data for volume
+  // Get time domain data for waveform visualization
+  analyser.getByteTimeDomainData(dataArray); // Use time domain data
 
-  // --- Calculate Average Volume ---
-  let sum = 0;
+  // --- Calculate Average Volume (still needed for silence detection) ---
+  // We can approximate volume from time domain data, though frequency is often better.
+  // Or, keep using frequency data just for volume calculation if preferred.
+  // Let's calculate from time domain for now:
+  let sumOfSquares = 0;
+  for (let i = 0; i < analyser.frequencyBinCount; i++) {
+      // Normalize the 0-255 value to -1 to 1
+      const normalizedSample = (dataArray[i] / 128.0) - 1.0;
+      sumOfSquares += normalizedSample * normalizedSample;
+  }
+  const rms = Math.sqrt(sumOfSquares / analyser.frequencyBinCount);
+  const averageVolume = rms; // Use RMS as the volume measure (0-1 range approx)
+
+
+  // --- Silence Detection Logic ---
+  if (averageVolume > silenceThreshold) {
+      // Speaking detected
+      if (!isSpeaking) {
+          console.log("Speech started.");
+          isSpeaking = true;
+          stopCurrentSpeech(); // Interrupt TTS if it's playing
+          // Ensure recorder is running (should be if isProcessing is true)
+          if (mediaRecorder && mediaRecorder.state === "inactive") {
+              console.warn("Recorder was inactive while processing, restarting.");
+              startRecorder(); // Make sure recorder is going
+          }
+      }
+      // Clear the silence timer if it was running
+      if (silenceTimer) {
+          clearTimeout(silenceTimer);
+          silenceTimer = null;
+      }
+  } else {
+      // Silence detected
+      if (isSpeaking) {
+          // Just transitioned from speaking to silence
+          console.log("Potential pause detected, starting timer...");
+          if (!silenceTimer) {
+              silenceTimer = window.setTimeout(() => {
+                  console.log("Silence duration met, triggering transcription.");
+                  isSpeaking = false; // Mark as no longer speaking
+                  stopRecorder(); // Stop recording to process the utterance
+                  silenceTimer = null;
+                  // Recorder onstop will handle transcription and restarting if still processing
+              }, silenceDelay);
+          }
+      }
+  }
+
+  // --- Waveform Visualization (using time domain data) ---
+  // Clear the canvas
+  canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Background color
+  canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Set up line style
+  canvasCtx.lineWidth = 2;
+  canvasCtx.strokeStyle = "rgb(50, 200, 50)"; // Waveform color
+  canvasCtx.beginPath();
+
+  const sliceWidth = canvas.width * 1.0 / analyser.frequencyBinCount;
+  let x = 0;
+
+  for (let i = 0; i < analyser.frequencyBinCount; i++) {
+    // dataArray values are 0-255, map to canvas height centered vertically
+    const v = dataArray[i] / 128.0; // Normalize to range 0-2
+    const y = v * canvas.height / 2; // Scale to canvas height
+
+    if (i === 0) {
+      canvasCtx.moveTo(x, y);
+    } else {
+      canvasCtx.lineTo(x, y);
+    }
+
+    x += sliceWidth;
+  }
+
+  canvasCtx.lineTo(canvas.width, canvas.height / 2); // Line to the middle vertical point at the end
+  canvasCtx.stroke(); // Draw the line
+  // --- End Visualization ---
+
+
+  // Request next frame
+  animationFrameId = requestAnimationFrame(processAudio);
+}
+
+function clearCanvas() {
   for (let i = 0; i < analyser.frequencyBinCount; i++) {
     sum += dataArray[i];
   }
@@ -77,40 +161,6 @@ function processAudio() {
                   // Recorder onstop will handle transcription and restarting if still processing
               }, silenceDelay);
           }
-      }
-  }
-
-  // --- Horizontal Bar Visualization (based on average volume) ---
-  // Clear the canvas
-  canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Background color
-  canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Calculate bar dimensions based on average volume
-  const maxBarWidth = canvas.width * 0.8; // Max width (80% of canvas)
-  const minBarWidth = 10; // Minimum width when silent
-  const barHeight = canvas.height * 0.2; // Fixed height (20% of canvas height)
-
-  // Map averageVolume (0-1) to bar width
-  // Use a non-linear scale (e.g., power) to make quiet sounds more visible
-  const volumeScale = Math.pow(averageVolume, 0.6);
-  let currentBarWidth = minBarWidth + volumeScale * (maxBarWidth - minBarWidth);
-  currentBarWidth = Math.max(minBarWidth, currentBarWidth); // Ensure minimum width
-
-  // Calculate position for centered bar
-  const barX = (canvas.width - currentBarWidth) / 2;
-  const barY = (canvas.height - barHeight) / 2;
-
-  // Draw the bar
-  canvasCtx.fillStyle = "rgb(50, 200, 50)"; // Bar color
-  canvasCtx.fillRect(barX, barY, currentBarWidth, barHeight);
-  // --- End Visualization ---
-
-
-  // Request next frame
-  animationFrameId = requestAnimationFrame(processAudio);
-}
-
-function clearCanvas() {
     if (canvas && canvasCtx) {
         canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Match background color #111
         canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
