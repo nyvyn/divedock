@@ -9,14 +9,65 @@ let audioContext: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
 let microphoneStream: MediaStream | null = null;
 let dataArray: Uint8Array | null = null;
-// API Key logic moved to main.ts
+let mediaRecorder: MediaRecorder | null = null;
+let recordedChunks: Blob[] = [];
 
 
 // --- DOM Elements ---
 const toggleButton = document.getElementById("mic-toggle") as HTMLButtonElement | null;
 const canvas = document.getElementById("audioCanvas") as HTMLCanvasElement | null;
 const canvasCtx = canvas?.getContext("2d");
+const transcriptionResultDiv = document.getElementById("transcription-result") as HTMLElement | null;
 // Dialog elements are handled in main.ts
+
+
+// --- Transcription Logic ---
+async function transcribeAudioWithOpenAI(audioBlob: Blob) {
+    if (!transcriptionResultDiv) {
+        console.error("Transcription result display area not found.");
+        return;
+    }
+    if (!openAIApiKey) {
+        console.error("OpenAI API Key is not set.");
+        transcriptionResultDiv.innerText = "Error: OpenAI API Key is not set. Please set it via the settings icon.";
+        return;
+    }
+
+    console.log("Sending audio to OpenAI for transcription...");
+    transcriptionResultDiv.innerText = "Transcribing..."; // Indicate processing
+
+    const formData = new FormData();
+    // OpenAI API expects a file field. Provide a filename.
+    formData.append("file", audioBlob, "audio.webm"); // Adjust filename/type if needed
+    formData.append("model", "whisper-1");
+    // Optional: Add parameters like 'language' (ISO-639-1 code) or 'prompt'
+    // formData.append("language", "en");
+
+    try {
+        const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${openAIApiKey}`,
+                // 'Content-Type': 'multipart/form-data' is set automatically by fetch when using FormData
+            },
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            // Handle API errors (e.g., invalid key, rate limits)
+            console.error("OpenAI API Error:", data);
+            transcriptionResultDiv.innerText = `Error: ${data.error?.message || 'Failed to transcribe'}`;
+        } else {
+            console.log("Transcription successful:", data.text);
+            transcriptionResultDiv.innerText = data.text || "[No transcription result]";
+        }
+    } catch (error) {
+        console.error("Error sending request to OpenAI:", error);
+        transcriptionResultDiv.innerText = "Error: Could not connect to OpenAI API.";
+    }
+}
 
 
 // --- Visualization Logic ---
@@ -106,10 +157,67 @@ if (toggleButton && canvas && canvasCtx) {
         source.connect(analyser);
         // Note: We don't connect analyser to destination, as we only want to analyze
 
+        // --- Start MediaRecorder ---
+        recordedChunks = []; // Clear previous recording chunks
+        try {
+            // Choose a mimeType that the browser supports and OpenAI likely accepts
+            // Common options: 'audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4'
+            // Check support: MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+            const options = { mimeType: 'audio/webm;codecs=opus' };
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                console.warn(`${options.mimeType} not supported, trying default.`);
+                // Fallback to default or another supported type if necessary
+                mediaRecorder = new MediaRecorder(microphoneStream);
+            } else {
+                 mediaRecorder = new MediaRecorder(microphoneStream, options);
+            }
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                    // console.log(`Recorded chunk size: ${event.data.size}`);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                console.log("Recorder stopped. Processing recorded chunks.");
+                if (recordedChunks.length > 0) {
+                    // Determine the mimeType from the first chunk or the options used
+                    const mimeType = recordedChunks[0].type || options.mimeType || 'audio/webm';
+                    const audioBlob = new Blob(recordedChunks, { type: mimeType });
+                    console.log(`Combined Blob size: ${audioBlob.size}, type: ${audioBlob.type}`);
+                    // Send the combined audio blob to OpenAI
+                    transcribeAudioWithOpenAI(audioBlob);
+                } else {
+                    console.log("No audio data recorded.");
+                    if(transcriptionResultDiv) transcriptionResultDiv.innerText = "No audio data was recorded.";
+                }
+                recordedChunks = []; // Clear chunks for next recording
+            };
+
+            mediaRecorder.start(); // Start recording
+            console.log("MediaRecorder started.");
+
+        } catch (recorderError) {
+            console.error("Error initializing MediaRecorder:", recorderError);
+            alert("Could not start audio recorder. Check console for details.");
+            // Don't proceed with listening state if recorder fails
+            microphoneStream.getTracks().forEach(track => track.stop());
+            microphoneStream = null;
+            if (audioContext && audioContext.state !== 'closed') {
+                await audioContext.close();
+                audioContext = null;
+            }
+            return; // Exit the click handler
+        }
+        // --- End MediaRecorder Start ---
+
+
         isListening = true;
         toggleButton.innerText = "Stop Listening";
-        console.log("Microphone access granted, starting visualization...");
-        drawVisualization(); // Start the loop
+        if(transcriptionResultDiv) transcriptionResultDiv.innerText = ""; // Clear previous transcription
+        console.log("Microphone access granted, starting visualization and recording...");
+        drawVisualization(); // Start the visualization loop
 
       } catch (err) {
         console.error("Error accessing microphone:", err);
@@ -129,11 +237,20 @@ if (toggleButton && canvas && canvasCtx) {
           microphoneStream.getTracks().forEach(track => track.stop()); // Release microphone
           microphoneStream = null;
         }
+
+        // --- Stop MediaRecorder ---
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop(); // This triggers the onstop event handler
+            console.log("MediaRecorder stopping...");
+        }
+        mediaRecorder = null; // Release the recorder object
+        // --- End MediaRecorder Stop ---
+
         isListening = false;
         toggleButton.innerText = "Start Listening";
         console.log("Stopped listening.");
 
-        // Stop visualization loop and clear canvas
+        // Stop visualization loop
         if (animationFrameId) {
           cancelAnimationFrame(animationFrameId);
           animationFrameId = null;
@@ -161,6 +278,7 @@ if (toggleButton && canvas && canvasCtx) {
   if (!toggleButton) console.error("Toggle button not found");
   if (!canvas) console.error("Canvas element not found");
   if (!canvasCtx) console.error("Canvas context not available");
+  if (!transcriptionResultDiv) console.error("Transcription result div not found");
 }
 
 // --- API Key Dialog Logic moved to main.ts ---

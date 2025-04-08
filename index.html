@@ -114,6 +114,26 @@
         background-color: #5a6268;
       }
 
+      /* Transcription Result Area */
+      #transcription-result {
+        width: 80%; /* Match canvas width */
+        height: 15%; /* Adjust height as needed */
+        margin-top: 15px; /* Space below button */
+        padding: 15px;
+        background-color: #1a1a1a; /* Slightly lighter than canvas bg */
+        border: 1px solid #333;
+        border-radius: 5px;
+        color: #eee; /* Light text */
+        font-family: monospace; /* Monospaced font for transcription */
+        font-size: 14px;
+        overflow-y: auto; /* Add scrollbar if text overflows */
+        box-sizing: border-box; /* Include padding/border in element's total width/height */
+      }
+      #transcription-result:empty::before {
+          content: "Transcription will appear here...";
+          color: #666; /* Placeholder text color */
+      }
+
     </style>
   </head>
   <body>
@@ -121,6 +141,7 @@
 
     <canvas id="audioCanvas"></canvas>
     <button id="mic-toggle">Start Listening</button>
+    <div id="transcription-result"></div>
 
     <!-- API Key Input Dialog -->
     <div id="api-key-dialog">
