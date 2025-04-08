@@ -2,42 +2,160 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/src/styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri App</title>
-    <script type="module" src="/src/main.ts" defer></script>
+    <title>Interactive Element</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: black;
+        /* Center canvas and button */
+        flex-direction: column;
+      }
+      canvas {
+        /* Optional: Add border for visibility */
+        border: 1px solid #333;
+        background-color: #111; /* Darker background for canvas */
+        width: 80%; /* Adjust size as needed */
+        height: 60%;
+        margin-bottom: 20px; /* Space between canvas and button */
+      }
+      button#mic-toggle {
+        padding: 12px 24px;
+        font-size: 16px;
+        color: white;
+        background-color: #007bff; /* Blue background */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease; /* Smooth transition on hover */
+      }
+      button#mic-toggle:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+      }
+      button#mic-toggle:active {
+        background-color: #004085; /* Even darker blue when clicked */
+      }
+
+      /* Settings Icon */
+      #settings-icon {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 24px; /* Adjust size as needed */
+        cursor: pointer;
+        color: #ccc; /* Light gray color */
+        user-select: none; /* Prevent text selection */
+      }
+      #settings-icon:hover {
+        color: #fff; /* White on hover */
+      }
+
+      /* API Key Dialog */
+      #api-key-dialog {
+        display: none; /* Hidden by default */
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 350px;
+        padding: 25px;
+        background-color: #2a2a2a; /* Dark gray background */
+        border: 1px solid #444;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        color: #eee; /* Light text color */
+      }
+      #api-key-dialog label {
+        display: block;
+        margin-bottom: 10px; /* Increased margin slightly */
+        font-weight: normal; /* Changed from bold */
+        font-size: 15px; /* Slightly larger */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Common UI font stack */
+        color: #ddd; /* Slightly lighter gray */
+      }
+      #api-key-dialog input[type="password"] {
+        width: calc(100% - 22px); /* Account for padding + border */
+        padding: 8px 10px;
+        margin-bottom: 20px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        background-color: #333;
+        color: #eee;
+        font-size: 14px;
+      }
+      #api-key-dialog .dialog-buttons {
+        text-align: right;
+      }
+      #api-key-dialog button {
+        padding: 8px 16px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      #api-key-dialog button#save-api-key {
+        background-color: #007bff;
+        color: white;
+      }
+      #api-key-dialog button#save-api-key:hover {
+        background-color: #0056b3;
+      }
+      #api-key-dialog button#cancel-api-key {
+        background-color: #6c757d; /* Gray */
+        color: white;
+      }
+       #api-key-dialog button#cancel-api-key:hover {
+        background-color: #5a6268;
+      }
+
+      /* Transcription Result Area */
+      #transcription-result {
+        width: 80%; /* Match canvas width */
+        height: 15%; /* Adjust height as needed */
+        margin-top: 15px; /* Space below button */
+        padding: 15px;
+        background-color: #1a1a1a; /* Slightly lighter than canvas bg */
+        border: 1px solid #333;
+        border-radius: 5px;
+        color: #eee; /* Light text */
+        font-family: monospace; /* Monospaced font for transcription */
+        font-size: 14px;
+        overflow-y: auto; /* Add scrollbar if text overflows */
+        box-sizing: border-box; /* Include padding/border in element's total width/height */
+      }
+      #transcription-result:empty::before {
+          content: "Transcription will appear here...";
+          color: #666; /* Placeholder text color */
+      }
+
+    </style>
   </head>
-
   <body>
-    <main class="container">
-      <h1>Welcome to Tauri</h1>
+    <div id="settings-icon" title="API Key Settings">⚙️</div>
 
-      <div class="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/src/assets/vite.svg" class="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img
-            src="/src/assets/tauri.svg"
-            class="logo tauri"
-            alt="Tauri logo"
-          />
-        </a>
-        <a href="https://www.typescriptlang.org/docs" target="_blank">
-          <img
-            src="/src/assets/typescript.svg"
-            class="logo typescript"
-            alt="typescript logo"
-          />
-        </a>
+    <canvas id="audioCanvas"></canvas>
+    <button id="mic-toggle">Start Listening</button>
+    <div id="transcription-result"></div>
+
+    <!-- API Key Input Dialog -->
+    <div id="api-key-dialog">
+      <label for="api-key-input">OpenAI API Key:</label>
+      <input type="password" id="api-key-input" placeholder="Enter your API key">
+      <div class="dialog-buttons">
+        <button id="cancel-api-key">Cancel</button>
+        <button id="save-api-key">Save</button>
       </div>
-      <p>Click on the Tauri logo to learn more about the framework</p>
+    </div>
 
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
-      <p id="greet-msg"></p>
-    </main>
+    <!-- Load main first to handle general setup like API key -->
+    <script type="module" src="/src/main.ts"></script>
+    <!-- Then load audio-visual -->
+    <script type="module" src="/src/audio.ts"></script>
   </body>
 </html>
