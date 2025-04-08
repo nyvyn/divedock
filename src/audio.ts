@@ -270,7 +270,7 @@ async function stopProcessingCleanup() {
     clearCanvas(); // Clear visualization
 
     if (toggleButton) {
-        toggleButton.innerText = "Start Processing"; // Reset button text
+        toggleButton.innerText = "Start Listening"; // Reset button text
     }
      if (transcriptionResultDiv) {
         // Optionally clear transcription or leave the last one
@@ -319,7 +319,7 @@ if (toggleButton && canvas && canvasCtx && transcriptionResultDiv) { // Check fo
         // Set state and UI
         isProcessing = true;
         isSpeaking = false; // Assume silence initially
-        toggleButton.innerText = "Stop Processing";
+        toggleButton.innerText = "Stop Listening";
         if(transcriptionResultDiv) transcriptionResultDiv.innerText = ""; // Clear previous transcription
         console.log("Audio processing started...");
 
