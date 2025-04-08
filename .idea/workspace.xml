@@ -21,10 +21,9 @@
     <cargoProject FILE="$PROJECT_DIR$/src-tauri/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="docs: update README formatting and inferred feature details">
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="feat: add OpenAI library and update dependencies in package-lock&#10;&#10;Added OpenAI library for integration and updated package-lock.json with new dependencies for compatibility. Renamed and reorganized source files for better clarity.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,7 +180,7 @@
       <workItem from="1743810051889" duration="2305000" />
       <workItem from="1743812478841" duration="180000" />
       <workItem from="1743812710506" duration="2567000" />
-      <workItem from="1743898822320" duration="10561000" />
+      <workItem from="1743898822320" duration="11901000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -239,7 +238,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744068831113</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="feat: add OpenAI library and update dependencies in package-lock&#10;&#10;Added OpenAI library for integration and updated package-lock.json with new dependencies for compatibility. Renamed and reorganized source files for better clarity.">
+      <option name="closed" value="true" />
+      <created>1744072141692</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1744072141692</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -265,7 +272,8 @@
     <MESSAGE value="Update IntelliJ config for new Tauri dev setup&#10;&#10;This commit adds the `npm.tauri:dev` run configuration and updates related IntelliJ settings. Adjustments include changes to the workspace, RunManager, and shared indexes, ensuring seamless development for the Tauri project." />
     <MESSAGE value="Add support for microphone recording using Tauri plugin&#10;&#10;Integrated the `tauri-plugin-mic-recorder` to enable microphone recording capabilities. Updated dependencies in `Cargo.toml` and `package-lock.json`, adjusted the application logic, and registered the plugin in the Tauri app." />
     <MESSAGE value="docs: update README formatting and inferred feature details" />
-    <option name="LAST_COMMIT_MESSAGE" value="docs: update README formatting and inferred feature details" />
+    <MESSAGE value="feat: add OpenAI library and update dependencies in package-lock&#10;&#10;Added OpenAI library for integration and updated package-lock.json with new dependencies for compatibility. Renamed and reorganized source files for better clarity." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add OpenAI library and update dependencies in package-lock&#10;&#10;Added OpenAI library for integration and updated package-lock.json with new dependencies for compatibility. Renamed and reorganized source files for better clarity." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">

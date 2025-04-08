@@ -1,10 +1,5 @@
-// We'll use the Web Audio API for visualization for now.
-// If file recording via the plugin is needed simultaneously,
-// further integration might be required.
-// import { startRecording, stopRecording } from "tauri-plugin-mic-recorder-api";
-import { openAIApiKey } from "./main"; // Import the API key
 import { transcribeAudioWithOpenAI } from "./transcribe"; // Import transcription function
-import { generateAndPlaySpeech, stopCurrentSpeech } from "./tts"; // Import TTS functions
+import { generateAndPlaySpeech, stopCurrentSpeech } from "./synthesize"; // Import TTS functions
 
 // --- State Variables ---
 let isProcessing = false; // Is the app actively processing audio? Renamed from isListening
@@ -28,10 +23,6 @@ const canvas = document.getElementById("audioCanvas") as HTMLCanvasElement | nul
 const canvasCtx = canvas?.getContext("2d");
 const transcriptionResultDiv = document.getElementById("transcription-result") as HTMLElement | null;
 // Dialog elements are handled in main.ts
-
-// Transcription logic moved to transcribe.ts
-// TTS logic imported above
-
 
 // --- Audio Processing Loop (includes Visualization and Silence Detection) ---
 function processAudio() {
@@ -99,7 +90,7 @@ function processAudio() {
   canvasCtx.strokeStyle = "rgb(50, 200, 50)"; // Waveform color
   canvasCtx.beginPath();
 
-  const sliceWidth = canvas.width * 1.0 / analyser.frequencyBinCount;
+  const sliceWidth = canvas.width / analyser.frequencyBinCount;
   let x = 0;
 
   for (let i = 0; i < analyser.frequencyBinCount; i++) {

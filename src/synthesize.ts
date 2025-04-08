@@ -71,12 +71,6 @@ export async function generateAndPlaySpeech(text: string, audioContext: AudioCon
 
     } catch (error) {
         console.error("Error during OpenAI TTS:", error);
-        let errorMessage = "An unknown error occurred during TTS generation.";
-         if (error instanceof OpenAI.APIError) {
-            errorMessage = `OpenAI TTS API Error: ${error.status} ${error.name} ${error.message}`;
-        } else if (error instanceof Error) {
-            errorMessage = `TTS Error: ${error.message}`;
-        }
         // Optionally display this error to the user
         currentSpeech = null; // Ensure reference is cleared on error
         return null;
