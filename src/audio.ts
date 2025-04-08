@@ -80,35 +80,29 @@ function processAudio() {
       }
   }
 
-  // --- Simple Waveform Visualization (using the same frequency data) ---
+  // --- Horizontal Bar Visualization (based on average volume) ---
   // Clear the canvas
   canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Background color
   canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw based on frequency data
-  canvasCtx.lineWidth = 2;
-  canvasCtx.strokeStyle = "rgb(50, 200, 50)"; // Waveform color
-  canvasCtx.beginPath();
+  // Calculate bar dimensions based on average volume
+  const maxBarWidth = canvas.width * 0.8; // Max width (80% of canvas)
+  const minBarWidth = 10; // Minimum width when silent
+  const barHeight = canvas.height * 0.2; // Fixed height (20% of canvas height)
 
-  const sliceWidth = canvas.width / analyser.frequencyBinCount;
-  let x = 0;
+  // Map averageVolume (0-1) to bar width
+  // Use a non-linear scale (e.g., power) to make quiet sounds more visible
+  const volumeScale = Math.pow(averageVolume, 0.6);
+  let currentBarWidth = minBarWidth + volumeScale * (maxBarWidth - minBarWidth);
+  currentBarWidth = Math.max(minBarWidth, currentBarWidth); // Ensure minimum width
 
-  for (let i = 0; i < analyser.frequencyBinCount; i++) {
-    // dataArray values are 0-255 (frequency)
-    const v = dataArray[i] / 128.0; // Adjust scaling as needed
-    const y = canvas.height - (v * canvas.height / 2); // Draw from bottom up
+  // Calculate position for centered bar
+  const barX = (canvas.width - currentBarWidth) / 2;
+  const barY = (canvas.height - barHeight) / 2;
 
-    if (i === 0) {
-      canvasCtx.moveTo(x, y);
-    } else {
-      canvasCtx.lineTo(x, y);
-    }
-
-    x += sliceWidth;
-  }
-
-  canvasCtx.lineTo(canvas.width, canvas.height); // Line to the bottom right
-  canvasCtx.stroke(); // Draw the line
+  // Draw the bar
+  canvasCtx.fillStyle = "rgb(50, 200, 50)"; // Bar color
+  canvasCtx.fillRect(barX, barY, currentBarWidth, barHeight);
   // --- End Visualization ---
 
 
