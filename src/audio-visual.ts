@@ -2,6 +2,7 @@
 // If file recording via the plugin is needed simultaneously,
 // further integration might be required.
 // import { startRecording, stopRecording } from "tauri-plugin-mic-recorder-api";
+import { openAIApiKey } from "./main"; // Import the API key
 
 let isListening = false;
 let animationFrameId: number | null = null;
