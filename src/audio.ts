@@ -3,8 +3,16 @@
 // further integration might be required.
 // import { startRecording, stopRecording } from "tauri-plugin-mic-recorder-api";
 import { openAIApiKey } from "./main"; // Import the API key
+import { transcribeAudioWithOpenAI } from "./transcribe"; // Import transcription function
+import { generateAndPlaySpeech, stopCurrentSpeech } from "./tts"; // Import TTS functions
 
-let isListening = false;
+// --- State Variables ---
+let isProcessing = false; // Is the app actively processing audio? Renamed from isListening
+let isSpeaking = false; // Is the user currently speaking?
+let silenceTimer: number | null = null; // Timer for detecting end-of-speech pause
+const silenceDelay = 1500; // ms of silence before triggering transcription
+const silenceThreshold = 0.01; // Audio level threshold (adjust based on testing)
+
 let animationFrameId: number | null = null;
 let audioContext: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
@@ -124,18 +132,156 @@ function clearCanvas() {
     }
 }
 
+// --- Helper Functions for Recorder ---
+function startRecorder() {
+    if (!microphoneStream) {
+        console.error("Cannot start recorder: microphone stream not available.");
+        return;
+    }
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+        console.log("Recorder already running.");
+        return;
+    }
 
-if (toggleButton && canvas && canvasCtx) {
-  // Set canvas dimensions based on its styled size
+    recordedChunks = []; // Clear previous chunks
+    try {
+        // Choose a mimeType
+        let options = { mimeType: 'audio/ogg;codecs=opus' };
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+            console.warn(`${options.mimeType} not supported. Trying audio/webm...`);
+            options.mimeType = 'audio/webm';
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                 console.warn(`${options.mimeType} also not supported. Using browser default.`);
+                 mediaRecorder = new MediaRecorder(microphoneStream);
+                 options.mimeType = mediaRecorder.mimeType;
+            } else {
+                 mediaRecorder = new MediaRecorder(microphoneStream, options);
+            }
+        } else {
+             mediaRecorder = new MediaRecorder(microphoneStream, options);
+        }
+
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+            }
+        };
+
+        mediaRecorder.onstop = async () => { // Make async to await transcription/TTS
+            console.log("Recorder stopped.");
+            // Ensure context is still valid before proceeding
+            if (!audioContext || audioContext.state === 'closed') {
+                console.warn("Audio context closed before processing recorder stop.");
+                return;
+            }
+            if (recordedChunks.length > 0) {
+                const mimeType = recordedChunks[0].type || options.mimeType || 'audio/webm';
+                const audioBlob = new Blob(recordedChunks, { type: mimeType });
+                console.log(`Combined Blob size: ${audioBlob.size}, type: ${audioBlob.type}`);
+
+                // Perform transcription
+                const transcriptionText = await transcribeAudioWithOpenAI(audioBlob, transcriptionResultDiv);
+
+                // If transcription successful, generate and play speech
+                if (transcriptionText && isProcessing) { // Only speak if still processing
+                    await generateAndPlaySpeech(transcriptionText, audioContext);
+                }
+
+            } else {
+                console.log("No audio data recorded for this segment.");
+                // Optionally clear transcription display or show a message
+                // if(transcriptionResultDiv) transcriptionResultDiv.innerText = "[No speech detected in last segment]";
+            }
+            recordedChunks = []; // Clear chunks for next recording
+
+            // IMPORTANT: Restart recorder immediately if still processing
+            if (isProcessing) {
+                console.log("Restarting recorder for next utterance...");
+                startRecorder();
+            }
+        };
+
+        // Use a short timeslice to ensure data is available reasonably often,
+        // although onstop is the primary trigger for transcription here.
+        mediaRecorder.start(1000); // Start recording, timeslice optional but can help keep data flowing
+        console.log(`MediaRecorder started with ${options.mimeType}. State: ${mediaRecorder.state}`);
+
+    } catch (recorderError) {
+        console.error("Error initializing MediaRecorder:", recorderError);
+        alert("Could not start audio recorder. Check console for details.");
+        // Handle cleanup if recorder fails to start
+        stopProcessingCleanup();
+    }
+}
+
+function stopRecorder() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop(); // This triggers the onstop event handler
+        console.log("MediaRecorder stopping...");
+    }
+    // Don't nullify mediaRecorder here, onstop might need it briefly,
+    // and startRecorder will create a new one if needed.
+}
+
+// --- Cleanup Function ---
+async function stopProcessingCleanup() {
+    console.log("Stopping audio processing and cleaning up...");
+    isProcessing = false;
+    isSpeaking = false;
+
+    if (silenceTimer) {
+        clearTimeout(silenceTimer);
+        silenceTimer = null;
+    }
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+
+    stopRecorder(); // Stop recorder if running
+    stopCurrentSpeech(); // Stop any TTS
+
+    if (microphoneStream) {
+      microphoneStream.getTracks().forEach(track => track.stop()); // Release microphone
+      microphoneStream = null;
+    }
+
+    // Close AudioContext
+    if (audioContext && audioContext.state !== 'closed') {
+        await audioContext.close();
+        audioContext = null;
+        analyser = null;
+        dataArray = null;
+    }
+
+    mediaRecorder = null; // Clear recorder instance
+    recordedChunks = [];
+
+    clearCanvas(); // Clear visualization
+
+    if (toggleButton) {
+        toggleButton.innerText = "Start Processing"; // Reset button text
+    }
+     if (transcriptionResultDiv) {
+        // Optionally clear transcription or leave the last one
+        // transcriptionResultDiv.innerText = "";
+    }
+}
+
+
+// --- Initialization and Button Logic ---
+if (toggleButton && canvas && canvasCtx && transcriptionResultDiv) { // Check for transcriptionResultDiv here now
+  // Set canvas dimensions
   const rect = canvas.getBoundingClientRect();
   canvas.width = rect.width;
   canvas.height = rect.height;
 
   toggleButton.addEventListener("click", async () => {
-    if (!isListening) {
-      // Start listening
+    if (!isProcessing) { // Use isProcessing state variable
+      // --- Start Processing ---
       try {
-        if (!audioContext) {
+        // Initialize Audio Context
+        if (!audioContext || audioContext.state === 'closed') { // Check if closed too
             audioContext = new AudioContext();
         }
         // Resume context if it was suspended
