@@ -283,149 +283,47 @@ if (toggleButton && canvas && canvasCtx && transcriptionResultDiv) { // Check fo
         // Initialize Audio Context
         if (!audioContext || audioContext.state === 'closed') { // Check if closed too
             audioContext = new AudioContext();
-        }
-        // Resume context if it was suspended
-        if (audioContext.state === 'suspended') {
+            console.log("AudioContext initialized/resumed.");
+        } else if (audioContext.state === 'suspended') {
             await audioContext.resume();
+            console.log("AudioContext resumed.");
         }
 
+        // Get Microphone Stream
         microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        console.log("Microphone access granted.");
+
+        // Setup Analyser
         const source = audioContext.createMediaStreamSource(microphoneStream);
         analyser = audioContext.createAnalyser();
-        analyser.fftSize = 2048; // Adjust detail level
+        // Adjust analyser settings for responsiveness
+        analyser.fftSize = 512; // Smaller size for faster analysis
+        analyser.smoothingTimeConstant = 0.6; // Adjust smoothing
         const bufferLength = analyser.frequencyBinCount;
         dataArray = new Uint8Array(bufferLength);
+        source.connect(analyser); // Connect stream to analyser
 
-        source.connect(analyser);
-        // Note: We don't connect analyser to destination, as we only want to analyze
+        // Start the first recorder instance
+        startRecorder();
 
-        // --- Start MediaRecorder ---
-        recordedChunks = []; // Clear previous recording chunks
-        try {
-            // Choose a mimeType that the browser supports and OpenAI likely accepts
-            // Common options: 'audio/ogg;codecs=opus', 'audio/webm;codecs=opus', 'audio/mp4', 'audio/wav'
-            // OpenAI supported: ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm']
-            let options = { mimeType: 'audio/ogg;codecs=opus' }; // Try OGG Opus first
-
-            if (MediaRecorder.isTypeSupported(options.mimeType)) {
-                console.log(`Using supported mimeType: ${options.mimeType}`);
-                mediaRecorder = new MediaRecorder(microphoneStream, options);
-            } else {
-                console.warn(`${options.mimeType} not supported. Trying audio/webm...`);
-                options.mimeType = 'audio/webm'; // Fallback to webm (browser default codec)
-                if (MediaRecorder.isTypeSupported(options.mimeType)) {
-                    console.log(`Using supported mimeType: ${options.mimeType}`);
-                    mediaRecorder = new MediaRecorder(microphoneStream, options);
-                } else {
-                     console.warn(`${options.mimeType} also not supported. Using browser default.`);
-                     // Let the browser choose the default format/codec
-                     mediaRecorder = new MediaRecorder(microphoneStream);
-                     options.mimeType = mediaRecorder.mimeType; // Store the actual used type
-                     console.log(`Using browser default mimeType: ${options.mimeType}`);
-                }
-            }
-
-
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                    // console.log(`Recorded chunk size: ${event.data.size}`);
-                }
-            };
-
-            mediaRecorder.onstop = () => {
-                console.log("Recorder stopped. Processing recorded chunks.");
-                if (recordedChunks.length > 0) {
-                    // Determine the mimeType from the first chunk or the options used
-                    const mimeType = recordedChunks[0].type || options.mimeType || 'audio/webm';
-                    const audioBlob = new Blob(recordedChunks, { type: mimeType });
-                    console.log(`Combined Blob size: ${audioBlob.size}, type: ${audioBlob.type}`);
-                    // Send the combined audio blob to OpenAI, passing the display element
-                    transcribeAudioWithOpenAI(audioBlob, transcriptionResultDiv);
-                } else {
-                    console.log("No audio data recorded.");
-                    if(transcriptionResultDiv) transcriptionResultDiv.innerText = "No audio data was recorded.";
-                }
-                recordedChunks = []; // Clear chunks for next recording
-            };
-
-            mediaRecorder.start(); // Start recording
-            console.log("MediaRecorder started.");
-
-        } catch (recorderError) {
-            console.error("Error initializing MediaRecorder:", recorderError);
-            alert("Could not start audio recorder. Check console for details.");
-            // Don't proceed with listening state if recorder fails
-            microphoneStream.getTracks().forEach(track => track.stop());
-            microphoneStream = null;
-            if (audioContext && audioContext.state !== 'closed') {
-                await audioContext.close();
-                audioContext = null;
-            }
-            return; // Exit the click handler
-        }
-        // --- End MediaRecorder Start ---
-
-
-        isListening = true;
-        toggleButton.innerText = "Stop Listening";
+        // Set state and UI
+        isProcessing = true;
+        isSpeaking = false; // Assume silence initially
+        toggleButton.innerText = "Stop Processing";
         if(transcriptionResultDiv) transcriptionResultDiv.innerText = ""; // Clear previous transcription
-        console.log("Microphone access granted, starting visualization and recording...");
-        drawVisualization(); // Start the visualization loop
+        console.log("Audio processing started...");
+
+        // Start the processing loop
+        processAudio();
 
       } catch (err) {
-        console.error("Error accessing microphone:", err);
-        alert("Error accessing microphone. Please ensure permission is granted.");
-        // Reset state
-        isListening = false;
-        toggleButton.innerText = "Start Listening";
-        if (audioContext && audioContext.state !== 'closed') {
-            await audioContext.close(); // Close context on error
-            audioContext = null;
-        }
+        console.error("Error starting audio processing:", err);
+        alert("Error starting audio processing. Check console and permissions.");
+        await stopProcessingCleanup(); // Ensure cleanup on error
       }
     } else {
-      // Stop listening
-      try {
-        if (microphoneStream) {
-          microphoneStream.getTracks().forEach(track => track.stop()); // Release microphone
-          microphoneStream = null;
-        }
-
-        // --- Stop MediaRecorder ---
-        if (mediaRecorder && mediaRecorder.state === "recording") {
-            mediaRecorder.stop(); // This triggers the onstop event handler
-            console.log("MediaRecorder stopping...");
-        }
-        mediaRecorder = null; // Release the recorder object
-        // --- End MediaRecorder Stop ---
-
-        isListening = false;
-        toggleButton.innerText = "Start Listening";
-        console.log("Stopped listening.");
-
-        // Stop visualization loop
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
-          animationFrameId = null;
-        }
-        clearCanvas();
-
-        // Optional: Suspend or close AudioContext when not in use
-        // if (audioContext && audioContext.state === 'running') {
-        //     await audioContext.suspend();
-        // }
-        // Or close it completely if you don't expect to restart soon:
-        // if (audioContext) {
-        //     await audioContext.close();
-        //     audioContext = null;
-        //     analyser = null;
-        //     dataArray = null;
-        // }
-
-      } catch (error) {
-        console.error("Error stopping microphone or visualization:", error);
-      }
+      // --- Stop Processing ---
+      await stopProcessingCleanup();
     }
   });
 } else {
