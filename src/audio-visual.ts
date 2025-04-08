@@ -9,18 +9,14 @@ let audioContext: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
 let microphoneStream: MediaStream | null = null;
 let dataArray: Uint8Array | null = null;
-let openAIApiKey: string | null = null; // Variable to store the API key in memory
+// API Key logic moved to main.ts
 
 
 // --- DOM Elements ---
 const toggleButton = document.getElementById("mic-toggle") as HTMLButtonElement | null;
 const canvas = document.getElementById("audioCanvas") as HTMLCanvasElement | null;
 const canvasCtx = canvas?.getContext("2d");
-const settingsIcon = document.getElementById("settings-icon") as HTMLElement | null;
-const apiKeyDialog = document.getElementById("api-key-dialog") as HTMLElement | null;
-const apiKeyInput = document.getElementById("api-key-input") as HTMLInputElement | null;
-const saveApiKeyButton = document.getElementById("save-api-key") as HTMLButtonElement | null;
-const cancelApiKeyButton = document.getElementById("cancel-api-key") as HTMLButtonElement | null;
+// Dialog elements are handled in main.ts
 
 
 // --- Visualization Logic ---
@@ -167,33 +163,4 @@ if (toggleButton && canvas && canvasCtx) {
   if (!canvasCtx) console.error("Canvas context not available");
 }
 
-// --- API Key Dialog Logic ---
-if (settingsIcon && apiKeyDialog && apiKeyInput && saveApiKeyButton && cancelApiKeyButton) {
-  settingsIcon.addEventListener("click", () => {
-    // Populate input with current key if it exists
-    apiKeyInput.value = openAIApiKey || "";
-    apiKeyDialog.style.display = "block";
-  });
-
-  cancelApiKeyButton.addEventListener("click", () => {
-    apiKeyDialog.style.display = "none";
-  });
-
-  saveApiKeyButton.addEventListener("click", () => {
-    openAIApiKey = apiKeyInput.value.trim();
-    apiKeyDialog.style.display = "none";
-    if (openAIApiKey) {
-        console.log("OpenAI API Key saved (in memory).");
-        // Optional: Add visual feedback, e.g., change settings icon color
-        // settingsIcon.style.color = '#0f0'; // Greenish color
-    } else {
-        console.log("OpenAI API Key cleared.");
-        // settingsIcon.style.color = '#ccc'; // Reset color
-    }
-    // Clear the input field after saving for security
-    apiKeyInput.value = "";
-  });
-
-} else {
-    console.error("One or more API Key dialog elements were not found.");
-}
+// --- API Key Dialog Logic moved to main.ts ---
