@@ -21,54 +21,8 @@ const canvasCtx = canvas?.getContext("2d");
 const transcriptionResultDiv = document.getElementById("transcription-result") as HTMLElement | null;
 // Dialog elements are handled in main.ts
 
-
-// --- Transcription Logic ---
-async function transcribeAudioWithOpenAI(audioBlob: Blob) {
-    if (!transcriptionResultDiv) {
-        console.error("Transcription result display area not found.");
-        return;
-    }
-    if (!openAIApiKey) {
-        console.error("OpenAI API Key is not set.");
-        transcriptionResultDiv.innerText = "Error: OpenAI API Key is not set. Please set it via the settings icon.";
-        return;
-    }
-
-    console.log("Sending audio to OpenAI for transcription...");
-    transcriptionResultDiv.innerText = "Transcribing..."; // Indicate processing
-
-    const formData = new FormData();
-    // OpenAI API expects a file field. Provide a filename.
-    formData.append("file", audioBlob, "audio.webm"); // Adjust filename/type if needed
-    formData.append("model", "whisper-1");
-    // Optional: Add parameters like 'language' (ISO-639-1 code) or 'prompt'
-    // formData.append("language", "en");
-
-    try {
-        const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${openAIApiKey}`,
-                // 'Content-Type': 'multipart/form-data' is set automatically by fetch when using FormData
-            },
-            body: formData,
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            // Handle API errors (e.g., invalid key, rate limits)
-            console.error("OpenAI API Error:", data);
-            transcriptionResultDiv.innerText = `Error: ${data.error?.message || 'Failed to transcribe'}`;
-        } else {
-            console.log("Transcription successful:", data.text);
-            transcriptionResultDiv.innerText = data.text || "[No transcription result]";
-        }
-    } catch (error) {
-        console.error("Error sending request to OpenAI:", error);
-        transcriptionResultDiv.innerText = "Error: Could not connect to OpenAI API.";
-    }
-}
+// Transcription logic moved to transcribe.ts
+import { transcribeAudioWithOpenAI } from "./transcribe";
 
 
 // --- Visualization Logic ---
@@ -187,8 +141,8 @@ if (toggleButton && canvas && canvasCtx) {
                     const mimeType = recordedChunks[0].type || options.mimeType || 'audio/webm';
                     const audioBlob = new Blob(recordedChunks, { type: mimeType });
                     console.log(`Combined Blob size: ${audioBlob.size}, type: ${audioBlob.type}`);
-                    // Send the combined audio blob to OpenAI
-                    transcribeAudioWithOpenAI(audioBlob);
+                    // Send the combined audio blob to OpenAI, passing the display element
+                    transcribeAudioWithOpenAI(audioBlob, transcriptionResultDiv);
                 } else {
                     console.log("No audio data recorded.");
                     if(transcriptionResultDiv) transcriptionResultDiv.innerText = "No audio data was recorded.";
