@@ -331,12 +331,6 @@ if (toggleButton && canvas && canvasCtx && transcriptionResultDiv) { // Check fo
   if (!canvas) console.error("Canvas element not found");
   if (!canvasCtx) console.error("Canvas context not available");
   if (!transcriptionResultDiv) console.error("Transcription result div not found");
-} else {
-    // Log errors if essential elements are missing
-    if (!toggleButton) console.error("Toggle button not found");
-    if (!canvas) console.error("Canvas element not found");
-    if (!canvasCtx) console.error("Canvas context not available");
-    if (!transcriptionResultDiv) console.error("Transcription result div not found");
 }
 
 // --- API Key Dialog Logic is handled in main.ts ---
