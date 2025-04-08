@@ -72,11 +72,14 @@
       }
       #api-key-dialog label {
         display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
+        margin-bottom: 10px; /* Increased margin slightly */
+        font-weight: normal; /* Changed from bold */
+        font-size: 15px; /* Slightly larger */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Common UI font stack */
+        color: #ddd; /* Slightly lighter gray */
       }
       #api-key-dialog input[type="password"] {
-        width: calc(100% - 20px); /* Account for padding */
+        width: calc(100% - 22px); /* Account for padding + border */
         padding: 8px 10px;
         margin-bottom: 20px;
         border: 1px solid #555;
