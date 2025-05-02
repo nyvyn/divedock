@@ -25,9 +25,7 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor(audio): improve rms handling and remove redundant volume variable&#10;&#10;- Adjusted RMS as the primary volume measure to simplify logic.&#10;- Removed redundant `averageVolume` variable.&#10;- Minor refactor to simplify `sliceWidth` calculation.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor(audio): optimize volume calculation with RMS and remove redundancy&#10;&#10;- Simplified logic by using RMS as the primary volume measure.  &#10;- Eliminated unnecessary `averageVolume` variable.  &#10;- Streamlined `sliceWidth` calculation." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -194,7 +192,7 @@
       <workItem from="1743812710506" duration="2567000" />
       <workItem from="1743898822320" duration="14427000" />
       <workItem from="1744407558778" duration="225000" />
-      <workItem from="1744938735291" duration="2975000" />
+      <workItem from="1744938735291" duration="3196000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -292,7 +290,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744078132211</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="refactor(audio): optimize volume calculation with RMS and remove redundancy&#10;&#10;- Simplified logic by using RMS as the primary volume measure.  &#10;- Eliminated unnecessary `averageVolume` variable.  &#10;- Streamlined `sliceWidth` calculation.">
+      <option name="closed" value="true" />
+      <created>1744984492672</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1744984492672</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -322,7 +328,8 @@
     <MESSAGE value="feat: remove unused assets and refactor OpenAI TTS implementation&#10;&#10;This commit removes redundant SVG assets and consolidates TTS logic by deleting tts.ts and migrating functionality to synthesize.ts. Additionally, minor improvements in audio processing and dependency cleanup were made for better maintainability." />
     <MESSAGE value="chore: update IDE workspace settings" />
     <MESSAGE value="refactor(audio): improve rms handling and remove redundant volume variable&#10;&#10;- Adjusted RMS as the primary volume measure to simplify logic.&#10;- Removed redundant `averageVolume` variable.&#10;- Minor refactor to simplify `sliceWidth` calculation." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(audio): improve rms handling and remove redundant volume variable&#10;&#10;- Adjusted RMS as the primary volume measure to simplify logic.&#10;- Removed redundant `averageVolume` variable.&#10;- Minor refactor to simplify `sliceWidth` calculation." />
+    <MESSAGE value="refactor(audio): optimize volume calculation with RMS and remove redundancy&#10;&#10;- Simplified logic by using RMS as the primary volume measure.  &#10;- Eliminated unnecessary `averageVolume` variable.  &#10;- Streamlined `sliceWidth` calculation." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(audio): optimize volume calculation with RMS and remove redundancy&#10;&#10;- Simplified logic by using RMS as the primary volume measure.  &#10;- Eliminated unnecessary `averageVolume` variable.  &#10;- Streamlined `sliceWidth` calculation." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
