@@ -25,9 +25,7 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: optimize RMS volume calculation and remove redundancy in audio logic">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: optimize RMS volume calculation and remove redundancy in audio logic" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -99,6 +97,9 @@
     "npm.tauri:dev.executor": "Run",
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
     "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "settings.sync",
     "ts.external.directory.path": "/Users/nyvyn/Development/divedock/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
@@ -200,6 +201,7 @@
       <workItem from="1744407558778" duration="225000" />
       <workItem from="1744938735291" duration="3196000" />
       <workItem from="1746147899880" duration="112000" />
+      <workItem from="1746148108923" duration="2000000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -313,7 +315,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746147975378</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="refactor: optimize RMS volume calculation and remove redundancy in audio logic">
+      <option name="closed" value="true" />
+      <created>1746148127779</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1746148127779</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

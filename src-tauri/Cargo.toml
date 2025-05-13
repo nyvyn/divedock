@@ -15,10 +15,9 @@ name = "divedock_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build = { version = "2.2.0", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
-tauri-plugin-opener = "2"
-tauri-plugin-mic-recorder = "2.0.0"
+tauri = { version = "2.5.1", features = [] }
+tauri-plugin-opener = "2.2.6"
 
