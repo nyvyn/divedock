@@ -1,5 +1,6 @@
 import { generateAndPlaySpeech, stopCurrentSpeech } from "./synthesize"; // Import TTS functions
 import { transcribeAudioWithOpenAI } from "./transcribe"; // Import transcription function
+import { requestMicrophonePermission } from "tauri-plugin-macos-permissions-api";
 
 // --- State Variables ---
 let isProcessing = false; // Is the app actively processing audio? Renamed from isListening
@@ -26,100 +27,100 @@ const transcriptionResultDiv = document.getElementById("transcription-result") a
 
 // --- Audio Processing Loop (includes Visualization and Silence Detection) ---
 function processAudio() {
-  if (!isProcessing || !analyser || !dataArray || !canvas || !canvasCtx) {
-      // Stop loop if not processing
-      if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
-          animationFrameId = null;
-      }
-      return;
-  }
-
-  // Get time domain data for waveform visualization
-  analyser.getByteTimeDomainData(dataArray); // Use time domain data
-
-  // --- Calculate Average Volume (still needed for silence detection) ---
-  // We can approximate volume from time domain data, though frequency is often better.
-  // Or, keep using frequency data just for volume calculation if preferred.
-  // Let's calculate from time domain for now:
-  let sumOfSquares = 0;
-  for (let i = 0; i < analyser.frequencyBinCount; i++) {
-      // Normalize the 0-255 value to -1 to 1
-      const normalizedSample = (dataArray[i] / 128.0) - 1.0;
-      sumOfSquares += normalizedSample * normalizedSample;
-  }
-  const rms = Math.sqrt(sumOfSquares / analyser.frequencyBinCount);
-
-   // Use RMS as the volume measure (0-1 range approx)
-    // --- Silence Detection Logic ---
-  if (rms > silenceThreshold) {
-      // Speaking detected
-      if (!isSpeaking) {
-          console.log("Speech started.");
-          isSpeaking = true;
-          stopCurrentSpeech(); // Interrupt TTS if it's playing
-          // Ensure recorder is running (should be if isProcessing is true)
-          if (mediaRecorder && mediaRecorder.state === "inactive") {
-              console.warn("Recorder was inactive while processing, restarting.");
-              startRecorder(); // Make sure recorder is going
-          }
-      }
-      // Clear the silence timer if it was running
-      if (silenceTimer) {
-          clearTimeout(silenceTimer);
-          silenceTimer = null;
-      }
-  } else {
-      // Silence detected
-      if (isSpeaking) {
-          // Just transitioned from speaking to silence
-          console.log("Potential pause detected, starting timer...");
-          if (!silenceTimer) {
-              silenceTimer = window.setTimeout(() => {
-                  console.log("Silence duration met, triggering transcription.");
-                  isSpeaking = false; // Mark as no longer speaking
-                  stopRecorder(); // Stop recording to process the utterance
-                  silenceTimer = null;
-                  // Recorder onstop will handle transcription and restarting if still processing
-              }, silenceDelay);
-          }
-      }
-  }
-
-  // --- Waveform Visualization (using time domain data) ---
-  // Clear the canvas
-  canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Background color
-  canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Set up line style
-  canvasCtx.lineWidth = 2;
-  canvasCtx.strokeStyle = "rgb(50, 200, 50)"; // Waveform color
-  canvasCtx.beginPath();
-
-  const sliceWidth = canvas.width / analyser.frequencyBinCount;
-  let x = 0;
-
-  for (let i = 0; i < analyser.frequencyBinCount; i++) {
-    // dataArray values are 0-255, map to canvas height centered vertically
-    const v = dataArray[i] / 128.0; // Normalize to range 0-2
-    const y = v * canvas.height / 2; // Scale to canvas height
-
-    if (i === 0) {
-      canvasCtx.moveTo(x, y);
-    } else {
-      canvasCtx.lineTo(x, y);
+    if (!isProcessing || !analyser || !dataArray || !canvas || !canvasCtx) {
+        // Stop loop if not processing
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        return;
     }
 
-    x += sliceWidth;
-  }
+    // Get time domain data for waveform visualization
+    analyser.getByteTimeDomainData(dataArray); // Use time domain data
 
-  canvasCtx.lineTo(canvas.width, canvas.height / 2); // Line to the middle vertical point at the end
-  canvasCtx.stroke(); // Draw the line
-  // --- End Visualization ---
+    // --- Calculate Average Volume (still needed for silence detection) ---
+    // We can approximate volume from time domain data, though frequency is often better.
+    // Or, keep using frequency data just for volume calculation if preferred.
+    // Let's calculate from time domain for now:
+    let sumOfSquares = 0;
+    for (let i = 0; i < analyser.frequencyBinCount; i++) {
+        // Normalize the 0-255 value to -1 to 1
+        const normalizedSample = (dataArray[i] / 128.0) - 1.0;
+        sumOfSquares += normalizedSample * normalizedSample;
+    }
+    const rms = Math.sqrt(sumOfSquares / analyser.frequencyBinCount);
+
+    // Use RMS as the volume measure (0-1 range approx)
+    // --- Silence Detection Logic ---
+    if (rms > silenceThreshold) {
+        // Speaking detected
+        if (!isSpeaking) {
+            console.log("Speech started.");
+            isSpeaking = true;
+            stopCurrentSpeech(); // Interrupt TTS if it's playing
+            // Ensure recorder is running (should be if isProcessing is true)
+            if (mediaRecorder && mediaRecorder.state === "inactive") {
+                console.warn("Recorder was inactive while processing, restarting.");
+                startRecorder(); // Make sure recorder is going
+            }
+        }
+        // Clear the silence timer if it was running
+        if (silenceTimer) {
+            clearTimeout(silenceTimer);
+            silenceTimer = null;
+        }
+    } else {
+        // Silence detected
+        if (isSpeaking) {
+            // Just transitioned from speaking to silence
+            console.log("Potential pause detected, starting timer...");
+            if (!silenceTimer) {
+                silenceTimer = window.setTimeout(() => {
+                    console.log("Silence duration met, triggering transcription.");
+                    isSpeaking = false; // Mark as no longer speaking
+                    stopRecorder(); // Stop recording to process the utterance
+                    silenceTimer = null;
+                    // Recorder onstop will handle transcription and restarting if still processing
+                }, silenceDelay);
+            }
+        }
+    }
+
+    // --- Waveform Visualization (using time domain data) ---
+    // Clear the canvas
+    canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Background color
+    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Set up line style
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = "rgb(50, 200, 50)"; // Waveform color
+    canvasCtx.beginPath();
+
+    const sliceWidth = canvas.width / analyser.frequencyBinCount;
+    let x = 0;
+
+    for (let i = 0; i < analyser.frequencyBinCount; i++) {
+        // dataArray values are 0-255, map to canvas height centered vertically
+        const v = dataArray[i] / 128.0; // Normalize to range 0-2
+        const y = v * canvas.height / 2; // Scale to canvas height
+
+        if (i === 0) {
+            canvasCtx.moveTo(x, y);
+        } else {
+            canvasCtx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+    }
+
+    canvasCtx.lineTo(canvas.width, canvas.height / 2); // Line to the middle vertical point at the end
+    canvasCtx.stroke(); // Draw the line
+    // --- End Visualization ---
 
 
-  // Request next frame
-  animationFrameId = requestAnimationFrame(processAudio);
+    // Request next frame
+    animationFrameId = requestAnimationFrame(processAudio);
 }
 
 function clearCanvas() {
@@ -143,20 +144,20 @@ function startRecorder() {
     recordedChunks = []; // Clear previous chunks
     try {
         // Choose a mimeType - Prioritize WAV for potentially better compatibility
-        let options = { mimeType: 'audio/wav' };
+        let options = {mimeType: "audio/wav"};
 
         if (MediaRecorder.isTypeSupported(options.mimeType)) {
             console.log(`Using supported mimeType: ${options.mimeType}`);
             mediaRecorder = new MediaRecorder(microphoneStream, options);
         } else {
             console.warn(`${options.mimeType} not supported. Trying audio/ogg...`);
-            options.mimeType = 'audio/ogg;codecs=opus'; // Fallback to Ogg
+            options.mimeType = "audio/ogg;codecs=opus"; // Fallback to Ogg
             if (MediaRecorder.isTypeSupported(options.mimeType)) {
-                 console.log(`Using supported mimeType: ${options.mimeType}`);
-                 mediaRecorder = new MediaRecorder(microphoneStream, options);
+                console.log(`Using supported mimeType: ${options.mimeType}`);
+                mediaRecorder = new MediaRecorder(microphoneStream, options);
             } else {
                 console.warn(`${options.mimeType} not supported. Trying audio/webm...`);
-                options.mimeType = 'audio/webm'; // Fallback to WebM
+                options.mimeType = "audio/webm"; // Fallback to WebM
                 if (MediaRecorder.isTypeSupported(options.mimeType)) {
                     console.log(`Using supported mimeType: ${options.mimeType}`);
                     mediaRecorder = new MediaRecorder(microphoneStream, options);
@@ -179,13 +180,13 @@ function startRecorder() {
         mediaRecorder.onstop = async () => { // Make async to await transcription/TTS
             console.log("Recorder stopped.");
             // Ensure context is still valid before proceeding
-            if (!audioContext || audioContext.state === 'closed') {
+            if (!audioContext || audioContext.state === "closed") {
                 console.warn("Audio context closed before processing recorder stop.");
                 return;
             }
             if (recordedChunks.length > 0) {
-                const mimeType = recordedChunks[0].type || options.mimeType || 'audio/webm';
-                const audioBlob = new Blob(recordedChunks, { type: mimeType });
+                const mimeType = recordedChunks[0].type || options.mimeType || "audio/webm";
+                const audioBlob = new Blob(recordedChunks, {type: mimeType});
                 console.log(`Combined Blob size: ${audioBlob.size}, type: ${audioBlob.type}`);
 
                 // Perform transcription
@@ -251,12 +252,12 @@ async function stopProcessingCleanup() {
     stopCurrentSpeech(); // Stop any TTS
 
     if (microphoneStream) {
-      microphoneStream.getTracks().forEach(track => track.stop()); // Release microphone
-      microphoneStream = null;
+        microphoneStream.getTracks().forEach(track => track.stop()); // Release microphone
+        microphoneStream = null;
     }
 
     // Close AudioContext
-    if (audioContext && audioContext.state !== 'closed') {
+    if (audioContext && audioContext.state !== "closed") {
         await audioContext.close();
         audioContext = null;
         analyser = null;
@@ -271,7 +272,7 @@ async function stopProcessingCleanup() {
     if (toggleButton) {
         toggleButton.innerText = "Start Listening"; // Reset button text
     }
-     if (transcriptionResultDiv) {
+    if (transcriptionResultDiv) {
         // Optionally clear transcription or leave the last one
         // transcriptionResultDiv.innerText = "";
     }
@@ -280,66 +281,72 @@ async function stopProcessingCleanup() {
 
 // --- Initialization and Button Logic ---
 if (toggleButton && canvas && canvasCtx && transcriptionResultDiv) { // Check for transcriptionResultDiv here now
-  // Set canvas dimensions
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width;
-  canvas.height = rect.height;
+                                                                     // Set canvas dimensions
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
 
-  toggleButton.addEventListener("click", async () => {
-    if (!isProcessing) { // Use isProcessing state variable
-      // --- Start Processing ---
-      try {
-        // Initialize Audio Context
-        if (!audioContext || audioContext.state === 'closed') { // Check if closed too
-            audioContext = new AudioContext();
-            console.log("AudioContext initialized/resumed.");
-        } else if (audioContext.state === 'suspended') {
-            await audioContext.resume();
-            console.log("AudioContext resumed.");
+    toggleButton.addEventListener("click", async () => {
+        if (!isProcessing) { // Use isProcessing state variable
+            // --- Start Processing ---
+            try {
+                // Check audio permissions
+                const micAvailable = await requestMicrophonePermission();
+                if (!micAvailable) {
+                    await requestMicrophonePermission();
+                }
+
+                // Initialize Audio Context
+                if (!audioContext || audioContext.state === "closed") { // Check if closed too
+                    audioContext = new AudioContext();
+                    console.log("AudioContext initialized/resumed.");
+                } else if (audioContext.state === "suspended") {
+                    await audioContext.resume();
+                    console.log("AudioContext resumed.");
+                }
+
+                // Get Microphone Stream
+                microphoneStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+                console.log("Microphone access granted.");
+
+                // Setup Analyser
+                const source = audioContext.createMediaStreamSource(microphoneStream);
+                analyser = audioContext.createAnalyser();
+                // Adjust analyser settings for responsiveness
+                analyser.fftSize = 512; // Smaller size for faster analysis
+                analyser.smoothingTimeConstant = 0.6; // Adjust smoothing
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                source.connect(analyser); // Connect stream to analyser
+
+                // Start the first recorder instance
+                startRecorder();
+
+                // Set state and UI
+                isProcessing = true;
+                isSpeaking = false; // Assume silence initially
+                toggleButton.innerText = "Stop Listening";
+                if (transcriptionResultDiv) transcriptionResultDiv.innerText = ""; // Clear previous transcription
+                console.log("Audio processing started...");
+
+                // Start the processing loop
+                processAudio();
+
+            } catch (err) {
+                console.error("Error starting audio processing:", err);
+                alert("Error starting audio processing. Check console and permissions.");
+                await stopProcessingCleanup(); // Ensure cleanup on error
+            }
+        } else {
+            // --- Stop Processing ---
+            await stopProcessingCleanup();
         }
-
-        // Get Microphone Stream
-        microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        console.log("Microphone access granted.");
-
-        // Setup Analyser
-        const source = audioContext.createMediaStreamSource(microphoneStream);
-        analyser = audioContext.createAnalyser();
-        // Adjust analyser settings for responsiveness
-        analyser.fftSize = 512; // Smaller size for faster analysis
-        analyser.smoothingTimeConstant = 0.6; // Adjust smoothing
-        const bufferLength = analyser.frequencyBinCount;
-        dataArray = new Uint8Array(bufferLength);
-        source.connect(analyser); // Connect stream to analyser
-
-        // Start the first recorder instance
-        startRecorder();
-
-        // Set state and UI
-        isProcessing = true;
-        isSpeaking = false; // Assume silence initially
-        toggleButton.innerText = "Stop Listening";
-        if(transcriptionResultDiv) transcriptionResultDiv.innerText = ""; // Clear previous transcription
-        console.log("Audio processing started...");
-
-        // Start the processing loop
-        processAudio();
-
-      } catch (err) {
-        console.error("Error starting audio processing:", err);
-        alert("Error starting audio processing. Check console and permissions.");
-        await stopProcessingCleanup(); // Ensure cleanup on error
-      }
-    } else {
-      // --- Stop Processing ---
-      await stopProcessingCleanup();
-    }
-  });
+    });
 } else {
-  if (!toggleButton) console.error("Toggle button not found");
-  if (!canvas) console.error("Canvas element not found");
-  if (!canvasCtx) console.error("Canvas context not available");
-  if (!transcriptionResultDiv) console.error("Transcription result div not found");
+    if (!toggleButton) console.error("Toggle button not found");
+    if (!canvas) console.error("Canvas element not found");
+    if (!canvasCtx) console.error("Canvas context not available");
+    if (!transcriptionResultDiv) console.error("Transcription result div not found");
 }
 
 // --- API Key Dialog Logic is handled in main.ts ---
