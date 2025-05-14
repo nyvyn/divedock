@@ -1,7 +1,7 @@
 let canvas: HTMLCanvasElement | null = null;
 let ctx: CanvasRenderingContext2D | null = null;
 
-/** Registra el canvas que se usará para las gráficas */
+/** Registers the canvas that will be used for graphing */
 export function initCanvas(target: HTMLCanvasElement) {
   canvas = target;
   const rect = canvas.getBoundingClientRect();
@@ -10,14 +10,14 @@ export function initCanvas(target: HTMLCanvasElement) {
   ctx = canvas.getContext("2d");
 }
 
-/** Borra el canvas con el mismo color de fondo usado en la app */
+/** Clears the canvas using the same background color as the app */
 export function clearCanvas() {
   if (!canvas || !ctx) return;
   ctx.fillStyle = "rgb(17, 17, 17)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-/** Dibuja una onda de audio a partir de los datos de dominio-tiempo */
+/** Draws an audio waveform from time‑domain data */
 export function drawWaveform(
   data: Uint8Array,
   bufferLength: number
@@ -35,7 +35,7 @@ export function drawWaveform(
 
   for (let i = 0; i < bufferLength; i++) {
     const v = data[i] / 128;          // 0-255  →  0-2
-    const y = v * canvas.height / 2;  // centra verticalmente
+    const y = v * canvas.height / 2;  // center vertically
 
     i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     x += sliceWidth;
