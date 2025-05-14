@@ -9,6 +9,7 @@ import { AudioVisualizer } from "./AudioVisualizer.ts";
  * TTS playback, and waveform visualization as a self‑contained class.
  */
 export class AudioController {
+    private static instance: AudioController | null = null;
     private isProcessing = false;
     private isSpeaking = false;
     private silenceTimer: number | null = null;
@@ -31,16 +32,27 @@ export class AudioController {
 
     private isStopping = false;
 
-    constructor(
+    private constructor(
         toggleButton: HTMLButtonElement,
         canvas: HTMLCanvasElement,
         transcriptionDiv: HTMLElement
     ) {
         this.toggleButton = toggleButton;
         this.transcriptionDiv = transcriptionDiv;
-        this.audioCanvas = new AudioVisualizer(canvas);
+        this.audioCanvas = AudioVisualizer.getInstance(canvas);
 
         this.toggleButton.addEventListener("click", () => this.toggle());
+    }
+
+    public static getInstance(
+        toggleButton: HTMLButtonElement,
+        canvas: HTMLCanvasElement,
+        transcriptionDiv: HTMLElement
+    ): AudioController {
+        if (!AudioController.instance) {
+            AudioController.instance = new AudioController(toggleButton, canvas, transcriptionDiv);
+        }
+        return AudioController.instance;
     }
 
     /** Public toggle used by the button click handler */
@@ -160,7 +172,9 @@ export class AudioController {
             if (!this.isSpeaking) {
                 this.isSpeaking = true;
                 stopCurrentSpeech();
-                if (this.mediaRecorder?.state === "inactive") this.startRecorder();
+                if (!this.isStopping && this.mediaRecorder?.state === "inactive") {
+                    this.startRecorder();
+                }
             }
             if (this.silenceTimer) {
                 clearTimeout(this.silenceTimer);
@@ -244,7 +258,7 @@ const canvas = document.getElementById("audioCanvas") as HTMLCanvasElement | nul
 const transcript = document.getElementById("transcription-result") as HTMLElement | null;
 
 if (toggleBtn && canvas && transcript) {
-    new AudioController(toggleBtn, canvas, transcript);
+    AudioController.getInstance(toggleBtn, canvas, transcript);
 } else {
     if (!toggleBtn) console.error("Toggle button not found");
     if (!canvas) console.error("Canvas element not found");

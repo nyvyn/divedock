@@ -25,9 +25,10 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="fix: handle errors in audio transcription and streamline OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Simplified transcribeAudioWithOpenAI function by removing UI dependencies.  &#10;- Improved clarity and reliability of error messages during transcription.">
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: remove permission wrapper from Permission.ts">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/AudioController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/AudioController.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/transcribe.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/transcribe.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -217,6 +218,7 @@
       <workItem from="1747148181022" duration="3595000" />
       <workItem from="1747174858697" duration="6370000" />
       <workItem from="1747220521958" duration="1697000" />
+      <workItem from="1747225379073" duration="2349000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -394,7 +396,23 @@
       <option name="project" value="LOCAL" />
       <updated>1747221314107</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use gpt-4o-transcribe model.  &#10;- Streamlined transcription logic and improved reliability">
+      <option name="closed" value="true" />
+      <created>1747225392424</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1747225392424</updated>
+    </task>
+    <task id="LOCAL-00024" summary="refactor: remove permission wrapper from Permission.ts">
+      <option name="closed" value="true" />
+      <created>1747225596892</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1747225596892</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -446,7 +464,10 @@
     <MESSAGE value="feat: refactor for modular architecture and rename components&#10;&#10;- Moved SpeechSynth and Transcriber to utils for better reusability&#10;- Renamed AudioCanvas to AudioVisualizer for clarity&#10;- Relocated and renamed AudioController to align with ui structure&#10;- Adjusted imports and file paths to match the updated organization" />
     <MESSAGE value="fix: rename stopProcessingCleanup to stopProcessing in AudioController&#10;&#10;- Standardized method naming for clarity and consistency.&#10;- Removed redundant code comment in synthesize." />
     <MESSAGE value="fix: handle errors in audio transcription and streamline OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Simplified transcribeAudioWithOpenAI function by removing UI dependencies.  &#10;- Improved clarity and reliability of error messages during transcription." />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: handle errors in audio transcription and streamline OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Simplified transcribeAudioWithOpenAI function by removing UI dependencies.  &#10;- Improved clarity and reliability of error messages during transcription." />
+    <MESSAGE value="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use" />
+    <MESSAGE value="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use.  " />
+    <MESSAGE value="refactor: remove permission wrapper from Permission.ts" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: remove permission wrapper from Permission.ts" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">

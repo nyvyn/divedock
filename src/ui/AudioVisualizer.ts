@@ -3,10 +3,11 @@
  * Encapsulates all logic for drawing an audio waveform on a <canvas>.
  */
 export class AudioVisualizer {
+  private static instance: AudioVisualizer | null = null;
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
 
-  constructor(target: HTMLCanvasElement) {
+  private constructor(target: HTMLCanvasElement) {
     this.canvas = target;
     const rect = this.canvas.getBoundingClientRect();
     this.canvas.width  = rect.width;
@@ -15,6 +16,13 @@ export class AudioVisualizer {
     const context = this.canvas.getContext("2d");
     if (!context) throw new Error("2D context unavailable");
     this.ctx = context;
+  }
+
+  public static getInstance(target: HTMLCanvasElement): AudioVisualizer {
+      if (!AudioVisualizer.instance) {
+          AudioVisualizer.instance = new AudioVisualizer(target);
+      }
+      return AudioVisualizer.instance;
   }
 
   /** Clears the canvas using the app background color */
