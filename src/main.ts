@@ -1,10 +1,5 @@
-// This file can be used for other global initializations if needed,
-// but the greet functionality is removed as it's not used in the current index.html.
+import { AudioController } from "./ui/AudioController.ts";
 
-// Example: You could import and initialize other modules here.
-// import './some-other-module';
-
-// Variable to store the API key in memory, exported for potential use elsewhere
 export let openAIApiKey: string | null = null;
 
 console.log("main.ts loaded");
@@ -50,4 +45,17 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Any other initializations that depend on the DOM can go here.
+
+    // Initialize AudioController for audio processing
+    const toggleBtn  = document.getElementById("mic-toggle")        as HTMLButtonElement | null;
+    const canvas     = document.getElementById("audioCanvas")       as HTMLCanvasElement | null;
+    const transcript = document.getElementById("transcription-result") as HTMLElement | null;
+
+    if (toggleBtn && canvas && transcript) {
+        AudioController.getInstance(toggleBtn, canvas, transcript);
+    } else {
+      if (!toggleBtn)  console.error("Toggle button not found in main.ts");
+      if (!canvas)     console.error("Canvas element not found in main.ts");
+      if (!transcript) console.error("Transcription div not found in main.ts");
+    }
 });

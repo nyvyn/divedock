@@ -1,4 +1,4 @@
-import { openAIApiKey } from "./main"; // Import the API key
+import { openAIApiKey } from "../main.ts"; // Import the API key
 import OpenAI from "openai"; // Import the OpenAI library
 
 let currentSpeech: AudioBufferSourceNode | null = null; // To hold the currently playing speech node
@@ -23,7 +23,6 @@ export async function generateAndPlaySpeech(text: string, audioContext: AudioCon
     stopCurrentSpeech();
 
     console.log("Generating speech for text:", text);
-    // Optionally indicate TTS generation in the UI
 
     try {
         const openai = new OpenAI({
