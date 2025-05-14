@@ -23,7 +23,6 @@ export async function generateAndPlaySpeech(text: string, audioContext: AudioCon
     stopCurrentSpeech();
 
     console.log("Generating speech for text:", text);
-    // Optionally indicate TTS generation in the UI
 
     try {
         const openai = new OpenAI({

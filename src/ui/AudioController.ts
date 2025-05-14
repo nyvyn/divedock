@@ -43,7 +43,7 @@ export class AudioController {
 
     /** Public toggle used by the button click handler */
     private toggle() {
-        this.isProcessing ? this.stopProcessingCleanup() : this.startProcessing();
+        this.isProcessing ? this.stopProcessing() : this.startProcessing();
     }
 
     /** ---------- MAIN START / STOP ---------- */
@@ -54,7 +54,7 @@ export class AudioController {
                 requestMicrophonePermission().then(async (micUpdated) => {
                     if (!(micUpdated as boolean)) {
                         console.error("Microphone permission denied");
-                        await this.stopProcessingCleanup();
+                        await this.stopProcessing();
                         return;
                     }
                 });
@@ -95,11 +95,11 @@ export class AudioController {
             this.processAudio();
         } catch (err) {
             console.error("Error starting audio:", err);
-            await this.stopProcessingCleanup();
+            await this.stopProcessing();
         }
     }
 
-    private async stopProcessingCleanup() {
+    private async stopProcessing() {
         this.isProcessing = false;
         this.isSpeaking = false;
 
