@@ -1,4 +1,4 @@
-import { AudioController } from "./audioController.ts";
+import { AudioController } from "./controllers/AudioController.ts";
 
 export let openAIApiKey: string | null = null;
 

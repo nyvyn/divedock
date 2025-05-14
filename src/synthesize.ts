@@ -1,4 +1,4 @@
-import { openAIApiKey } from "./main"; // Import the API key
+import { openAIApiKey } from "../main"; // Import the API key
 import OpenAI from "openai"; // Import the OpenAI library
 
 let currentSpeech: AudioBufferSourceNode | null = null; // To hold the currently playing speech node

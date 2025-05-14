@@ -1,7 +1,7 @@
-import { generateAndPlaySpeech, stopCurrentSpeech } from "./synthesize";
-import { transcribeAudioWithOpenAI } from "./transcribe";
-import { checkMicrophonePermission, requestMicrophonePermission } from "tauri-plugin-macos-permissions-api";
-import { AudioCanvas } from "./audioVisualizer";
+import { generateAndPlaySpeech, stopCurrentSpeech } from "../services/SpeechSynth";
+import { transcribeAudioWithOpenAI } from "../services/Transcriber";
+import { checkMicrophonePermission, requestMicrophonePermission } from "../services/Permission";
+import { AudioCanvas } from "../ui/AudioCanvas";
 
 /**
  * AudioController
