@@ -51,8 +51,8 @@ export class AudioController {
         try {
             const micGranted = await checkMicrophonePermission();
             if (!micGranted) {
-                requestMicrophonePermission().then(async (micUpdated: boolean) => {
-                    if (!micUpdated) {
+                requestMicrophonePermission().then(async (micUpdated) => {
+                    if (!(micUpdated as boolean)) {
                         console.error("Microphone permission denied");
                         await this.stopProcessingCleanup();
                         return;
