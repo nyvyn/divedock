@@ -1,7 +1,7 @@
 import { generateAndPlaySpeech, stopCurrentSpeech } from "./synthesize";
 import { transcribeAudioWithOpenAI } from "./transcribe";
 import { checkMicrophonePermission, requestMicrophonePermission } from "tauri-plugin-macos-permissions-api";
-import { AudioVisualizer } from "./audioVisualizer";
+import { AudioCanvas } from "./audioVisualizer";
 
 /**
  * AudioController
@@ -27,7 +27,7 @@ export class AudioController {
 
     private readonly toggleButton: HTMLButtonElement;
     private readonly transcriptionDiv: HTMLElement;
-    private readonly visualizer: AudioVisualizer;
+    private readonly audioCanvas: AudioCanvas;
 
     constructor(
         toggleButton: HTMLButtonElement,
@@ -36,7 +36,7 @@ export class AudioController {
     ) {
         this.toggleButton = toggleButton;
         this.transcriptionDiv = transcriptionDiv;
-        this.visualizer = new AudioVisualizer(canvas);
+        this.audioCanvas = new AudioCanvas(canvas);
 
         this.toggleButton.addEventListener("click", () => this.toggle());
     }
@@ -130,7 +130,7 @@ export class AudioController {
         this.mediaRecorder = null;
         this.recordedChunks = [];
 
-        this.visualizer.clear();
+        this.audioCanvas.clear();
         this.toggleButton.innerText = "Start Listening";
     }
 
@@ -172,7 +172,7 @@ export class AudioController {
             }, this.silenceDelay);
         }
 
-        this.visualizer.drawWaveform(
+        this.audioCanvas.drawWaveform(
             this.dataArray,
             this.analyser.frequencyBinCount
         );
