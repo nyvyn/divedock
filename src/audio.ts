@@ -1,6 +1,7 @@
 import { generateAndPlaySpeech, stopCurrentSpeech } from "./synthesize"; // Import TTS functions
 import { transcribeAudioWithOpenAI } from "./transcribe"; // Import transcription function
 import { requestMicrophonePermission } from "tauri-plugin-macos-permissions-api";
+import { WaveformVisualizer } from "./waveFormVisualizer";
 
 // --- State Variables ---
 let isProcessing = false; // Is the app actively processing audio? Renamed from isListening
@@ -20,14 +21,14 @@ let recordedChunks: Blob[] = [];
 
 // --- DOM Elements ---
 const toggleButton = document.getElementById("mic-toggle") as HTMLButtonElement | null;
-const canvas = document.getElementById("audioCanvas") as HTMLCanvasElement | null;
-const canvasCtx = canvas?.getContext("2d");
+const canvasElement = document.getElementById("audioCanvas") as HTMLCanvasElement | null;
+const waveformVisualizer = canvasElement ? new WaveformVisualizer(canvasElement) : null;
 const transcriptionResultDiv = document.getElementById("transcription-result") as HTMLElement | null;
 // Dialog elements are handled in main.ts
 
 // --- Audio Processing Loop (includes Visualization and Silence Detection) ---
 function processAudio() {
-    if (!isProcessing || !analyser || !dataArray || !canvas || !canvasCtx) {
+    if (!isProcessing || !analyser || !dataArray || !waveformVisualizer) {
         // Stop loop if not processing
         if (animationFrameId) {
             cancelAnimationFrame(animationFrameId);
@@ -87,35 +88,10 @@ function processAudio() {
         }
     }
 
-    // --- Waveform Visualization (using time domain data) ---
-    // Clear the canvas
-    canvasCtx.fillStyle = "rgb(17, 17, 17)"; // Background color
-    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Set up line style
-    canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = "rgb(50, 200, 50)"; // Waveform color
-    canvasCtx.beginPath();
-
-    const sliceWidth = canvas.width / analyser.frequencyBinCount;
-    let x = 0;
-
-    for (let i = 0; i < analyser.frequencyBinCount; i++) {
-        // dataArray values are 0-255, map to canvas height centered vertically
-        const v = dataArray[i] / 128.0; // Normalize to range 0-2
-        const y = v * canvas.height / 2; // Scale to canvas height
-
-        if (i === 0) {
-            canvasCtx.moveTo(x, y);
-        } else {
-            canvasCtx.lineTo(x, y);
-        }
-
-        x += sliceWidth;
+    // --- Waveform Visualization ---
+    if (waveformVisualizer) {
+        waveformVisualizer.drawWaveform(dataArray, analyser.frequencyBinCount);
     }
-
-    canvasCtx.lineTo(canvas.width, canvas.height / 2); // Line to the middle vertical point at the end
-    canvasCtx.stroke(); // Draw the line
     // --- End Visualization ---
 
 
@@ -267,7 +243,7 @@ async function stopProcessingCleanup() {
     mediaRecorder = null; // Clear recorder instance
     recordedChunks = [];
 
-    clearCanvas(); // Clear visualization
+    if (waveformVisualizer) waveformVisualizer.clear(); // Clear visualization
 
     if (toggleButton) {
         toggleButton.innerText = "Start Listening"; // Reset button text
@@ -344,9 +320,16 @@ if (toggleButton && canvas && canvasCtx && transcriptionResultDiv) { // Check fo
     });
 } else {
     if (!toggleButton) console.error("Toggle button not found");
-    if (!canvas) console.error("Canvas element not found");
-    if (!canvasCtx) console.error("Canvas context not available");
+    if (!waveformVisualizer) console.error("Waveform visualizer not available");
     if (!transcriptionResultDiv) console.error("Transcription result div not found");
+```
+
+src/audio.ts
+```typescript
+<<<<<<< SEARCH
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
 }
 
 // --- API Key Dialog Logic is handled in main.ts ---
