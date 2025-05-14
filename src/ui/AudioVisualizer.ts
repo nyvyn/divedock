@@ -2,7 +2,7 @@
  * Visualizer
  * Encapsulates all logic for drawing an audio waveform on a <canvas>.
  */
-export class AudioCanvas {
+export class AudioVisualizer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
 

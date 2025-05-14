@@ -1,7 +1,7 @@
-import { generateAndPlaySpeech, stopCurrentSpeech } from "../services/SpeechSynth";
-import { transcribeAudioWithOpenAI } from "../services/Transcriber";
-import { checkMicrophonePermission, requestMicrophonePermission } from "../services/Permission";
-import { AudioCanvas } from "../ui/AudioCanvas";
+import { generateAndPlaySpeech, stopCurrentSpeech } from "../utils/synthesize.ts";
+import { transcribeAudioWithOpenAI } from "../utils/transcribe.ts";
+import { checkMicrophonePermission, requestMicrophonePermission } from "../utils/permissions.ts";
+import { AudioVisualizer } from "./AudioVisualizer.ts";
 
 /**
  * AudioController
@@ -27,7 +27,7 @@ export class AudioController {
 
     private readonly toggleButton: HTMLButtonElement;
     private readonly transcriptionDiv: HTMLElement;
-    private readonly audioCanvas: AudioCanvas;
+    private readonly audioCanvas: AudioVisualizer;
 
     constructor(
         toggleButton: HTMLButtonElement,
@@ -36,7 +36,7 @@ export class AudioController {
     ) {
         this.toggleButton = toggleButton;
         this.transcriptionDiv = transcriptionDiv;
-        this.audioCanvas = new AudioCanvas(canvas);
+        this.audioCanvas = new AudioVisualizer(canvas);
 
         this.toggleButton.addEventListener("click", () => this.toggle());
     }

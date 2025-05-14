@@ -1,5 +1,5 @@
 import OpenAI from "openai"; // Import the OpenAI library
-import { openAIApiKey } from "../main"; // Import the API key
+import { openAIApiKey } from "../main.ts"; // Import the API key
 
 // --- Transcription Logic ---
 // Returns the transcribed text on success, or null on failure.
