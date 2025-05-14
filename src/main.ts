@@ -1,11 +1,5 @@
-// This file can be used for other global initializations if needed,
-// but the greet functionality is removed as it's not used in the current index.html.
+import { AudioController } from "./audioController.ts";
 
-// Example: You could import and initialize other modules here.
-import { AudioController } from "./audio";
-// import './some-other-module';
-
-// Variable to store the API key in memory, exported for potential use elsewhere
 export let openAIApiKey: string | null = null;
 
 console.log("main.ts loaded");
