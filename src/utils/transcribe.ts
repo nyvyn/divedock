@@ -41,8 +41,8 @@ export async function transcribeAudioWithOpenAI(audioBlob: Blob): Promise<string
         // Call the transcription API using the library
         const transcription = await openai.audio.transcriptions.create({
             file: audioFile,
-            model: "whisper-1", // Using whisper-1 as gpt-4o-transcribe is not documented for this endpoint
-            // model: "gpt-4o-transcribe", // Use this if you are sure it's correct and supported
+            model: "gpt-4o-transcribe",
+
         });
 
         return transcription.text || "";

@@ -29,6 +29,8 @@ export class AudioController {
     private readonly transcriptionDiv: HTMLElement;
     private readonly audioCanvas: AudioVisualizer;
 
+    private isStopping = false;
+
     constructor(
         toggleButton: HTMLButtonElement,
         canvas: HTMLCanvasElement,
@@ -200,6 +202,9 @@ export class AudioController {
         };
 
         this.mediaRecorder.onstop = async () => {
+            if (this.isStopping) return;
+            this.isStopping = true;
+            console.log("MediaRecorder stopped");
             if (
                 !this.audioContext ||
                 this.audioContext.state === "closed" ||
@@ -218,6 +223,7 @@ export class AudioController {
             } catch (error: any) {
                 this.transcriptionDiv.innerText = error.message ?? error.toString() ?? "";
             }
+            this.isStopping = false;
 
             this.recordedChunks = [];
         };
