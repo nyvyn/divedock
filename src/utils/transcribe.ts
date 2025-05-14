@@ -4,19 +4,12 @@ import { openAIApiKey } from "../main.ts"; // Import the API key
 // --- Transcription Logic ---
 // Returns the transcribed text on success, or null on failure.
 // Updates the display element during processing and on error.
-export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayElement: HTMLElement | null): Promise<string | null> {
-    if (!resultDisplayElement) {
-        console.error("Transcription result display element not provided.");
-        return null; // Return null on failure
-    }
+export async function transcribeAudioWithOpenAI(audioBlob: Blob): Promise<string> {
     if (!openAIApiKey) {
-        console.error("OpenAI API Key is not set.");
-        resultDisplayElement.innerText = "Error: OpenAI API Key is not set. Please set it via the settings icon.";
-        return null; // Return null on failure
+        throw new Error("API key not set");
     }
 
     console.log("Sending audio to OpenAI for transcription using openai library...");
-    resultDisplayElement.innerText = "Transcribing..."; // Indicate processing
 
     try {
         // Instantiate the OpenAI client with the API key
@@ -52,20 +45,10 @@ export async function transcribeAudioWithOpenAI(audioBlob: Blob, resultDisplayEl
             // model: "gpt-4o-transcribe", // Use this if you are sure it's correct and supported
         });
 
-        const transcribedText = transcription.text || "";
-        console.log("Transcription successful:", transcribedText);
-        resultDisplayElement.innerText = transcribedText || "[No transcription result]";
-        return transcribedText; // Return the text on success
+        return transcription.text || "";
 
-    } catch (error) {
-        console.error("Error during OpenAI transcription:", error);
-        let errorMessage = "An unknown error occurred during transcription.";
-        if (error instanceof OpenAI.APIError) {
-            errorMessage = `OpenAI API Error: ${error.status} ${error.name} ${error.message}`;
-        } else if (error instanceof Error) {
-            errorMessage = `Error: ${error.message}`;
-        }
-        resultDisplayElement.innerText = errorMessage;
-        return null; // Return null on failure
+    } catch (error: any) {
+        console.error("Error during transcription:", error);
+        throw error;
     }
 }

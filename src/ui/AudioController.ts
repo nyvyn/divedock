@@ -207,16 +207,19 @@ export class AudioController {
             )
                 return;
 
-            const blob = new Blob(this.recordedChunks, {type: mimeType});
-            const text = await transcribeAudioWithOpenAI(blob, this.transcriptionDiv);
-            this.transcriptionDiv.innerText = text ?? "";
+            try {
+                const blob = new Blob(this.recordedChunks, {type: mimeType});
+                const text = await transcribeAudioWithOpenAI(blob);
+                this.transcriptionDiv.innerText = text ?? "";
 
-            if (text && this.isProcessing) {
-                await generateAndPlaySpeech(text, this.audioContext);
+                if (text && this.isProcessing) {
+                    await generateAndPlaySpeech(text, this.audioContext);
+                }
+            } catch (error: any) {
+                this.transcriptionDiv.innerText = error.message ?? error.toString() ?? "";
             }
 
             this.recordedChunks = [];
-            if (this.isProcessing) this.startRecorder();
         };
 
         this.mediaRecorder.start(1000);

@@ -25,9 +25,8 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="feat: refactor for modular architecture and rename components&#10;&#10;- Moved SpeechSynth and Transcriber to utils for better reusability&#10;- Renamed AudioCanvas to AudioVisualizer for clarity&#10;- Relocated and renamed AudioController to align with ui structure&#10;- Adjusted imports and file paths to match the updated organization">
-      <change beforePath="$PROJECT_DIR$/src/ui/AudioController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/AudioController.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/synthesize.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/synthesize.ts" afterDir="false" />
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="fix: rename stopProcessingCleanup to stopProcessing in AudioController&#10;&#10;- Standardized method naming for clarity and consistency.&#10;- Removed redundant code comment in synthesize.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -215,7 +214,7 @@
       <workItem from="1746147899880" duration="112000" />
       <workItem from="1746148108923" duration="2000000" />
       <workItem from="1747148181022" duration="3595000" />
-      <workItem from="1747174858697" duration="5733000" />
+      <workItem from="1747174858697" duration="6370000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -377,7 +376,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747185239885</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="fix: rename stopProcessingCleanup to stopProcessing in AudioController&#10;&#10;- Standardized method naming for clarity and consistency.&#10;- Removed redundant code comment in synthesize.">
+      <option name="closed" value="true" />
+      <created>1747185702300</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1747185702300</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -394,7 +401,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="macos-permissions" />
+                        <option value="chat" />
                       </list>
                     </value>
                   </entry>
@@ -427,7 +434,8 @@
     <MESSAGE value="feat: refactor audio processing and introduce modular architecture&#10;&#10;- Replaced audio.ts with audioController.ts and audioVisualizer.ts for modularity.&#10;- Improved class-based structure for audio control and visualization.&#10;- Removed redundant code and standardized canvas handling methods.&#10;- Integrated microphone permission checks and streamlined initialization process." />
     <MESSAGE value="feat: remove audio controller and improve modular structure&#10;&#10;- Deleted audioController and reorganized code for better modularity.&#10;- Separated audio visualization into AudioCanvas in the ui directory.&#10;- Moved speech synthesis and transcription logic to services for clarity and reuse.&#10;- Updated index.html and imports to align with the new structure." />
     <MESSAGE value="feat: refactor for modular architecture and rename components&#10;&#10;- Moved SpeechSynth and Transcriber to utils for better reusability&#10;- Renamed AudioCanvas to AudioVisualizer for clarity&#10;- Relocated and renamed AudioController to align with ui structure&#10;- Adjusted imports and file paths to match the updated organization" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: refactor for modular architecture and rename components&#10;&#10;- Moved SpeechSynth and Transcriber to utils for better reusability&#10;- Renamed AudioCanvas to AudioVisualizer for clarity&#10;- Relocated and renamed AudioController to align with ui structure&#10;- Adjusted imports and file paths to match the updated organization" />
+    <MESSAGE value="fix: rename stopProcessingCleanup to stopProcessing in AudioController&#10;&#10;- Standardized method naming for clarity and consistency.&#10;- Removed redundant code comment in synthesize." />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: rename stopProcessingCleanup to stopProcessing in AudioController&#10;&#10;- Standardized method naming for clarity and consistency.&#10;- Removed redundant code comment in synthesize." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
