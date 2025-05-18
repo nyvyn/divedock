@@ -3,6 +3,10 @@
 <plist version="1.0">
 <dict>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Required to enable talking to the AI via microphone.</string>
+    <string>write some text describing the usage of the permission here</string>
+    <key>NSCameraUsageDescription</key>
+    <string>write some text describing the usage of the permission here</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>write some text describing the usage of the permission here</string>
 </dict>
 </plist>

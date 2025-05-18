@@ -1,116 +1,269 @@
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
-
-.logo.typescript:hover {
-  filter: drop-shadow(0 0 2em #2d79c7);
-}
+/* === General === */
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
+    background-color: #f6f6f6;
+    color: #0f0f0f;
+    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-synthesis: none;
+    font-weight: 400;
+    line-height: 24px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+    color: #646cff;
+    font-weight: 500;
+    text-decoration: inherit;
 }
 
 a:hover {
-  color: #535bf2;
+    color: #535bf2;
 }
 
-h1 {
-  text-align: center;
+body {
+    align-items: center;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
 }
 
-input,
+button,
+input {
+    background-color: #ffffff;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+    color: #0f0f0f;
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: 500;
+    outline: none;
+    padding: 0.6em 1.2em;
+    transition: border-color 0.25s;
+}
+
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
+    border-color: #396cd8;
 }
 
-input,
-button {
-  outline: none;
+button:active {
+    background-color: #e8e8e8;
+    border-color: #396cd8;
+}
+
+input:focus,
+button:focus {
+    outline: none;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+    padding-bottom: 24px;
+    padding-top: 24px;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+.logo {
+    height: 6em;
+    padding: 1.5em;
+    transition: 0.75s;
+    will-change: filter;
+}
+
+.logo.tauri:hover {
+    filter: drop-shadow(0 0 2em #24c8db);
+}
+
+.logo.typescript:hover {
+    filter: drop-shadow(0 0 2em #2d79c7);
+}
+
+.logo.vite:hover {
+    filter: drop-shadow(0 0 2em #747bff);
+}
+
+.row {
+    display: flex;
+    justify-content: center;
 }
 
 #greet-input {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 
+/* === Canvas === */
+#audio-canvas {
+    background-color: #111;
+    border: 1px solid #333;
+    flex: 1;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    min-height: 0;
+    width: 80%;
+}
+
+/* === Microphone Toggle Button === */
+#mic-toggle {
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 20px 0;
+    padding: 12px 24px;
+    transition: background-color 0.2s ease;
+}
+
+#mic-toggle:hover {
+    background-color: #0056b3;
+}
+
+#mic-toggle:active {
+    background-color: #004085;
+}
+
+/* === Settings Icon === */
+#settings-icon {
+    color: #ccc;
+    cursor: pointer;
+    font-size: 24px;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    user-select: none;
+}
+
+#settings-icon:hover {
+    color: #fff;
+}
+
+/* === API Key Dialog === */
+#api-key-dialog {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    color: #eee;
+    display: none;
+    left: 50%;
+    padding: 25px;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    z-index: 1000;
+}
+
+#api-key-dialog label {
+    color: #ddd;
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    font-weight: normal;
+    margin-bottom: 10px;
+}
+
+#api-key-dialog input[type="password"] {
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #eee;
+    font-size: 14px;
+    margin-bottom: 20px;
+    padding: 8px 10px;
+    width: calc(100% - 22px);
+}
+
+#api-key-dialog .dialog-buttons {
+    text-align: right;
+}
+
+#api-key-dialog button {
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+    padding: 8px 16px;
+}
+
+#api-key-dialog #save-api-key {
+    background-color: #007bff;
+    color: white;
+}
+
+#api-key-dialog #save-api-key:hover {
+    background-color: #0056b3;
+}
+
+#api-key-dialog #cancel-api-key {
+    background-color: #6c757d;
+    color: white;
+}
+
+#api-key-dialog #cancel-api-key:hover {
+    background-color: #5a6268;
+}
+
+/* === Transcription Result Area === */
+#transcription-result {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #eee;
+    flex: 1;
+    font-family: monospace;
+    font-size: 14px;
+    margin-bottom: 40px;
+    margin-top: 20px;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 15px;
+    width: 80%;
+}
+
+#transcription-result:empty::before {
+    color: #666;
+    content: "Transcription will appear here...";
+}
+
+/* === Dark Mode === */
 @media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
+    :root {
+        background-color: #2f2f2f;
+        color: #f6f6f6;
+    }
 
-  a:hover {
-    color: #24c8db;
-  }
+    a:hover {
+        color: #24c8db;
+    }
 
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
+    button,
+    input {
+        background-color: #0f0f0f98;
+        color: #ffffff;
+    }
+
+    button:active {
+        background-color: #0f0f0f69;
+    }
 }
+
