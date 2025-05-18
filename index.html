@@ -19,7 +19,8 @@
         background-color: #111; /* Darker background for canvas */
         width: 80%; /* Adjust size as needed */
         flex: 1; /* Take available space */
-        margin-bottom: 20px; /* Space between canvas and button */
+        margin-bottom: 20px;
+        min-height: 0;
       }
       button#mic-toggle {
         padding: 12px 24px;
@@ -125,8 +126,9 @@
         color: #eee; /* Light text */
         font-family: monospace; /* Monospaced font for transcription */
         font-size: 14px;
-        overflow-y: auto; /* Add scrollbar if text overflows */
-        box-sizing: border-box; /* Include padding/border in element's total width/height */
+        overflow-y: auto;
+        box-sizing: border-box;
+        min-height: 0;
       }
       #transcription-result:empty::before {
           content: "Transcription will appear here...";
