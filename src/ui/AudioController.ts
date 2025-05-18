@@ -251,16 +251,3 @@ export class AudioController {
         }
     }
 }
-
-/* ---------- Bootstrap when DOM is ready ---------- */
-const toggleBtn = document.getElementById("mic-toggle") as HTMLButtonElement | null;
-const canvas = document.getElementById("audioCanvas") as HTMLCanvasElement | null;
-const transcript = document.getElementById("transcription-result") as HTMLElement | null;
-
-if (toggleBtn && canvas && transcript) {
-    AudioController.getInstance(toggleBtn, canvas, transcript);
-} else {
-    if (!toggleBtn) console.error("Toggle button not found");
-    if (!canvas) console.error("Canvas element not found");
-    if (!transcript) console.error("Transcription div not found");
-}

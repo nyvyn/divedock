@@ -48,7 +48,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Initialize AudioController for audio processing
     const toggleBtn  = document.getElementById("mic-toggle")        as HTMLButtonElement | null;
-    const canvas     = document.getElementById("audioCanvas")       as HTMLCanvasElement | null;
+    const canvas     = document.getElementById("audio-canvas")       as HTMLCanvasElement | null;
     const transcript = document.getElementById("transcription-result") as HTMLElement | null;
 
     if (toggleBtn && canvas && transcript) {
