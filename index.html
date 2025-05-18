@@ -9,18 +9,16 @@
         margin: 0;
         height: 100vh;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: black;
-        /* Center canvas and button */
         flex-direction: column;
+        align-items: center;
+        background-color: black;
       }
       canvas {
         /* Optional: Add border for visibility */
         border: 1px solid #333;
         background-color: #111; /* Darker background for canvas */
         width: 80%; /* Adjust size as needed */
-        height: 60%;
+        flex: 1; /* Take available space */
         margin-bottom: 20px; /* Space between canvas and button */
       }
       button#mic-toggle {
@@ -31,6 +29,7 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        margin: 20px 0;
         transition: background-color 0.2s ease; /* Smooth transition on hover */
       }
       button#mic-toggle:hover {
@@ -117,8 +116,8 @@
       /* Transcription Result Area */
       #transcription-result {
         width: 80%; /* Match canvas width */
-        height: 15%; /* Adjust height as needed */
-        margin-top: 15px; /* Space below button */
+        flex: 1; /* Take available space */
+        margin-top: 20px; /* Space between button and bottom box */
         padding: 15px;
         background-color: #1a1a1a; /* Slightly lighter than canvas bg */
         border: 1px solid #333;
