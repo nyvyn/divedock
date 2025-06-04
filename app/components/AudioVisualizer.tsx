@@ -89,37 +89,22 @@ export default function AudioVisualizer() {
 
     return (
         <div
-            style={{
-                position: "fixed",
-                inset: 0,
-                width: "100vw",
-                height: "100vh",
-                background: "black",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1000,
-            }}
+            className="fixed inset-0 w-screen h-screen bg-black flex items-center justify-center z-[1000]"
         >
             <div
+                className="flex items-center justify-center rounded-full border-4 border-[#ff2222] shadow-[0_0_120px_40px_#ff2222aa,0_0_0_12px_#a10000]"
                 style={{
                     width: size,
                     height: size,
-                    borderRadius: "50%",
                     background: "radial-gradient(circle at 60% 40%, #ff6666 60%, #a10000 100%)",
-                    boxShadow: "0 0 120px 40px #ff2222aa, 0 0 0 12px #a10000",
-                    border: "4px solid #ff2222",
                     transition: "width 0.25s cubic-bezier(.4,2,.6,1), height 0.25s cubic-bezier(.4,2,.6,1)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
                 }}
             >
                 <div
+                    className="rounded-full"
                     style={{
                         width: size * 0.25,
                         height: size * 0.25,
-                        borderRadius: "50%",
                         background: "#ff2222",
                         boxShadow: "0 0 48px 16px #ff2222aa",
                         transition: "width 0.25s cubic-bezier(.4,2,.6,1), height 0.25s cubic-bezier(.4,2,.6,1)",
