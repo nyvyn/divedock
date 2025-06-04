@@ -1,6 +1,4 @@
-import dynamic from "next/dynamic";
-
-const HalMicVisualizer = dynamic(() => import("./components/HalMicVisualizer"), { ssr: false });
+import HalMicVisualizer from "./components/HalMicVisualizer";
 
 export default function Page() {
     return (
