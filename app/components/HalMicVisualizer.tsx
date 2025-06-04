@@ -71,7 +71,9 @@ export default function HalMicVisualizer() {
     // Circle size: min 80px, max 320px
     const minSize = 80;
     const maxSize = 320;
-    const size = minSize + (maxSize - minSize) * Math.min(level * 2, 1);
+    // Make the visualizer more reactive by amplifying the level
+    const amplification = 3.5;
+    const size = minSize + (maxSize - minSize) * Math.min(level * amplification, 1);
 
     return (
         <div
