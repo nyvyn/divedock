@@ -32,8 +32,7 @@ export default function AudioVisualizer() {
                 source.connect(analyser);
 
                 const bufferLength = analyser.frequencyBinCount;
-                const dataArray = new Uint8Array(bufferLength);
-                dataArrayRef.current = dataArray;
+                dataArrayRef.current = new Uint8Array(bufferLength);
 
                 function animate() {
                     if (!analyserRef.current || !dataArrayRef.current) return;
@@ -57,12 +56,12 @@ export default function AudioVisualizer() {
             }
         }
 
-        setupAudio();
+        setupAudio().then();
 
         return () => {
             mounted = false;
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
-            if (audioContextRef.current) audioContextRef.current.close();
+            if (audioContextRef.current) audioContextRef.current.close().then();
             if (stream) {
                 stream.getTracks().forEach((track) => track.stop());
             }
