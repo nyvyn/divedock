@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 export default function HalMicVisualizer() {
     const [level, setLevel] = useState(0);
+    const [smoothedLevel, setSmoothedLevel] = useState(0);
     const animationRef = useRef<number | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
     const analyserRef = useRef<AnalyserNode | null>(null);
@@ -68,12 +69,23 @@ export default function HalMicVisualizer() {
         };
     }, []);
 
-    // Circle size: min 80px, max 320px
-    const minSize = 80;
-    const maxSize = 320;
-    // Make the visualizer more reactive by amplifying the level
-    const amplification = 3.5;
-    const size = minSize + (maxSize - minSize) * Math.min(level * amplification, 1);
+    // Smoothing effect for more fluid animation
+    useEffect(() => {
+        let raf: number;
+        function smooth() {
+            setSmoothedLevel((prev) => prev + (level - prev) * 0.18); // lower = smoother
+            raf = requestAnimationFrame(smooth);
+        }
+        smooth();
+        return () => cancelAnimationFrame(raf);
+    }, [level]);
+
+    // Circle size: min 60px, max 400px
+    const minSize = 60;
+    const maxSize = 400;
+    // Make the visualizer even more reactive by amplifying the level
+    const amplification = 7.5;
+    const size = minSize + (maxSize - minSize) * Math.min(smoothedLevel * amplification, 1);
 
     return (
         <div
@@ -95,9 +107,9 @@ export default function HalMicVisualizer() {
                     height: size,
                     borderRadius: "50%",
                     background: "radial-gradient(circle at 60% 40%, #ff6666 60%, #a10000 100%)",
-                    boxShadow: "0 0 80px 20px #ff2222aa, 0 0 0 8px #a10000",
+                    boxShadow: "0 0 120px 40px #ff2222aa, 0 0 0 12px #a10000",
                     border: "4px solid #ff2222",
-                    transition: "width 0.1s, height 0.1s",
+                    transition: "width 0.25s cubic-bezier(.4,2,.6,1), height 0.25s cubic-bezier(.4,2,.6,1)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -109,7 +121,8 @@ export default function HalMicVisualizer() {
                         height: size * 0.25,
                         borderRadius: "50%",
                         background: "#ff2222",
-                        boxShadow: "0 0 32px 8px #ff2222aa",
+                        boxShadow: "0 0 48px 16px #ff2222aa",
+                        transition: "width 0.25s cubic-bezier(.4,2,.6,1), height 0.25s cubic-bezier(.4,2,.6,1)",
                     }}
                 />
             </div>
