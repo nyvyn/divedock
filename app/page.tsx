@@ -1,7 +1,7 @@
-import HalMicVisualizer from "./components/HalMicVisualizer";
+import AudioVisualizer from "./components/AudioVisualizer";
 
 export default function Page() {
     return (
-        <HalMicVisualizer />
+        <AudioVisualizer />
     );
 }
