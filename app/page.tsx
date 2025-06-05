@@ -2,13 +2,19 @@
 
 import { useMicVAD } from "@ricky0123/vad-react";
 import AudioVisualizer from "./components/visualizer/AudioVisualizer";
+import { usePlayer } from "./lib/usePlayer";
 
 export default function Home() {
 
+    const player = usePlayer();
+
     const vad = useMicVAD({
-        startOnLoad: true,
-        positiveSpeechThreshold: 0.6,
+        onSpeechEnd: () => {
+            player.stop();
+        },
         minSpeechFrames: 4,
+        positiveSpeechThreshold: 0.6,
+        startOnLoad: true,
     });
 
     return (

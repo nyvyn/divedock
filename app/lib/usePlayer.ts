@@ -51,7 +51,7 @@ export function usePlayer() {
     }
 
     function stop() {
-        audioContext.current?.close();
+        audioContext.current?.close().then();
         audioContext.current = null;
         setIsPlaying(false);
     }
