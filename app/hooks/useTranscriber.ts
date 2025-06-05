@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { transcribe as onnxTranscribe } from "../lib/transcribe";
 
 export interface TranscriberData {
     isBusy: boolean;
