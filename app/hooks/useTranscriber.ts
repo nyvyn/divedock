@@ -11,7 +11,8 @@ export function useTranscriber() {
     const workerRef = useRef(null);
 
     useEffect(() => {
-        workerRef.current = new Worker("transcriber.worker.js", {
+        // @ts-ignore
+        workerRef.current = new Worker(new URL("../../public/transcriber.worker.js", import.meta.url), {
             type: "module"
         });
 
