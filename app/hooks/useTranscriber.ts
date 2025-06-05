@@ -1,24 +1,25 @@
 import { useState, useCallback, useMemo } from "react";
 
-// @ts-ignore
-import { pipeline } from "@xenova/transformers";
+let pipeline: any = null;
+let pipelineLoading: Promise<any> | null = null;
 
-// Singleton for the pipeline
-let whisperPipeline: any = null;
-let whisperLoading: Promise<any> | null = null;
-
+// Only import transformers on the client side
 async function getWhisperPipeline() {
-    if (whisperPipeline) return whisperPipeline;
-    if (whisperLoading) return whisperLoading;
-    whisperLoading = pipeline(
-        "automatic-speech-recognition",
-        "onnx-community/whisper-tiny.en",
-        { quantized: false }
-    ).then((pipe: any) => {
-        whisperPipeline = pipe;
+    if (typeof window === "undefined") {
+        throw new Error("Whisper pipeline can only be loaded in the browser (client-side).");
+    }
+    if (pipeline) return pipeline;
+    if (pipelineLoading) return pipelineLoading;
+    pipelineLoading = import("@xenova/transformers").then(async (mod) => {
+        const pipe = await mod.pipeline(
+            "automatic-speech-recognition",
+            "onnx-community/whisper-tiny.en",
+            { quantized: false }
+        );
+        pipeline = pipe;
         return pipe;
     });
-    return whisperLoading;
+    return pipelineLoading;
 }
 
 export interface TranscriberData {
@@ -80,7 +81,12 @@ export function useTranscriber(): Transcriber {
                 setTranscript({
                     isBusy: false,
                     text: result.text,
-                    chunks: [], // Optionally, parse segments if available
+                    chunks: result.segments
+                        ? result.segments.map((seg: any) => ({
+                              text: seg.text,
+                              timestamp: [seg.start, seg.end],
+                          }))
+                        : [],
                 });
             } catch (e) {
                 setTranscript({
