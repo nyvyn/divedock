@@ -1,21 +1,22 @@
 import { useState, useCallback, useMemo } from "react";
 
+import { pipeline as transformersPipeline } from "@xenova/transformers";
+
 let pipeline: any = null;
 let pipelineLoading: Promise<any> | null = null;
 
-// Only import transformers on the client side
+// Only create the pipeline on the client side
 async function getWhisperPipeline() {
     if (typeof window === "undefined") {
         throw new Error("Whisper pipeline can only be loaded in the browser (client-side).");
     }
     if (pipeline) return pipeline;
     if (pipelineLoading) return pipelineLoading;
-    pipelineLoading = import("@xenova/transformers").then(async (mod) => {
-        const pipe = await mod.pipeline(
-            "automatic-speech-recognition",
-            "onnx-community/whisper-tiny.en",
-            { quantized: false }
-        );
+    pipelineLoading = transformersPipeline(
+        "automatic-speech-recognition",
+        "onnx-community/whisper-tiny.en",
+        { quantized: false }
+    ).then((pipe: any) => {
         pipeline = pipe;
         return pipe;
     });
