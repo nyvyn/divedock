@@ -25,10 +25,10 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance.">
-      <change afterPath="$PROJECT_DIR$/app/lib/usePlayer.ts" afterDir="false" />
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="fix: add stronger blur effect and update styling in AudioVisualizer&#10;&#10;Enhanced the blur effect in the audio visualizer's styles to improve visual appearance. Updated opacity transitions to align with loading and speaking states.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/components/visualizer/AudioVisualizer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/visualizer/AudioVisualizer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,7 +236,7 @@
       <workItem from="1747220521958" duration="1697000" />
       <workItem from="1747225379073" duration="2349000" />
       <workItem from="1749080722900" duration="633000" />
-      <workItem from="1749125709960" duration="3881000" />
+      <workItem from="1749125709960" duration="6527000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -470,7 +470,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749126251415</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="fix: add stronger blur effect and update styling in AudioVisualizer&#10;&#10;Enhanced the blur effect in the audio visualizer's styles to improve visual appearance. Updated opacity transitions to align with loading and speaking states.">
+      <option name="closed" value="true" />
+      <created>1749131169367</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1749131169367</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -505,7 +513,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Add support for microphone recording using Tauri plugin&#10;&#10;Integrated the `tauri-plugin-mic-recorder` to enable microphone recording capabilities. Updated dependencies in `Cargo.toml` and `package-lock.json`, adjusted the application logic, and registered the plugin in the Tauri app." />
     <MESSAGE value="docs: update README formatting and inferred feature details" />
     <MESSAGE value="feat: add OpenAI library and update dependencies in package-lock&#10;&#10;Added OpenAI library for integration and updated package-lock.json with new dependencies for compatibility. Renamed and reorganized source files for better clarity." />
     <MESSAGE value="feat: remove unused assets and refactor OpenAI TTS implementation&#10;&#10;This commit removes redundant SVG assets and consolidates TTS logic by deleting tts.ts and migrating functionality to synthesize.ts. Additionally, minor improvements in audio processing and dependency cleanup were made for better maintainability." />
@@ -530,7 +537,8 @@
     <MESSAGE value="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations." />
     <MESSAGE value="chore: remove unused add dependency and update IDE workspace configs" />
     <MESSAGE value="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance." />
+    <MESSAGE value="fix: add stronger blur effect and update styling in AudioVisualizer&#10;&#10;Enhanced the blur effect in the audio visualizer's styles to improve visual appearance. Updated opacity transitions to align with loading and speaking states." />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: add stronger blur effect and update styling in AudioVisualizer&#10;&#10;Enhanced the blur effect in the audio visualizer's styles to improve visual appearance. Updated opacity transitions to align with loading and speaking states." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
