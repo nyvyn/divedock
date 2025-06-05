@@ -16,7 +16,8 @@ export function useTranscriber() {
             if (!pipeRef.current) {
                 pipeRef.current = await pipeline(
                     "automatic-speech-recognition",
-                    "onnx-community/whisper-tiny"
+                    "onnx-community/whisper-tiny",
+                    { dtype: "float32" }
                 );
             }
             const pipe = pipeRef.current;
