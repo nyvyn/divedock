@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 // but the pipeline itself will now be in the worker.
 
 export function useTranscriber() {
-    const [error, setError] = useState(false);
+    const [error, setError] = useState<boolean | string>(false);
     const [loading, setLoading] = useState(false); // For the overall transcription call
     const [initializingModel, setInitializingModel] = useState(true); // True until model is loaded in worker
     const [transcribing, setTranscribing] = useState(false);
@@ -11,14 +11,13 @@ export function useTranscriber() {
     const workerRef = useRef(null);
 
     useEffect(() => {
-        // @ts-ignore
-        workerRef.current = new Worker(new URL("../../public/transcriber.worker.js", import.meta.url), {
+        workerRef.current = new Worker(new URL("./transcriber.worker.js", import.meta.url), {
             type: "module"
         });
 
-        const worker = workerRef.current;
+        const worker: Worker = workerRef.current;
 
-        worker.onmessage = (event) => {
+        worker.onmessage = (event: any) => {
             const {type, message, text, data} = event.data;
             switch (type) {
                 case "worker_loaded":
@@ -64,7 +63,7 @@ export function useTranscriber() {
             }
         };
 
-        worker.onerror = (err) => {
+        worker.onerror = (err: any) => {
             console.error("Unhandled worker error:", err);
             setError(err.message || "An unhandled worker error occurred");
             setInitializingModel(false);
@@ -80,7 +79,7 @@ export function useTranscriber() {
         };
     }, []); // Runs once on component mount
 
-    async function transcribe(audio) {
+    async function transcribe(audio: any) {
         if (!workerRef.current) {
             setError("Worker is not available.");
             console.error("Transcribe called before worker initialized.");
