@@ -25,11 +25,7 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="feat: implement Web Worker for transcriber pipeline and update useTranscriber hook&#10;&#10;- Moved transcription logic to `transcriber.worker.js` for improved performance and isolated processing.&#10;- Updated `useTranscriber` hook to utilize Web Worker for asynchronous transcription handling.&#10;- Enhanced error and state management in the hook, including model initialization tracking.&#10;- Added on-message handlers in the worker to communicate progress and transcription results.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/transcriber.worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/hooks/transcriber.worker.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
-    </list>
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="fix: streamline transcription logic and update worker initialization&#10;&#10;- Removed redundant promise handling in `initializePipe` and `transcribe` methods.&#10;- Added debug log for transcription results in `useTranscriber` hook.&#10;- Updated tsconfig.json to include all app files for improved type coverage.&#10;- Renamed and relocated `transcriber.worker.js` for better project organization." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -241,7 +237,7 @@
       <workItem from="1747220521958" duration="1697000" />
       <workItem from="1747225379073" duration="2349000" />
       <workItem from="1749080722900" duration="633000" />
-      <workItem from="1749125709960" duration="23983000" />
+      <workItem from="1749125709960" duration="24821000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -563,7 +559,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749157902056</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="fix: streamline transcription logic and update worker initialization&#10;&#10;- Removed redundant promise handling in `initializePipe` and `transcribe` methods.&#10;- Added debug log for transcription results in `useTranscriber` hook.&#10;- Updated tsconfig.json to include all app files for improved type coverage.&#10;- Renamed and relocated `transcriber.worker.js` for better project organization.">
+      <option name="closed" value="true" />
+      <created>1749158877294</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1749158877294</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -598,7 +602,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="fix: handle errors in audio transcription and streamline OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Simplified transcribeAudioWithOpenAI function by removing UI dependencies.  &#10;- Improved clarity and reliability of error messages during transcription." />
     <MESSAGE value="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use" />
     <MESSAGE value="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use.  " />
     <MESSAGE value="refactor: remove permission wrapper from Permission.ts" />
@@ -623,7 +626,8 @@
     <MESSAGE value="refactor: update useTranscriber and enhance transcription handling&#10;&#10;- Adjusted transcribe function to streamline transcription logic and state management.&#10;- Switched model to onnx-community/whisper-small with quantization for better performance.&#10;- Removed unused float32ToWavBlob function.&#10;- Simplified AudioVisualizer styling changes with reduced transition duration and blur effect." />
     <MESSAGE value="refactor: enhance transcriber logic and update component interactions&#10;&#10;- Improved transcriber to handle transcription with `whisper-small` and highlighted async handling with `useTransition`.&#10;- Updated audio visualization transitions and refined CSS for better responsiveness.&#10;- Removed redundant WAV conversion logic for cleaner implementation.&#10;- Adjusted error and state management in `useTranscriber` hook." />
     <MESSAGE value="feat: implement Web Worker for transcriber pipeline and update useTranscriber hook&#10;&#10;- Moved transcription logic to `transcriber.worker.js` for improved performance and isolated processing.&#10;- Updated `useTranscriber` hook to utilize Web Worker for asynchronous transcription handling.&#10;- Enhanced error and state management in the hook, including model initialization tracking.&#10;- Added on-message handlers in the worker to communicate progress and transcription results." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: implement Web Worker for transcriber pipeline and update useTranscriber hook&#10;&#10;- Moved transcription logic to `transcriber.worker.js` for improved performance and isolated processing.&#10;- Updated `useTranscriber` hook to utilize Web Worker for asynchronous transcription handling.&#10;- Enhanced error and state management in the hook, including model initialization tracking.&#10;- Added on-message handlers in the worker to communicate progress and transcription results." />
+    <MESSAGE value="fix: streamline transcription logic and update worker initialization&#10;&#10;- Removed redundant promise handling in `initializePipe` and `transcribe` methods.&#10;- Added debug log for transcription results in `useTranscriber` hook.&#10;- Updated tsconfig.json to include all app files for improved type coverage.&#10;- Renamed and relocated `transcriber.worker.js` for better project organization." />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: streamline transcription logic and update worker initialization&#10;&#10;- Removed redundant promise handling in `initializePipe` and `transcribe` methods.&#10;- Added debug log for transcription results in `useTranscriber` hook.&#10;- Updated tsconfig.json to include all app files for improved type coverage.&#10;- Renamed and relocated `transcriber.worker.js` for better project organization." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
