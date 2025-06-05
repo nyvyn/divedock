@@ -13,14 +13,14 @@ export default function AudioVisualizer({ errored, loading, speaking }: AudioVis
     return (
         <div
             className={clsx(
-                "size-36 rounded-full bg-gradient-to-b from-red-400 to-red-700 transition ease-in-out aspect-square blur-3xl",
+                "size-36 rounded-full bg-gradient-to-b from-red-400 to-red-700 transition-all duration-300 ease-in-out aspect-square",
                 {
                     "opacity-0": loading || errored,
                     "opacity-30": !loading && !errored && !speaking,
-                    "opacity-60 scale-110": speaking,
+                    "opacity-60 scale-110 blur-3xl": speaking,
+                    "blur-none": !speaking,
                 }
             )}
-            style={{ borderRadius: "50%" }}
         />
     );
 }
