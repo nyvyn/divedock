@@ -8,14 +8,14 @@ export function useTranscriber() {
     const [initializingModel, setInitializingModel] = useState(true); // True until model is loaded in worker
     const [transcribing, setTranscribing] = useState(false);
     const [transcription, setTranscription] = useState(null);
-    const workerRef = useRef(null);
+    const workerRef = useRef<Worker | null>(null);
 
     useEffect(() => {
         workerRef.current = new Worker(new URL("./transcriber.worker.js", import.meta.url), {
             type: "module"
         });
 
-        const worker: Worker = workerRef.current;
+        const worker = workerRef.current;
 
         worker.onmessage = (event: any) => {
             const {type, message, text, data} = event.data;
