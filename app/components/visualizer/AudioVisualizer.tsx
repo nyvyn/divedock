@@ -13,13 +13,18 @@ export default function AudioVisualizer({ errored, loading, speaking }: AudioVis
     return (
         <div
             className={clsx(
-                "size-36 blur rounded-full bg-gradient-to-b from-red-400 to-red-700 transition-all duration-300 ease-in-out",
+                "size-36 rounded-full bg-gradient-to-b from-red-400 to-red-700 transition-all duration-300 ease-in-out",
                 {
                     "opacity-0": loading || errored,
                     "opacity-30": !loading && !errored && !speaking,
                     "opacity-60 scale-110 blur-3xl": speaking,
                 }
             )}
+            style={{
+                borderRadius: "50%",
+                WebkitMaskImage: "radial-gradient(circle, white 100%, transparent 100%)",
+                maskImage: "radial-gradient(circle, white 100%, transparent 100%)",
+            }}
         />
     );
 }
