@@ -1,8 +1,9 @@
+import { InferenceSession } from "onnxruntime-web";
 import * as ort from "onnxruntime-web";
 
 const SAMPLE_RATE = 16_000;               // 16 kHz mono PCM
 const SEGMENT_SAMPLES = SAMPLE_RATE * 30; // Whisper expects 30-s windows
-const MODEL = "whisper_cpu_int8_0_model.onnx";
+const MODEL = "public/models/whisper-tiny-onnx-int4-inc.onnx";
 
 class WhisperSession {
     private session: ort.InferenceSession | null = null;
@@ -17,13 +18,16 @@ class WhisperSession {
 
     /** create (or reuse) ORT session */
     private async get() {
+        const buf   = await fetch(MODEL).then(r => r.arrayBuffer());
+        const bytes = new Uint8Array(buf);
+
         if (!this.session) {
-            const opts = {
+            const opts: InferenceSession.SessionOptions = {
                 executionProviders: ["wasm"],
                 logSeverityLevel: 3,
                 logVerbosityLevel: 3
             };
-            this.session = await ort.InferenceSession.create(MODEL, opts);
+            this.session = await ort.InferenceSession.create(bytes, opts);
         }
         return this.session;
     }
