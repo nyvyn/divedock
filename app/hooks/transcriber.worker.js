@@ -44,7 +44,7 @@ async function initializePipe() {
 
 // Initialize the pipe as soon as the worker loads, or on first message.
 // Initializing early can make the first transcription faster.
-initializePipe();
+initializePipe().then();
 
 ctx.onmessage = async (event) => {
     const audio = event.data;

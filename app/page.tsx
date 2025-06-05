@@ -20,7 +20,7 @@ export default function Home() {
         onSpeechEnd: (audio) => {
             player.stop();
             startTransition(() => {
-                transcribe(audio).then(result => console.log(result));
+                transcribe(audio);
             });
         },
         minSpeechFrames: 4,

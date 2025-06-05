@@ -44,6 +44,7 @@ export function useTranscriber() {
                     break;
                 case "transcription_result":
                     setTranscription(text);
+                    console.log("Transcription result:", text);
                     break;
                 case "transcribing_end":
                     setTranscribing(false);

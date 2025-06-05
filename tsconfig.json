@@ -31,8 +31,7 @@
     ]
   },
   "include": [
-    "app/lib",
-    "app/hooks",
+    "app/**/*",
     ".next/types/**/*.ts"
   ],
   "exclude": [
