@@ -22,6 +22,7 @@
       }
     ]
   },
-  "bundle": {},
-  "plugins": {}
+  "bundle": {
+    "resources": ["resources/**/*"]
+  }
 }
