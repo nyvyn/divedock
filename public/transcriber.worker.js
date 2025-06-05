@@ -9,8 +9,11 @@ import { pipeline } from "@huggingface/transformers";
 let transcriberPipe = null;
 let isInitializing = false;
 
-// Use globalThis for worker context compatibility (self in browser, global in Node, etc)
-const ctx = typeof self !== "undefined" ? self : globalThis;
+/**
+ * Use self for worker context.
+ * ctx = self in browser worker, fallback to globalThis for SSR/Node (should not run in Node).
+ */
+const ctx = typeof self !== "undefined" && typeof self.postMessage === "function" ? self : globalThis;
 
 async function initializePipe() {
     if (transcriberPipe || isInitializing) {
@@ -76,5 +79,7 @@ ctx.onmessage = async (event) => {
     }
 };
 
-// Signal that the worker script itself has loaded
-ctx.postMessage({ type: "worker_loaded" });
+if (typeof ctx.postMessage === "function") {
+    // Signal that the worker script itself has loaded
+    ctx.postMessage({ type: "worker_loaded" });
+}
