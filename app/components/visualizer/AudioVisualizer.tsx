@@ -15,9 +15,9 @@ export default function AudioVisualizer({ errored, loading, speaking }: AudioVis
             className={clsx(
                 "size-36 rounded-full bg-gradient-to-b from-red-400 to-red-700 transition ease-in-out aspect-square",
                 {
-                    "opacity-10": loading || errored,
+                    "opacity-0": loading || errored,
                     "opacity-30": !loading && !errored && !speaking,
-                    "opacity-100 scale-110": speaking,
+                    "opacity-60 scale-110": speaking,
                 }
             )}
             style={{ borderRadius: "50%" }}
