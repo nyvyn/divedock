@@ -28,7 +28,7 @@ export default function AudioVisualizer() {
                 stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 if (!mounted) return;
 
-                const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+                const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
                 audioContextRef.current = audioContext;
 
                 const analyser = audioContext.createAnalyser();
@@ -58,7 +58,7 @@ export default function AudioVisualizer() {
                     animationRef.current = requestAnimationFrame(animate);
                 }
                 animate();
-            } catch (err) {
+            } catch {
                 // Could not get mic
                 setLevel(0);
             }
