@@ -6,8 +6,7 @@
     "lib": [
       "ES2020",
       "DOM",
-      "DOM.Iterable",
-      "WebWorker"
+      "DOM.Iterable"
     ],
     "skipLibCheck": true,
     /* Bundler mode */
