@@ -6,7 +6,7 @@ import { pipeline } from "@huggingface/transformers";
 // Make sure to download the necessary .wasm files from the onnxruntime-web package
 // (e.g., from node_modules/onnxruntime-web/dist/) and place them in public/ort-wasm-files/.
 
-let transcriberPipe: any = null;
+let transcriberPipe = null;
 let isInitializing = false;
 
 async function initializePipe() {
@@ -21,13 +21,13 @@ async function initializePipe() {
             "onnx-community/whisper-small",
             {
                 dtype: "q8",
-                progress_callback: (progress: any) => {
+                progress_callback: (progress) => {
                   self.postMessage({ type: "model_loading_progress", data: progress });
                 }
             }
         );
         self.postMessage({ type: "model_loading_done" });
-    } catch (error: any) {
+    } catch (error) {
         self.postMessage({ type: "error", message: `Model initialization failed: ${error?.message || error}` });
         transcriberPipe = null; // Ensure it can try again or signals failure
     } finally {
@@ -40,7 +40,7 @@ async function initializePipe() {
 // Initializing early can make the first transcription faster.
 await initializePipe();
 
-self.onmessage = async (event: MessageEvent<Float32Array>) => {
+self.onmessage = async (event) => {
     const audio = event.data;
 
     if (!audio) {
@@ -66,7 +66,7 @@ self.onmessage = async (event: MessageEvent<Float32Array>) => {
         const output = await pipe(audio, { language: "en" });
         self.postMessage({ type: "transcription_result", text: output.text ?? "" });
 
-    } catch (err: any) {
+    } catch (err) {
         self.postMessage({ type: "error", message: err?.message || "Transcription failed in worker" });
     } finally {
         self.postMessage({ type: "transcribing_end" });
