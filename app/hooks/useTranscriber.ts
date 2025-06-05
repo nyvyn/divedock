@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 // Keep other imports like @huggingface/transformers if they are used elsewhere,
 // but the pipeline itself will now be in the worker.
 
-import "../../public/transcriber.worker";
-
 export function useTranscriber() {
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false); // For the overall transcription call
@@ -13,7 +11,7 @@ export function useTranscriber() {
     const workerRef = useRef(null);
 
     useEffect(() => {
-        workerRef.current = new Worker("", {
+        workerRef.current = new Worker("transcriber.worker.js", {
             type: "module"
         });
 
