@@ -25,9 +25,10 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="chore: remove unused add dependency and update IDE workspace configs">
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance.">
+      <change afterPath="$PROJECT_DIR$/app/lib/usePlayer.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/components/visualizer/AudioVisualizer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/visualizer/AudioVisualizer.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,11 +125,11 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/components/visualizer" />
+      <recent name="$PROJECT_DIR$/app/components" />
       <recent name="$PROJECT_DIR$/app" />
       <recent name="$PROJECT_DIR$/lib" />
       <recent name="$PROJECT_DIR$/src/ui" />
-      <recent name="$PROJECT_DIR$/src/utils" />
-      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunManager" selected="npm.tauri:dev">
@@ -235,6 +236,7 @@
       <workItem from="1747220521958" duration="1697000" />
       <workItem from="1747225379073" duration="2349000" />
       <workItem from="1749080722900" duration="633000" />
+      <workItem from="1749125709960" duration="3881000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -460,7 +462,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749081032474</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance.">
+      <option name="closed" value="true" />
+      <created>1749126251415</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1749126251415</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -495,7 +505,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Update IntelliJ config for new Tauri dev setup&#10;&#10;This commit adds the `npm.tauri:dev` run configuration and updates related IntelliJ settings. Adjustments include changes to the workspace, RunManager, and shared indexes, ensuring seamless development for the Tauri project." />
     <MESSAGE value="Add support for microphone recording using Tauri plugin&#10;&#10;Integrated the `tauri-plugin-mic-recorder` to enable microphone recording capabilities. Updated dependencies in `Cargo.toml` and `package-lock.json`, adjusted the application logic, and registered the plugin in the Tauri app." />
     <MESSAGE value="docs: update README formatting and inferred feature details" />
     <MESSAGE value="feat: add OpenAI library and update dependencies in package-lock&#10;&#10;Added OpenAI library for integration and updated package-lock.json with new dependencies for compatibility. Renamed and reorganized source files for better clarity." />
@@ -516,11 +525,12 @@
     <MESSAGE value="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use.  " />
     <MESSAGE value="refactor: remove permission wrapper from Permission.ts" />
     <MESSAGE value="refactor: implement singleton pattern for AudioVisualizer and AudioController" />
-    <MESSAGE value="chore: remove unused add dependency and update IDE workspace configs" />
     <MESSAGE value="feat: remove legacy audio processing and UI features for codebase overhaul&#10;&#10;This commit removes outdated modules including AudioController, AudioVisualizer, and associated UI elements to prepare for a restructured audio processing system and cleaner project architecture. All related utility functions and configurations are also deleted." />
     <MESSAGE value="chore: update package-lock.json with new dependencies and devDependencies&#10;&#10;Add several new dependencies, including TailwindCSS and PostCSS-related packages, alongside their accompanying optional and runtime modules. This update prepares the project for enhanced styling capabilities and improved dependency management." />
     <MESSAGE value="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations." />
+    <MESSAGE value="chore: remove unused add dependency and update IDE workspace configs" />
+    <MESSAGE value="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
