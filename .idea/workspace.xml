@@ -25,9 +25,7 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="fix: streamline transcription logic and update worker initialization&#10;&#10;- Removed redundant promise handling in `initializePipe` and `transcribe` methods.&#10;- Added debug log for transcription results in `useTranscriber` hook.&#10;- Updated tsconfig.json to include all app files for improved type coverage.&#10;- Renamed and relocated `transcriber.worker.js` for better project organization." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,7 +34,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="vad-voice" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -73,6 +71,9 @@
   <component name="PackageJsonUpdateNotifier">
     <dismissed value="$PROJECT_DIR$/package.json" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -91,11 +92,11 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "next",
+    "git-widget-placeholder": "vad",
     "js.debugger.nextJs.config.created.client": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/nyvyn/Development/divedock",
+    "last_opened_file_path": "/Users/nyvyn/Development/divedock/public/ort-wasm",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -120,14 +121,16 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/ort-wasm" />
+      <recent name="$PROJECT_DIR$/app/models" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/app" />
-      <recent name="$PROJECT_DIR$/lib" />
-      <recent name="$PROJECT_DIR$/src/ui" />
-      <recent name="$PROJECT_DIR$/src/utils" />
-      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/app/hooks" />
+      <recent name="$PROJECT_DIR$/src-tauri/resources" />
+      <recent name="$PROJECT_DIR$/public" />
+      <recent name="$PROJECT_DIR$/app/components/visualizer" />
+      <recent name="$PROJECT_DIR$/app/components" />
     </key>
   </component>
   <component name="RunManager" selected="npm.tauri:dev">
@@ -184,13 +187,21 @@
       <envs />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="JavaScript Debug.Next.js: debug client-side" />
+      <item itemvalue="npm.lint" />
+      <item itemvalue="npm.test" />
+      <item itemvalue="npm.dev" />
+      <item itemvalue="npm.tauri" />
+      <item itemvalue="npm.tauri:dev" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="npm.tauri:dev" />
+        <item itemvalue="npm.dev" />
         <item itemvalue="npm.lint" />
         <item itemvalue="npm.tauri" />
         <item itemvalue="npm.test" />
-        <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
   </component>
@@ -226,6 +237,7 @@
       <workItem from="1747220521958" duration="1697000" />
       <workItem from="1747225379073" duration="2349000" />
       <workItem from="1749080722900" duration="633000" />
+      <workItem from="1749125709960" duration="24821000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -451,11 +463,118 @@
       <option name="project" value="LOCAL" />
       <updated>1749081032474</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance.">
+      <option name="closed" value="true" />
+      <created>1749126251415</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1749126251415</updated>
+    </task>
+    <task id="LOCAL-00030" summary="fix: add stronger blur effect and update styling in AudioVisualizer&#10;&#10;Enhanced the blur effect in the audio visualizer's styles to improve visual appearance. Updated opacity transitions to align with loading and speaking states.">
+      <option name="closed" value="true" />
+      <created>1749131169367</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1749131169367</updated>
+    </task>
+    <task id="LOCAL-00031" summary="refactor: optimize AudioVisualizer and page styles&#10;&#10;Simplified inline styles by consolidating them into class-based styling. Updated blur, opacity, and scale transitions for a smoother audio visualizer animation. Replaced background color assignment with consistent class usage.">
+      <option name="closed" value="true" />
+      <created>1749133973057</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133973057</updated>
+    </task>
+    <task id="LOCAL-00032" summary="feat: integrate usePlayer hook and update VAD speech handling&#10;&#10;Added `usePlayer` hook to manage audio playback. Updated VAD configuration to stop audio playback when speech ends. Minor cleanup in `stop` function for better promise handling.">
+      <option name="closed" value="true" />
+      <created>1749134940200</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1749134940200</updated>
+    </task>
+    <task id="LOCAL-00033" summary="feat: replace transcribe utility with new hooks and constants&#10;&#10;Refactored the codebase to replace the transcribe utility with `useTranscriber` and `useWorker` hooks. Added a constants file for configuration. Removed the `WhisperSession` class, transitioning functionality to the new hooks structure. Updated Tauri configuration to support file system permissions for model loading.">
+      <option name="closed" value="true" />
+      <created>1749152008737</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1749152008737</updated>
+    </task>
+    <task id="LOCAL-00034" summary="refactor: remove useWorker hook and associated worker script&#10;&#10;Removed `useWorker` hook and its linked web worker script for automatic speech recognition. Simplified `useTranscriber` to no longer rely on web workers.">
+      <option name="closed" value="true" />
+      <created>1749152068859</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1749152068859</updated>
+    </task>
+    <task id="LOCAL-00035" summary="refactor: simplify Tauri config and permissions handling&#10;&#10;Removed redundant file system permissions and resource bundling from Tauri configuration. Consolidated capabilities to use default settings for streamlined maintenance.">
+      <option name="closed" value="true" />
+      <created>1749152312455</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1749152312455</updated>
+    </task>
+    <task id="LOCAL-00036" summary="chore: remove WebWorker lib from tsconfig.json for streamlined target environments">
+      <option name="closed" value="true" />
+      <created>1749152412584</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1749152412584</updated>
+    </task>
+    <task id="LOCAL-00037" summary="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting.">
+      <option name="closed" value="true" />
+      <created>1749152974059</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1749152974059</updated>
+    </task>
+    <task id="LOCAL-00038" summary="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transformers` in dependencies to align with updated">
+      <option name="closed" value="true" />
+      <created>1749153453698</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1749153453698</updated>
+    </task>
+    <task id="LOCAL-00039" summary="refactor: enhance transcriber logic and update component interactions&#10;&#10;- Improved transcriber to handle transcription with `whisper-small` and highlighted async handling with `useTransition`.&#10;- Updated audio visualization transitions and refined CSS for better responsiveness.&#10;- Removed redundant WAV conversion logic for cleaner implementation.&#10;- Adjusted error and state management in `useTranscriber` hook.">
+      <option name="closed" value="true" />
+      <created>1749156270384</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1749156270384</updated>
+    </task>
+    <task id="LOCAL-00040" summary="feat: implement Web Worker for transcriber pipeline and update useTranscriber hook&#10;&#10;- Moved transcription logic to `transcriber.worker.js` for improved performance and isolated processing.&#10;- Updated `useTranscriber` hook to utilize Web Worker for asynchronous transcription handling.&#10;- Enhanced error and state management in the hook, including model initialization tracking.&#10;- Added on-message handlers in the worker to communicate progress and transcription results.">
+      <option name="closed" value="true" />
+      <created>1749157902056</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1749157902056</updated>
+    </task>
+    <task id="LOCAL-00041" summary="fix: streamline transcription logic and update worker initialization&#10;&#10;- Removed redundant promise handling in `initializePipe` and `transcribe` methods.&#10;- Added debug log for transcription results in `useTranscriber` hook.&#10;- Updated tsconfig.json to include all app files for improved type coverage.&#10;- Renamed and relocated `transcriber.worker.js` for better project organization.">
+      <option name="closed" value="true" />
+      <created>1749158877294</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1749158877294</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.plist" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -483,32 +602,32 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Update IntelliJ config for new Tauri dev setup&#10;&#10;This commit adds the `npm.tauri:dev` run configuration and updates related IntelliJ settings. Adjustments include changes to the workspace, RunManager, and shared indexes, ensuring seamless development for the Tauri project." />
-    <MESSAGE value="Add support for microphone recording using Tauri plugin&#10;&#10;Integrated the `tauri-plugin-mic-recorder` to enable microphone recording capabilities. Updated dependencies in `Cargo.toml` and `package-lock.json`, adjusted the application logic, and registered the plugin in the Tauri app." />
-    <MESSAGE value="docs: update README formatting and inferred feature details" />
-    <MESSAGE value="feat: add OpenAI library and update dependencies in package-lock&#10;&#10;Added OpenAI library for integration and updated package-lock.json with new dependencies for compatibility. Renamed and reorganized source files for better clarity." />
-    <MESSAGE value="feat: remove unused assets and refactor OpenAI TTS implementation&#10;&#10;This commit removes redundant SVG assets and consolidates TTS logic by deleting tts.ts and migrating functionality to synthesize.ts. Additionally, minor improvements in audio processing and dependency cleanup were made for better maintainability." />
-    <MESSAGE value="chore: update IDE workspace settings" />
-    <MESSAGE value="refactor(audio): optimize volume calculation with RMS and remove redundancy&#10;&#10;- Simplified logic by using RMS as the primary volume measure.  &#10;- Eliminated unnecessary `averageVolume` variable.  &#10;- Streamlined `sliceWidth` calculation." />
-    <MESSAGE value="refactor: optimize RMS volume calculation and remove redundancy in audio logic" />
-    <MESSAGE value="refactor(audio): improve rms handling and remove redundant volume variable&#10;&#10;- Adjusted RMS as the primary volume measure to simplify logic.&#10;- Removed redundant `averageVolume` variable.&#10;- Minor refactor to simplify `sliceWidth` calculation." />
-    <MESSAGE value="feat: add macOS microphone permissions and integrate with audio processing&#10;&#10;- Added macOS microphone permissions using `tauri-plugin-macos-permissions`.&#10;- Updated `Info.plist` with microphone usage description.&#10;- Integrated microphone permission check in audio processing logic.&#10;- Updated dependencies and configurations for `tauri-plugin-macos-permissions`." />
-    <MESSAGE value="feat: standardize canvas methods and add macOS microphone permissions&#10;&#10;- Updated canvas-related methods with standardized English documentation.&#10;- Added macOS microphone permissions using tauri-plugin-macos-permissions.&#10;- Integrated microphone permission check into audio processing logic.&#10;- Updated dependencies and configurations for microphone permissions support." />
-    <MESSAGE value="feat: refactor audio processing and introduce modular architecture&#10;&#10;- Replaced audio.ts with audioController.ts and audioVisualizer.ts for modularity.&#10;- Improved class-based structure for audio control and visualization.&#10;- Removed redundant code and standardized canvas handling methods.&#10;- Integrated microphone" />
-    <MESSAGE value="feat: refactor audio processing and introduce modular architecture&#10;&#10;- Replaced audio.ts with audioController.ts and audioVisualizer.ts for modularity.&#10;- Improved class-based structure for audio control and visualization.&#10;- Removed redundant code and standardized canvas handling methods.&#10;- Integrated microphone permission checks and streamlined initialization process." />
-    <MESSAGE value="feat: remove audio controller and improve modular structure&#10;&#10;- Deleted audioController and reorganized code for better modularity.&#10;- Separated audio visualization into AudioCanvas in the ui directory.&#10;- Moved speech synthesis and transcription logic to services for clarity and reuse.&#10;- Updated index.html and imports to align with the new structure." />
-    <MESSAGE value="feat: refactor for modular architecture and rename components&#10;&#10;- Moved SpeechSynth and Transcriber to utils for better reusability&#10;- Renamed AudioCanvas to AudioVisualizer for clarity&#10;- Relocated and renamed AudioController to align with ui structure&#10;- Adjusted imports and file paths to match the updated organization" />
-    <MESSAGE value="fix: rename stopProcessingCleanup to stopProcessing in AudioController&#10;&#10;- Standardized method naming for clarity and consistency.&#10;- Removed redundant code comment in synthesize." />
-    <MESSAGE value="fix: handle errors in audio transcription and streamline OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Simplified transcribeAudioWithOpenAI function by removing UI dependencies.  &#10;- Improved clarity and reliability of error messages during transcription." />
     <MESSAGE value="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use" />
     <MESSAGE value="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use.  " />
     <MESSAGE value="refactor: remove permission wrapper from Permission.ts" />
     <MESSAGE value="refactor: implement singleton pattern for AudioVisualizer and AudioController" />
-    <MESSAGE value="chore: remove unused add dependency and update IDE workspace configs" />
     <MESSAGE value="feat: remove legacy audio processing and UI features for codebase overhaul&#10;&#10;This commit removes outdated modules including AudioController, AudioVisualizer, and associated UI elements to prepare for a restructured audio processing system and cleaner project architecture. All related utility functions and configurations are also deleted." />
     <MESSAGE value="chore: update package-lock.json with new dependencies and devDependencies&#10;&#10;Add several new dependencies, including TailwindCSS and PostCSS-related packages, alongside their accompanying optional and runtime modules. This update prepares the project for enhanced styling capabilities and improved dependency management." />
     <MESSAGE value="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations." />
+    <MESSAGE value="chore: remove unused add dependency and update IDE workspace configs" />
+    <MESSAGE value="feat: restructure imports and add LoadingIcon component&#10;&#10;This commit reorganizes the `AudioVisualizer` import path and introduces a new `LoadingIcon` component. Additionally, it includes updates to `.gitignore` for `.env` file exclusion, package updates for dependencies and devDependencies, and removal of obsolete packages in `package-lock.json` for improved project maintenance." />
+    <MESSAGE value="fix: add stronger blur effect and update styling in AudioVisualizer&#10;&#10;Enhanced the blur effect in the audio visualizer's styles to improve visual appearance. Updated opacity transitions to align with loading and speaking states." />
+    <MESSAGE value="refactor: optimize AudioVisualizer and page styles&#10;&#10;Simplified inline styles by consolidating them into class-based styling. Updated blur, opacity, and scale transitions for a smoother audio visualizer animation. Replaced background color assignment with consistent class usage." />
+    <MESSAGE value="feat: integrate usePlayer hook and update VAD speech handling&#10;&#10;Added `usePlayer` hook to manage audio playback. Updated VAD configuration to stop audio playback when speech ends. Minor cleanup in `stop` function for better promise handling." />
+    <MESSAGE value="feat: replace transcribe implementation with useTranscriber hook and constants&#10;&#10;Removed `transcribe` utility and `WhisperSession` class. Introduced `useTranscriber` hook for managing transcription logic and `constants` for default configuration. Added Web Worker support with `useWorker` hook and updated Tauri permissions and TypeScript configuration." />
+    <MESSAGE value="feat: replace transcribe utility with new hooks and constants&#10;&#10;Refactored the codebase to replace the transcribe utility with `useTranscriber` and `useWorker` hooks. Added a constants file for configuration. Removed the `WhisperSession` class, transitioning functionality to the new hooks structure. Updated Tauri configuration to support file system permissions for model loading." />
+    <MESSAGE value="refactor: remove useWorker hook and associated worker script&#10;&#10;Removed `useWorker` hook and its linked web worker script for automatic speech recognition. Simplified `useTranscriber` to no longer rely on web workers." />
+    <MESSAGE value="refactor: simplify Tauri configuration and update file system permissions&#10;&#10;Removed redundant bundle resource configuration in `tauri.conf.json`. Unified file system capabilities in `default.json` to use &quot;fs:default&quot; for streamlined management." />
+    <MESSAGE value="refactor: simplify Tauri config and permissions handling&#10;&#10;Removed redundant file system permissions and resource bundling from Tauri configuration. Consolidated capabilities to use default settings for streamlined" />
+    <MESSAGE value="chore: remove WebWorker lib from tsconfig.json for streamlined target environments" />
+    <MESSAGE value="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting." />
+    <MESSAGE value="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform" />
+    <MESSAGE value="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform requirements." />
+    <MESSAGE value="refactor: update useTranscriber and enhance transcription handling&#10;&#10;- Adjusted transcribe function to streamline transcription logic and state management.&#10;- Switched model to onnx-community/whisper-small with quantization for better performance.&#10;- Removed unused float32ToWavBlob function.&#10;- Simplified AudioVisualizer styling changes with reduced transition duration and blur effect." />
+    <MESSAGE value="refactor: enhance transcriber logic and update component interactions&#10;&#10;- Improved transcriber to handle transcription with `whisper-small` and highlighted async handling with `useTransition`.&#10;- Updated audio visualization transitions and refined CSS for better responsiveness.&#10;- Removed redundant WAV conversion logic for cleaner implementation.&#10;- Adjusted error and state management in `useTranscriber` hook." />
+    <MESSAGE value="feat: implement Web Worker for transcriber pipeline and update useTranscriber hook&#10;&#10;- Moved transcription logic to `transcriber.worker.js` for improved performance and isolated processing.&#10;- Updated `useTranscriber` hook to utilize Web Worker for asynchronous transcription handling.&#10;- Enhanced error and state management in the hook, including model initialization tracking.&#10;- Added on-message handlers in the worker to communicate progress and transcription results." />
+    <MESSAGE value="fix: streamline transcription logic and update worker initialization&#10;&#10;- Removed redundant promise handling in `initializePipe` and `transcribe` methods.&#10;- Added debug log for transcription results in `useTranscriber` hook.&#10;- Updated tsconfig.json to include all app files for improved type coverage.&#10;- Renamed and relocated `transcriber.worker.js` for better project organization." />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: streamline transcription logic and update worker initialization&#10;&#10;- Removed redundant promise handling in `initializePipe` and `transcribe` methods.&#10;- Added debug log for transcription results in `useTranscriber` hook.&#10;- Updated tsconfig.json to include all app files for improved type coverage.&#10;- Renamed and relocated `transcriber.worker.js` for better project organization." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
