@@ -25,11 +25,10 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform">
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: enhance transcriber logic and update component interactions&#10;&#10;- Improved transcriber to handle transcription with `whisper-small` and highlighted async handling with `useTransition`.&#10;- Updated audio visualization transitions and refined CSS for better responsiveness.&#10;- Removed redundant WAV conversion logic for cleaner implementation.&#10;- Adjusted error and state management in `useTranscriber` hook.">
+      <change afterPath="$PROJECT_DIR$/public/transcriber.worker.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/components/visualizer/AudioVisualizer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/visualizer/AudioVisualizer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/hooks/useTranscriber.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/hooks/useTranscriber.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,10 +199,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="npm.tauri:dev" />
+        <item itemvalue="npm.dev" />
         <item itemvalue="npm.lint" />
         <item itemvalue="npm.tauri" />
         <item itemvalue="npm.test" />
-        <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
   </component>
@@ -239,7 +238,7 @@
       <workItem from="1747220521958" duration="1697000" />
       <workItem from="1747225379073" duration="2349000" />
       <workItem from="1749080722900" duration="633000" />
-      <workItem from="1749125709960" duration="21542000" />
+      <workItem from="1749125709960" duration="23146000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -545,7 +544,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749153453698</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="refactor: enhance transcriber logic and update component interactions&#10;&#10;- Improved transcriber to handle transcription with `whisper-small` and highlighted async handling with `useTransition`.&#10;- Updated audio visualization transitions and refined CSS for better responsiveness.&#10;- Removed redundant WAV conversion logic for cleaner implementation.&#10;- Adjusted error and state management in `useTranscriber` hook.">
+      <option name="closed" value="true" />
+      <created>1749156270384</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1749156270384</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -580,8 +587,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="feat: remove audio controller and improve modular structure&#10;&#10;- Deleted audioController and reorganized code for better modularity.&#10;- Separated audio visualization into AudioCanvas in the ui directory.&#10;- Moved speech synthesis and transcription logic to services for clarity and reuse.&#10;- Updated index.html and imports to align with the new structure." />
-    <MESSAGE value="feat: refactor for modular architecture and rename components&#10;&#10;- Moved SpeechSynth and Transcriber to utils for better reusability&#10;- Renamed AudioCanvas to AudioVisualizer for clarity&#10;- Relocated and renamed AudioController to align with ui structure&#10;- Adjusted imports and file paths to match the updated organization" />
     <MESSAGE value="fix: rename stopProcessingCleanup to stopProcessing in AudioController&#10;&#10;- Standardized method naming for clarity and consistency.&#10;- Removed redundant code comment in synthesize." />
     <MESSAGE value="fix: handle errors in audio transcription and streamline OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Simplified transcribeAudioWithOpenAI function by removing UI dependencies.  &#10;- Improved clarity and reliability of error messages during transcription." />
     <MESSAGE value="fix: improve audio transcription handling and OpenAI integration&#10;&#10;- Added error handling for transcription failures in AudioController.  &#10;- Updated transcribe utility to use" />
@@ -605,7 +610,9 @@
     <MESSAGE value="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting." />
     <MESSAGE value="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform" />
     <MESSAGE value="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform requirements." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform requirements." />
+    <MESSAGE value="refactor: update useTranscriber and enhance transcription handling&#10;&#10;- Adjusted transcribe function to streamline transcription logic and state management.&#10;- Switched model to onnx-community/whisper-small with quantization for better performance.&#10;- Removed unused float32ToWavBlob function.&#10;- Simplified AudioVisualizer styling changes with reduced transition duration and blur effect." />
+    <MESSAGE value="refactor: enhance transcriber logic and update component interactions&#10;&#10;- Improved transcriber to handle transcription with `whisper-small` and highlighted async handling with `useTransition`.&#10;- Updated audio visualization transitions and refined CSS for better responsiveness.&#10;- Removed redundant WAV conversion logic for cleaner implementation.&#10;- Adjusted error and state management in `useTranscriber` hook." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: enhance transcriber logic and update component interactions&#10;&#10;- Improved transcriber to handle transcription with `whisper-small` and highlighted async handling with `useTransition`.&#10;- Updated audio visualization transitions and refined CSS for better responsiveness.&#10;- Removed redundant WAV conversion logic for cleaner implementation.&#10;- Adjusted error and state management in `useTranscriber` hook." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
