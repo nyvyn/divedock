@@ -1,30 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
-import Constants from "../lib/constants";
-import { useWorker } from "./useWorker";
-
-interface ProgressItem {
-    file: string;
-    loaded: number;
-    progress: number;
-    total: number;
-    name: string;
-    status: string;
-}
-
-interface TranscriberUpdateData {
-    data: [
-        string,
-        { chunks: { text: string; timestamp: [number, number | null] }[] },
-    ];
-    text: string;
-}
-
-interface TranscriberCompleteData {
-    data: {
-        text: string;
-        chunks: { text: string; timestamp: [number, number | null] }[];
-    };
-}
+import { useState, useCallback, useMemo } from "react";
+import { transcribe as onnxTranscribe } from "../lib/transcribe";
 
 export interface TranscriberData {
     isBusy: boolean;
@@ -36,7 +11,7 @@ export interface Transcriber {
     onInputChange: () => void;
     isBusy: boolean;
     isModelLoading: boolean;
-    progressItems: ProgressItem[];
+    progressItems: any[];
     start: (audioData: Float32Array) => void;
     output?: TranscriberData;
     model: string;
@@ -52,114 +27,46 @@ export interface Transcriber {
 }
 
 export function useTranscriber(): Transcriber {
-    const [transcript, setTranscript] = useState<TranscriberData | undefined>(
-        undefined,
-    );
+    const [transcript, setTranscript] = useState<TranscriberData | undefined>(undefined);
     const [isBusy, setIsBusy] = useState(false);
     const [isModelLoading, setIsModelLoading] = useState(false);
+    const [progressItems] = useState<any[]>([]);
 
-    const [progressItems, setProgressItems] = useState<ProgressItem[]>([]);
-
-    const webWorker = useWorker((event) => {
-        const message = event.data;
-        // Update the state with the result
-        switch (message.status) {
-            case "progress":
-                // Model file progress: update one of the progress items.
-                setProgressItems((prev) =>
-                    prev.map((item) => {
-                        if (item.file === message.file) {
-                            return { ...item, progress: message.progress };
-                        }
-                        return item;
-                    }),
-                );
-                break;
-            case "update":
-                // Received partial update
-                // console.log("update", message);
-                // eslint-disable-next-line no-case-declarations
-                const updateMessage = message as TranscriberUpdateData;
-                setTranscript({
-                    isBusy: true,
-                    text: updateMessage.data[0],
-                    chunks: updateMessage.data[1].chunks,
-                });
-                break;
-            case "complete":
-                // Received complete transcript
-                // console.log("complete", message);
-                // eslint-disable-next-line no-case-declarations
-                const completeMessage = message as TranscriberCompleteData;
-                setTranscript({
-                    isBusy: false,
-                    text: completeMessage.data.text,
-                    chunks: completeMessage.data.chunks,
-                });
-                setIsBusy(false);
-                break;
-
-            case "initiate":
-                // Model file start load: add a new progress item to the list.
-                setIsModelLoading(true);
-                setProgressItems((prev) => [...prev, message]);
-                break;
-            case "ready":
-                setIsModelLoading(false);
-                break;
-            case "error":
-                setIsBusy(false);
-                alert(
-                    `${message.data.message} This is most likely because you are using Safari on an M1/M2 Mac. Please try again from Chrome, Firefox, or Edge.\n\nIf this is not the case, please file a bug report.`,
-                );
-                break;
-            case "done":
-                // Model file loaded: remove the progress item from the list.
-                setProgressItems((prev) =>
-                    prev.filter((item) => item.file !== message.file),
-                );
-                break;
-
-            default:
-                // initiate/download/done
-                break;
-        }
-    });
-
-    const [model, setModel] = useState<string>(Constants.DEFAULT_MODEL);
-    const [subtask, setSubtask] = useState<string>(Constants.DEFAULT_SUBTASK);
-    const [quantized, setQuantized] = useState<boolean>(
-        Constants.DEFAULT_QUANTIZED,
-    );
-    const [multilingual, setMultilingual] = useState<boolean>(
-        Constants.DEFAULT_MULTILINGUAL,
-    );
-    const [language, setLanguage] = useState<string>(
-        Constants.DEFAULT_LANGUAGE,
-    );
+    // These are kept for API compatibility, but are not used in this simple ONNX version
+    const [model, setModel] = useState<string>("onnx-whisper");
+    const [subtask, setSubtask] = useState<string>("transcribe");
+    const [quantized, setQuantized] = useState<boolean>(false);
+    const [multilingual, setMultilingual] = useState<boolean>(false);
+    const [language, setLanguage] = useState<string>("en");
 
     const onInputChange = useCallback(() => {
         setTranscript(undefined);
     }, []);
 
-    const postRequest = useCallback(
+    const start = useCallback(
         async (audio: Float32Array) => {
-            if (audio) {
-                setTranscript(undefined);
-                setIsBusy(true);
-
-                webWorker?.postMessage({
-                    audio,
-                    model,
-                    multilingual,
-                    quantized,
-                    subtask: multilingual ? subtask : null,
-                    language:
-                        multilingual && language !== "auto" ? language : null,
+            setTranscript(undefined);
+            setIsBusy(true);
+            setIsModelLoading(true);
+            try {
+                const text = await onnxTranscribe(audio);
+                setTranscript({
+                    isBusy: false,
+                    text,
+                    chunks: [],
                 });
+            } catch (e) {
+                setTranscript({
+                    isBusy: false,
+                    text: "Transcription failed",
+                    chunks: [],
+                });
+            } finally {
+                setIsBusy(false);
+                setIsModelLoading(false);
             }
         },
-        [webWorker, model, multilingual, quantized, subtask, language],
+        []
     );
 
     return useMemo(() => {
@@ -168,7 +75,7 @@ export function useTranscriber(): Transcriber {
             isBusy,
             isModelLoading,
             progressItems,
-            start: postRequest,
+            start,
             output: transcript,
             model,
             setModel,
@@ -182,15 +89,21 @@ export function useTranscriber(): Transcriber {
             setLanguage,
         };
     }, [
+        onInputChange,
         isBusy,
         isModelLoading,
         progressItems,
-        postRequest,
+        start,
         transcript,
         model,
+        setModel,
         multilingual,
+        setMultilingual,
         quantized,
+        setQuantized,
         subtask,
+        setSubtask,
         language,
+        setLanguage,
     ]);
 }
