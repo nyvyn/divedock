@@ -18,8 +18,10 @@ class WhisperSession {
 
     /** create (or reuse) ORT session */
     private async get() {
-        const buf   = await fetch(MODEL).then(r => r.arrayBuffer());
-        const bytes = new Uint8Array(buf);
+        // Use Tauri's file system API to read the model from disk
+        // @ts-ignore
+        const { readBinaryFile } = await import('@tauri-apps/api/fs');
+        const bytes = new Uint8Array(await readBinaryFile(MODEL));
 
         if (!this.session) {
             const opts: InferenceSession.SessionOptions = {
