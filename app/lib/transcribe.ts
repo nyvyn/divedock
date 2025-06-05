@@ -1,49 +1,66 @@
 import * as ort from "onnxruntime-web";
 
-// You may need to adjust the model path and tokenizer for your setup.
-const MODEL_URL = "/models/whisper-tiny.onnx";
+const SAMPLE_RATE = 16_000;               // 16 kHz mono PCM
+const SEGMENT_SAMPLES = SAMPLE_RATE * 30; // Whisper expects 30-s windows
+const MODEL = "whisper_cpu_int8_0_model.onnx";
 
-let sessionPromise: Promise<ort.InferenceSession> | null = null;
+class WhisperSession {
+    private session: ort.InferenceSession | null = null;
 
-async function getSession() {
-    if (!sessionPromise) {
-        sessionPromise = ort.InferenceSession.create(MODEL_URL, { executionProviders: ["wasm"] });
+    // static inputs reused between calls
+    private readonly max_length = new Int32Array([448]);
+    private readonly min_length = new Int32Array([1]);
+    private readonly num_return_sequences = new Int32Array([1]);
+    private readonly length_penalty = new Float32Array([1.0]);
+    private readonly repetition_penalty = new Float32Array([1.0]);
+    private readonly attention_mask = new Int32Array(80 * 3000); // all zeros
+
+    /** create (or reuse) ORT session */
+    private async get() {
+        if (!this.session) {
+            const opts = {
+                executionProviders: ["wasm"],
+                logSeverityLevel: 3,
+                logVerbosityLevel: 3
+            };
+            this.session = await ort.InferenceSession.create(MODEL, opts);
+        }
+        return this.session;
     }
-    return sessionPromise;
+
+    /** run whisper on one 30-s PCM chunk */
+    async infer(audio: Float32Array, beams = 1) {
+        const s = await this.get();
+
+        const feed: Record<string, ort.Tensor> = {
+            audio_pcm: new ort.Tensor(audio, [1, audio.length]),
+            max_length: new ort.Tensor(this.max_length, [1]),
+            min_length: new ort.Tensor(this.min_length, [1]),
+            num_beams: new ort.Tensor(new Int32Array([beams]), [1]),
+            num_return_sequences: new ort.Tensor(this.num_return_sequences, [1]),
+            length_penalty: new ort.Tensor(this.length_penalty, [1]),
+            repetition_penalty: new ort.Tensor(this.repetition_penalty, [1]),
+            attention_mask: new ort.Tensor(this.attention_mask, [1, 80, 3000]),
+        };
+
+        return s.run(feed); // returns { str: Tensor }
+    }
 }
 
+const whisper = new WhisperSession();
+
 /**
- * Transcribe audio using Whisper ONNX model in the browser.
- * @param audio Float32Array PCM audio, 16kHz, mono
- * @returns Promise<string> transcript
+ * Transcribe an entire Float32Array (16 kHz mono).
+ * Splits into 30-s windows, runs inference, concatenates text.
  */
-export async function transcribe(audio: Float32Array): Promise<string> {
-    const session = await getSession();
+export async function transcribe(pcm: Float32Array): Promise<string> {
+    const out: string[] = [];
 
-    // TODO: Preprocess audio to match Whisper input (e.g., convert to log-mel spectrogram)
-    // This is a placeholder. You need to implement log-mel spectrogram extraction.
-    // For a real implementation, see: https://github.com/ggerganov/whisper.cpp/blob/master/whisper.cpp#L1200
-    // or use a JS library if available.
+    for (let i = 0; i < pcm.length; i += SEGMENT_SAMPLES) {
+        const chunk = pcm.subarray(i, i + SEGMENT_SAMPLES);
+        const {str} = await whisper.infer(chunk);          // greedy, 1 beam
+        out.push((str.data as string[])[0]);                 // first/only sequence
+    }
 
-    // Example placeholder: assume audio is already a Float32Array of the correct shape
-    // Whisper expects [1, 80, 3000] log-mel spectrogram for 30s of audio at 16kHz
-    // You must replace this with actual preprocessing!
-    const input = new ort.Tensor("float32", audio, [1, 1, audio.length]);
-
-    const feeds: Record<string, ort.Tensor> = {
-        "audio_features": input,
-    };
-
-    const results = await session.run(feeds);
-
-    // TODO: Postprocess results to decode tokens to text
-    // This is a placeholder. You need to implement token decoding.
-    // For a real implementation, see: https://github.com/openai/whisper/blob/main/whisper/tokenizer.py
-
-    // Example: get output tokens and join as string (not real decoding)
-    const tokens = results["text"]?.data as Int32Array | undefined;
-    if (!tokens) return "";
-
-    // Placeholder: just return token ids as string
-    return tokens.join(" ");
+    return out.join("\n");
 }
