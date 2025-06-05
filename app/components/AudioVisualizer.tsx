@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { checkMicrophonePermission } from "tauri-plugin-macos-permissions-api";
 
 export default function AudioVisualizer() {
     const [level, setLevel] = useState(0);
@@ -17,6 +18,13 @@ export default function AudioVisualizer() {
 
         async function setupAudio() {
             try {
+                // Check microphone permission using Tauri plugin
+                const hasPermission = await checkMicrophonePermission();
+                if (!hasPermission) {
+                    setLevel(0);
+                    return;
+                }
+
                 stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 if (!mounted) return;
 
