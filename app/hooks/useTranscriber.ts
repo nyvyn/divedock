@@ -1,5 +1,25 @@
 import { useState, useCallback, useMemo } from "react";
-import { transcribe as onnxTranscribe } from "../lib/transcribe";
+
+// @ts-ignore
+import { pipeline } from "@xenova/transformers";
+
+// Singleton for the pipeline
+let whisperPipeline: any = null;
+let whisperLoading: Promise<any> | null = null;
+
+async function getWhisperPipeline() {
+    if (whisperPipeline) return whisperPipeline;
+    if (whisperLoading) return whisperLoading;
+    whisperLoading = pipeline(
+        "automatic-speech-recognition",
+        "onnx-community/whisper-tiny.en",
+        { quantized: false }
+    ).then((pipe: any) => {
+        whisperPipeline = pipe;
+        return pipe;
+    });
+    return whisperLoading;
+}
 
 export interface TranscriberData {
     isBusy: boolean;
@@ -49,11 +69,18 @@ export function useTranscriber(): Transcriber {
             setIsBusy(true);
             setIsModelLoading(true);
             try {
-                const text = await onnxTranscribe(audio);
+                // Get the pipeline (loads model if needed)
+                const pipe = await getWhisperPipeline();
+
+                // The pipeline expects a Float32Array or a Blob
+                const result = await pipe(audio, {
+                    // You can set options here if needed
+                });
+
                 setTranscript({
                     isBusy: false,
-                    text,
-                    chunks: [],
+                    text: result.text,
+                    chunks: [], // Optionally, parse segments if available
                 });
             } catch (e) {
                 setTranscript({
