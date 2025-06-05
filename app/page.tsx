@@ -12,6 +12,8 @@ export default function Home() {
     });
 
     return (
-        <AudioVisualizer errored={vad.errored} loading={vad.loading} speaking={vad.userSpeaking}/>
+        <div style={{ background: "black", minHeight: "100vh", width: "100vw" }}>
+            <AudioVisualizer errored={vad.errored} loading={vad.loading} speaking={vad.userSpeaking}/>
+        </div>
     );
 }
