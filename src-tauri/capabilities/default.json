@@ -9,7 +9,6 @@
     "core:default",
     "opener:default",
     "macos-permissions:default",
-    "fs:allow-read-file",
-    "fs:allow-resource-read-recursive"
+    "fs:default"
   ]
 }
