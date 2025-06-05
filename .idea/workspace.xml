@@ -25,9 +25,8 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="chore: remove unused add dependency and update IDE workspace configs">
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src-tauri/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/src-tauri/Info.plist" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +36,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="local-stt" />
+        <entry key="$PROJECT_DIR$" value="vad-voice" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -80,6 +79,7 @@
   <component name="ProjectId" id="2vHlntpyT4Otq8yWzJABNl6LNg8" />
   <component name="ProjectLevelVcsManager">
     <OptionsSetting value="false" id="Update" />
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -91,7 +91,8 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "next",
+    "js.debugger.nextJs.config.created.client": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/nyvyn/Development/divedock",
@@ -102,9 +103,11 @@
     "nodejs_package_manager_path": "npm",
     "npm.build.executor": "Run",
     "npm.dev.executor": "Run",
+    "npm.lint.executor": "Run",
     "npm.preview.executor": "Run",
     "npm.tauri.executor": "Run",
     "npm.tauri:dev.executor": "Run",
+    "npm.test.executor": "Run",
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
     "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
     "project.structure.last.edited": "Project",
@@ -120,21 +123,15 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app" />
+      <recent name="$PROJECT_DIR$/lib" />
       <recent name="$PROJECT_DIR$/src/ui" />
       <recent name="$PROJECT_DIR$/src/utils" />
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.build">
-    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="build" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
+  <component name="RunManager" selected="npm.tauri:dev">
+    <configuration name="Next.js: debug client-side" type="JavascriptDebugType" uri="http://localhost:3000/">
       <method v="2" />
     </configuration>
     <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
@@ -147,11 +144,11 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="preview" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+    <configuration name="lint" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
-        <script value="preview" />
+        <script value="lint" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
@@ -177,12 +174,22 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.tauri:dev" />
+        <item itemvalue="npm.lint" />
         <item itemvalue="npm.tauri" />
-        <item itemvalue="npm.preview" />
+        <item itemvalue="npm.test" />
         <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
@@ -193,8 +200,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26094.121" />
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-IU-251.26094.121" />
       </set>
     </attachedChunks>
   </component>
@@ -218,6 +225,7 @@
       <workItem from="1747174858697" duration="6370000" />
       <workItem from="1747220521958" duration="1697000" />
       <workItem from="1747225379073" duration="2349000" />
+      <workItem from="1749080722900" duration="633000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -419,7 +427,31 @@
       <option name="project" value="LOCAL" />
       <updated>1747233746673</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="feat: remove legacy audio processing and UI features for codebase overhaul&#10;&#10;This commit removes outdated modules including AudioController, AudioVisualizer, and associated UI elements to prepare for a restructured audio processing system and cleaner project architecture. All related utility functions and configurations are also deleted.">
+      <option name="closed" value="true" />
+      <created>1749080331543</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1749080331543</updated>
+    </task>
+    <task id="LOCAL-00027" summary="chore: update package-lock.json with new dependencies and devDependencies&#10;&#10;Add several new dependencies, including TailwindCSS and PostCSS-related packages, alongside their accompanying optional and runtime modules. This update prepares the project for enhanced styling capabilities and improved dependency management.">
+      <option name="closed" value="true" />
+      <created>1749080859289</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1749080859289</updated>
+    </task>
+    <task id="LOCAL-00028" summary="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations.">
+      <option name="closed" value="true" />
+      <created>1749081032474</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1749081032474</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -451,9 +483,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Initial project" />
-    <MESSAGE value="Add IntelliJ IDEA project configuration files&#10;&#10;This commit introduces IntelliJ IDEA's `.idea` directory with project-specific configuration files. These files define settings for VCS, workspace, modules, and project structure, enabling consistent development setups across environments." />
-    <MESSAGE value="Add generated Cargo.lock file to track dependencies&#10;&#10;This commit includes the addition of the `Cargo.lock` file, which is automatically generated by Cargo. It helps ensure consistent dependency versions across different environments and is critical for reproducible builds. The file should not be manually edited." />
     <MESSAGE value="Update IntelliJ config for new Tauri dev setup&#10;&#10;This commit adds the `npm.tauri:dev` run configuration and updates related IntelliJ settings. Adjustments include changes to the workspace, RunManager, and shared indexes, ensuring seamless development for the Tauri project." />
     <MESSAGE value="Add support for microphone recording using Tauri plugin&#10;&#10;Integrated the `tauri-plugin-mic-recorder` to enable microphone recording capabilities. Updated dependencies in `Cargo.toml` and `package-lock.json`, adjusted the application logic, and registered the plugin in the Tauri app." />
     <MESSAGE value="docs: update README formatting and inferred feature details" />
@@ -476,7 +505,10 @@
     <MESSAGE value="refactor: remove permission wrapper from Permission.ts" />
     <MESSAGE value="refactor: implement singleton pattern for AudioVisualizer and AudioController" />
     <MESSAGE value="chore: remove unused add dependency and update IDE workspace configs" />
-    <option name="LAST_COMMIT_MESSAGE" value="chore: remove unused add dependency and update IDE workspace configs" />
+    <MESSAGE value="feat: remove legacy audio processing and UI features for codebase overhaul&#10;&#10;This commit removes outdated modules including AudioController, AudioVisualizer, and associated UI elements to prepare for a restructured audio processing system and cleaner project architecture. All related utility functions and configurations are also deleted." />
+    <MESSAGE value="chore: update package-lock.json with new dependencies and devDependencies&#10;&#10;Add several new dependencies, including TailwindCSS and PostCSS-related packages, alongside their accompanying optional and runtime modules. This update prepares the project for enhanced styling capabilities and improved dependency management." />
+    <MESSAGE value="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: remove HalMicVisualizer and add ESLint and TypeScript configurations&#10;&#10;Remove `HalMicVisualizer` component and its associated logic since it's no longer needed. Introduce ESLint with `next/core-web-vitals` and `next/typescript` for code quality and consistency. Add a TypeScript declaration file to support Next.js configurations." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
