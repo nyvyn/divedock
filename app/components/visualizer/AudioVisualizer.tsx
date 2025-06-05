@@ -3,16 +3,16 @@
 import clsx from "clsx";
 import React from "react";
 
-// Dummy VAD state for demonstration. Replace with your actual VAD hook or state.
-const useVad = () => ({
-    loading: false,
-    errored: false,
-    userSpeaking: false,
-});
 
-export default function AudioVisualizer() {
-    const vad = useVad();
+interface AudioVisualizerProps {
+    vad: {
+        loading: boolean;
+        errored: boolean;
+        userSpeaking: boolean;
+    };
+}
 
+export default function AudioVisualizer({ vad }: AudioVisualizerProps) {
     return (
         <div
             className={clsx(
