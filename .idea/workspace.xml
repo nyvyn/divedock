@@ -25,11 +25,16 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="chore: remove WebWorker lib from tsconfig.json for streamlined target environments">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/hooks/usePlayer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/hooks/usePlayer.ts" afterDir="false" />
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting.">
+      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort-wasm-simd-threaded.jsep.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort-wasm-simd-threaded.jsep.wasm" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort-wasm-simd-threaded.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort-wasm-simd-threaded.wasm" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort.wasm.bundle.min.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort.wasm.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort.wasm.min.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort.wasm.mjs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/hooks/useTranscriber.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/hooks/useTranscriber.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next.conf.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.conf.mjs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +103,7 @@
     "js.debugger.nextJs.config.created.client": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/nyvyn/Development/divedock/app/models",
+    "last_opened_file_path": "/Users/nyvyn/Development/divedock/public/ort-wasm",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -123,6 +128,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/ort-wasm" />
       <recent name="$PROJECT_DIR$/app/models" />
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -238,7 +244,7 @@
       <workItem from="1747220521958" duration="1697000" />
       <workItem from="1747225379073" duration="2349000" />
       <workItem from="1749080722900" duration="633000" />
-      <workItem from="1749125709960" duration="18313000" />
+      <workItem from="1749125709960" duration="18689000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -528,7 +534,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749152412584</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting.">
+      <option name="closed" value="true" />
+      <created>1749152974059</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1749152974059</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -563,7 +577,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="feat: standardize canvas methods and add macOS microphone permissions&#10;&#10;- Updated canvas-related methods with standardized English documentation.&#10;- Added macOS microphone permissions using tauri-plugin-macos-permissions.&#10;- Integrated microphone permission check into audio processing logic.&#10;- Updated dependencies and configurations for microphone permissions support." />
     <MESSAGE value="feat: refactor audio processing and introduce modular architecture&#10;&#10;- Replaced audio.ts with audioController.ts and audioVisualizer.ts for modularity.&#10;- Improved class-based structure for audio control and visualization.&#10;- Removed redundant code and standardized canvas handling methods.&#10;- Integrated microphone" />
     <MESSAGE value="feat: refactor audio processing and introduce modular architecture&#10;&#10;- Replaced audio.ts with audioController.ts and audioVisualizer.ts for modularity.&#10;- Improved class-based structure for audio control and visualization.&#10;- Removed redundant code and standardized canvas handling methods.&#10;- Integrated microphone permission checks and streamlined initialization process." />
     <MESSAGE value="feat: remove audio controller and improve modular structure&#10;&#10;- Deleted audioController and reorganized code for better modularity.&#10;- Separated audio visualization into AudioCanvas in the ui directory.&#10;- Moved speech synthesis and transcription logic to services for clarity and reuse.&#10;- Updated index.html and imports to align with the new structure." />
@@ -588,7 +601,8 @@
     <MESSAGE value="refactor: simplify Tauri configuration and update file system permissions&#10;&#10;Removed redundant bundle resource configuration in `tauri.conf.json`. Unified file system capabilities in `default.json` to use &quot;fs:default&quot; for streamlined management." />
     <MESSAGE value="refactor: simplify Tauri config and permissions handling&#10;&#10;Removed redundant file system permissions and resource bundling from Tauri configuration. Consolidated capabilities to use default settings for streamlined" />
     <MESSAGE value="chore: remove WebWorker lib from tsconfig.json for streamlined target environments" />
-    <option name="LAST_COMMIT_MESSAGE" value="chore: remove WebWorker lib from tsconfig.json for streamlined target environments" />
+    <MESSAGE value="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
