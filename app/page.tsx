@@ -13,7 +13,7 @@ export default function Home() {
 
     return (
         <div
-            style={{ background: "white", minHeight: "100vh", width: "100vw" }}
+            style={{ background: "black", minHeight: "100vh", width: "100vw" }}
             className="flex items-center justify-center"
         >
             <AudioVisualizer errored={vad.errored} loading={vad.loading} speaking={vad.userSpeaking}/>

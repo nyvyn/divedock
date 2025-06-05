@@ -13,7 +13,7 @@ export default function AudioVisualizer({ errored, loading, speaking }: AudioVis
     return (
         <div
             className={clsx(
-                "size-36 blur-3xl rounded-full bg-gradient-to-b from-red-200 to-red-400 dark:from-red-600 dark:to-red-800 -z-50 transition ease-in-out aspect-square",
+                "size-36 rounded-full bg-gradient-to-b from-red-400 to-red-700 transition ease-in-out aspect-square",
                 {
                     "opacity-10": loading || errored,
                     "opacity-30": !loading && !errored && !speaking,
