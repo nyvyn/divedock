@@ -25,16 +25,11 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting.">
-      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort-wasm-simd-threaded.jsep.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort-wasm-simd-threaded.jsep.wasm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort-wasm-simd-threaded.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort-wasm-simd-threaded.wasm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort.wasm.bundle.min.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort.wasm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort.wasm.min.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/ort-wasm/ort.wasm.mjs" afterDir="false" />
+    <list default="true" id="68ce4c3e-c809-4c2e-bb39-1d80e6ffbaa8" name="Changes" comment="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/components/visualizer/AudioVisualizer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/visualizer/AudioVisualizer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/hooks/useTranscriber.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/hooks/useTranscriber.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,7 +239,7 @@
       <workItem from="1747220521958" duration="1697000" />
       <workItem from="1747225379073" duration="2349000" />
       <workItem from="1749080722900" duration="633000" />
-      <workItem from="1749125709960" duration="18689000" />
+      <workItem from="1749125709960" duration="21542000" />
     </task>
     <task id="LOCAL-00001" summary="Initial project">
       <option name="closed" value="true" />
@@ -542,7 +537,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749152974059</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transformers` in dependencies to align with updated">
+      <option name="closed" value="true" />
+      <created>1749153453698</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1749153453698</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -577,8 +580,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="feat: refactor audio processing and introduce modular architecture&#10;&#10;- Replaced audio.ts with audioController.ts and audioVisualizer.ts for modularity.&#10;- Improved class-based structure for audio control and visualization.&#10;- Removed redundant code and standardized canvas handling methods.&#10;- Integrated microphone" />
-    <MESSAGE value="feat: refactor audio processing and introduce modular architecture&#10;&#10;- Replaced audio.ts with audioController.ts and audioVisualizer.ts for modularity.&#10;- Improved class-based structure for audio control and visualization.&#10;- Removed redundant code and standardized canvas handling methods.&#10;- Integrated microphone permission checks and streamlined initialization process." />
     <MESSAGE value="feat: remove audio controller and improve modular structure&#10;&#10;- Deleted audioController and reorganized code for better modularity.&#10;- Separated audio visualization into AudioCanvas in the ui directory.&#10;- Moved speech synthesis and transcription logic to services for clarity and reuse.&#10;- Updated index.html and imports to align with the new structure." />
     <MESSAGE value="feat: refactor for modular architecture and rename components&#10;&#10;- Moved SpeechSynth and Transcriber to utils for better reusability&#10;- Renamed AudioCanvas to AudioVisualizer for clarity&#10;- Relocated and renamed AudioController to align with ui structure&#10;- Adjusted imports and file paths to match the updated organization" />
     <MESSAGE value="fix: rename stopProcessingCleanup to stopProcessing in AudioController&#10;&#10;- Standardized method naming for clarity and consistency.&#10;- Removed redundant code comment in synthesize." />
@@ -602,7 +603,9 @@
     <MESSAGE value="refactor: simplify Tauri config and permissions handling&#10;&#10;Removed redundant file system permissions and resource bundling from Tauri configuration. Consolidated capabilities to use default settings for streamlined" />
     <MESSAGE value="chore: remove WebWorker lib from tsconfig.json for streamlined target environments" />
     <MESSAGE value="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: improve pipeline handling in useTranscriber&#10;&#10;Replaced `pipeline` with a more descriptive `whisperPipeline` variable. Updated pipeline logic to streamline loading checks and error handling. Added `&quot;use client&quot;` directive to enhance client-side targeting." />
+    <MESSAGE value="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform" />
+    <MESSAGE value="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform requirements." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: remove useTranscriber hook and update dependencies&#10;&#10;Removed the `useTranscriber` hook and associated logic, including redundant model loading code and state management. Replaced `@xenova/transformers` with `@huggingface/transform requirements." />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
