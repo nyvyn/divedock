@@ -13,28 +13,6 @@ use kalosm::sound::rodio::Source;
 static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> =
     Lazy::new(|| Mutex::new(None));
 
-/// Collects consecutive VAD-positive chunks from the default microphone
-/// and prints their durations until the stream ends or the caller drops the task.
-pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
-    println!("voice_activity_detection: starting VAD stream");
-    let mic = MicInput::default();
-    let stream = mic.stream();
-    let vad_stream = stream.voice_activity_stream();
-    let mut audio_chunks = vad_stream.rechunk_voice_activity();
-
-    while let Some(input) = StreamExt::next(&mut audio_chunks).await
-    {
-        app.emit("speech-detected", input.total_duration()).ok();
-        println!(
-            "voice_activity_detection: speaking event emitted | duration = {:?}",
-            input.total_duration()
-        );
-        transcribe_audio(input).await?;
-    }
-
-    Ok(())
-}
-
 /// Spawn VAD loop (no-op if one already runs)
 pub fn start_vad(app: AppHandle) -> Result<()> {
     let mut guard = VAD_TASK
@@ -65,12 +43,34 @@ pub fn stop_vad() -> Result<()> {
     Ok(())
 }
 
-/// Runs Whisper on the microphone and streams the transcription to stdout.
+/// Runs Whisper on the provided audio and streams the transcription to stdout.
 pub async fn transcribe_audio(input: SamplesBuffer<f32>) -> Result<()> {
     println!("transcribe_realtime: starting");
 
     let mut tx = input.transcribe(Whisper::new().await?);
     tx.to_std_out().await?;
     println!("transcribe_realtime: finished");
+    Ok(())
+}
+
+/// Collects consecutive VAD-positive chunks from the default microphone
+/// and prints their durations until the stream ends or the caller drops the task.
+pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
+    println!("voice_activity_detection: starting VAD stream");
+    let mic = MicInput::default();
+    let stream = mic.stream();
+    let vad_stream = stream.voice_activity_stream();
+    let mut audio_chunks = vad_stream.rechunk_voice_activity();
+
+    while let Some(input) = StreamExt::next(&mut audio_chunks).await
+    {
+        app.emit("speech-detected", input.total_duration()).ok();
+        println!(
+            "voice_activity_detection: speaking event emitted | duration = {:?}",
+            input.total_duration()
+        );
+        transcribe_audio(input).await?;
+    }
+
     Ok(())
 }
