@@ -3,7 +3,7 @@
 use kalosm::sound::*;
 use tokio_stream::StreamExt;
 use anyhow::Result;
-use tauri::{AppHandle};
+use tauri::{AppHandle, Emitter};
 use tauri::async_runtime::{self, JoinHandle};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
@@ -13,7 +13,7 @@ static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> =
 
 /// Collects consecutive VAD-positive chunks from the default microphone
 /// and prints their durations until the stream ends or the caller drops the task.
-pub async fn vad_until_silence(app: AppHandle) -> Result<()> {
+pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
     println!("vad_until_silence: starting VAD stream");
     let mic = MicInput::default();
     let stream = mic.stream();
@@ -47,7 +47,7 @@ pub fn start_vad(app: AppHandle) -> Result<()> {
         return Ok(());
     }
     let handle = async_runtime::spawn(async move {
-        if let Err(e) = vad_until_silence(app).await {
+        if let Err(e) = voice_activity_detection(app).await {
             println!("VAD loop error: {e}");
         }
     });
