@@ -53,17 +53,10 @@ pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Resu
     app.emit("transcription-started", ()).ok();
 
     // Stream each transcription line and emit it.
-    while let Some(res) = StreamExt::next(&mut tx).await {
-        // Depending on kalosm’s API the item might be `String` or `Result<String, _>`
-        let text = match res {
-            Ok(t) => t,
-            Err(e) => {
-                println!("transcription error: {e}");
-                continue;
-            }
-        };
+    while let Some(segment) = StreamExt::next(&mut tx).await {
+        let text = segment.text();
 
-        app.emit("transcription-line", text.clone()).ok();
+        app.emit("transcription-line", text).ok();
         println!("transcription-line: {text}");
     }
 

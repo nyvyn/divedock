@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 export function useDetection() {
     const [errored, setErrored] = useState<boolean | string>(false);
     const [listening, setListening] = useState(false);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         // helper to save un-listen functions
@@ -23,8 +22,6 @@ export function useDetection() {
                 console.log("speaking");
             }),
         );
-
-        setLoading(false);
 
         return () => {
             console.log("un-listening");
@@ -53,5 +50,5 @@ export function useDetection() {
 
     const toggleListening = () => listening ? stopListening() : startListening();
 
-    return {errored, listening, loading, toggleListening};
+    return {errored, listening, toggleListening};
 }
