@@ -3,10 +3,11 @@
 use kalosm::sound::*;
 use tokio_stream::StreamExt;
 use anyhow::{Result, anyhow};
-use tauri::AppHandle;
+use tauri::{AppHandle, Emitter};
 use tauri::async_runtime::{self, JoinHandle};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
+use kalosm::sound::rodio::Source;
 
 static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> =
     Lazy::new(|| Mutex::new(None));
@@ -14,22 +15,23 @@ static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> =
 /// Collects consecutive VAD-positive chunks from the default microphone
 /// and prints their durations until the stream ends or the caller drops the task.
 pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
-    println!("vad_until_silence: starting VAD stream");
+    println!("voice_activity_detection: starting VAD stream");
     let mic = MicInput::default();
     let stream = mic.stream();
-    let mut vad_stream = stream.voice_activity_stream();
+    let vad_stream = stream.voice_activity_stream();
+    let mut audio_chunks = vad_stream.rechunk_voice_activity();
 
     // detection has begun
     app.emit("detection-started", ()).ok();
-    println!("vad_until_silence: detection-started event emitted");
+    println!("voice_activity_detection: detection-started event emitted");
 
-    while let Some(input) = StreamExt::next(&mut vad_stream).await
+    while let Some(input) = StreamExt::next(&mut audio_chunks).await
     {
         // user is speaking
-        app.emit("detection-speaking", input.probability).ok();
+        app.emit("detection-speaking", input.total_duration()).ok();
         println!(
-            "vad_until_silence: speaking event emitted | probability = {}",
-            input.probability
+            "voice_activity_detection: speaking event emitted | duration = {:?}",
+            input.total_duration()
         );
     }
 
