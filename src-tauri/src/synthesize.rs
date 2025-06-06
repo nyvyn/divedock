@@ -3,19 +3,18 @@ use candle_core::{DType, Device, Tensor};
 use candle_nn::VarBuilder;
 use candle_transformers::generation::LogitsProcessor;
 use candle_transformers::models::parler_tts::{Config, Model};
-use tokio::task;
 use hf_hub::{api::sync::Api, Repo, RepoType};
 use rodio::{buffer::SamplesBuffer, OutputStream, Sink};
 use serde_json;
 use std::{fs::File, io::BufReader};
 use tauri::{AppHandle, Emitter};
 use tokenizers::Tokenizer;
+use tokio::task;
 
 const DEFAULT_DESCRIPTION: &str = "A female speaker delivers a slightly expressive and animated speech with a moderate speed and pitch. The recording is of very high quality, with the speaker's voice sounding clear and very close up.";
 const MAX_STEPS: usize = 512;
 
-#[tauri::command]
-async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
+pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
     app.emit("synthesis-started", ())
         .map_err(|e| e.to_string())?;
 
