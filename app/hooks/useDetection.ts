@@ -17,11 +17,11 @@ export function useDetection() {
       setLoading(false);
     });
 
-    // helper to save unlisten functions
-    const unlisteners: UnlistenFn[] = [];
+    // helper to save un-listen functions
+    const unlistenFns: UnlistenFn[] = [];
     // make sure we don’t return the promise → no lint warning
     const add = (p: Promise<UnlistenFn>) => {
-      p.then((f) => unlisteners.push(f)).catch(console.error);
+      p.then((f) => unlistenFns.push(f)).catch(console.error);
     };
 
     add(listen("detection-started", () => {
@@ -38,7 +38,7 @@ export function useDetection() {
     }));
 
     return () => {
-      unlisteners.forEach(fn => fn());
+      unlistenFns.forEach(fn => fn());
     };
   }, []);
 
