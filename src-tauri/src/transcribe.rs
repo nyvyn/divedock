@@ -8,7 +8,7 @@ use tauri::async_runtime::{self, JoinHandle};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 use kalosm::sound::rodio::buffer::SamplesBuffer;
-use kalosm::sound::rodio::Source;
+use kalosm::sound::rodio::{Source};
 
 static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> =
     Lazy::new(|| Mutex::new(None));

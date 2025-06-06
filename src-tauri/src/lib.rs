@@ -1,5 +1,7 @@
-mod sound;
-use sound::*;
+mod transcribe;
+mod synthesize;
+
+use transcribe::*;
 
 use tauri::{AppHandle};
 
