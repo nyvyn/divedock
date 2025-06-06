@@ -1,5 +1,5 @@
 use anyhow::Result;
-use candle_core::{DType, Device, Tensor};
+use candle_core::{DType, Device, Tensor, IndexOp};
 use candle_nn::VarBuilder;
 use candle_transformers::generation::LogitsProcessor;
 use candle_transformers::models::parler_tts::{Config, Model};
@@ -93,6 +93,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
             .audio_encoder
             .decode_codes(&codes)
             .map_err(|e| e.to_string())?;
+        let pcm_tensor = pcm_tensor.i((0, 0)).map_err(|e| e.to_string())?;
         let pcm = pcm_tensor.to_vec1::<f32>().map_err(|e| e.to_string())?;
         Ok(pcm)
     })
