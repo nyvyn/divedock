@@ -4,12 +4,14 @@ import { MicOffIcon } from "./components/icons/MicOffIcon.tsx";
 import { MicOnIcon } from "./components/icons/MicOnIcon.tsx";
 import AudioVisualizer from "./components/visualizer/AudioVisualizer";
 import { useDetection } from "./hooks/useDetection";
+import { useSynthesis } from "./hooks/useSynthesis.ts";
 import { useTranscription } from "./hooks/useTranscription.ts";
 
 export default function Home() {
 
     const vad = useDetection();
     const scribe = useTranscription();
+    const voice = useSynthesis();
 
     return (
         <div
@@ -18,7 +20,7 @@ export default function Home() {
             <AudioVisualizer
                 listening={vad.listening}
                 thinking={scribe.transcribing}
-                speaking={false}
+                speaking={voice.speaking}
             />
 
             {/* toggle-listening button */}

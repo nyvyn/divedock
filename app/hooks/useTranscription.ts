@@ -12,7 +12,6 @@ export function useTranscription() {
         // helper to save un-listen functions
         const unlistenFns: UnlistenFn[] = [];
         const add = (p: Promise<UnlistenFn>) => {
-            console.log("adding listener");
             p.then((f) => unlistenFns.push(f)).catch(console.error);
         };
 
