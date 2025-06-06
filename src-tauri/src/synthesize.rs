@@ -47,7 +47,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
             serde_json::from_reader(BufReader::new(config_file)).map_err(|e| e.to_string())?;
 
         // 4. Build device & model
-        let device = Device::Cpu;
+        let device = Device::new_metal(0).map_err(|e| e.to_string())?;
         let vb = unsafe {
             VarBuilder::from_mmaped_safetensors(&[model_path.clone()], DType::F32, &device)
                 .map_err(|e| e.to_string())?
