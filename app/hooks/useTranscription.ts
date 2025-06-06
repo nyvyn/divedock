@@ -3,18 +3,18 @@
 
 import { useEffect, useState } from "react";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
-import { invoke } from "@tauri-apps/api/core";
 
 export function useTranscription() {
   const [transcript, setTranscript] = useState("");
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const [errored, setErrored] = useState<boolean | string>(false);
 
   useEffect(() => {
-    // Array to store every `UnlistenFn` so we can clean them up later
-    const unlistenFns: UnlistenFn[] = [];
-    const add = (p: Promise<UnlistenFn>) =>
-      p.then((f) => unlistenFns.push(f)).catch(console.error);
+      // helper to save un-listen functions
+      const unlistenFns: UnlistenFn[] = [];
+      const add = (p: Promise<UnlistenFn>) => {
+          console.log("adding listener");
+          p.then((f) => unlistenFns.push(f)).catch(console.error);
+      };
 
     /* ---- listeners ---- */
     add(
@@ -42,12 +42,5 @@ export function useTranscription() {
     };
   }, []);
 
-  // Backend commands
-  const startTranscription = () =>
-    invoke("mic_transcribe").catch((err) => {
-      console.error(err);
-      setErrored(err);
-    });
-
-  return { transcript, isTranscribing, startTranscription, errored };
+  return { isTranscribing, transcript };
 }
