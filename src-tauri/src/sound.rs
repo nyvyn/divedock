@@ -17,8 +17,7 @@ pub async fn vad_until_silence(app: AppHandle) -> Result<()> {
     app.emit("detection-started", ()).ok();
     println!("vad_until_silence: detection-started event emitted");
 
-    while let Some(input) =
-        StreamExt::next(&mut vad_stream).await
+    while let Some(input) = StreamExt::next(&mut vad_stream).await
     {
         // user is speaking
         app.emit("detection-speaking", input.probability).ok();
