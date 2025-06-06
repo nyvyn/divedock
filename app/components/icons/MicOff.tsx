@@ -1,4 +1,4 @@
-/* Icono de micrófono silenciado */
+ // Muted microphone icon
 export function MicOff(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg

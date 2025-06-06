@@ -1,4 +1,4 @@
-/* Icono de micrófono activo */
+ // Active microphone icon
 export function MicOn(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
