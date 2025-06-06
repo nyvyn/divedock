@@ -1,4 +1,4 @@
-/// Reusable helpers for microphone VAD and transcription.
+/// Reusable helpers for microphone activity detection and transcription.
 
 use kalosm::sound::*;
 use tokio_stream::StreamExt;

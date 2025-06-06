@@ -1402,6 +1402,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "kalosm",
+ "once_cell",
  "tauri",
  "tauri-build",
  "tauri-plugin-fs",
