@@ -12,6 +12,7 @@ use tauri::{AppHandle, Emitter};
 use tokenizers::Tokenizer;
 
 const DEFAULT_DESCRIPTION: &str = "A female speaker delivers a slightly expressive and animated speech with a moderate speed and pitch. The recording is of very high quality, with the speaker's voice sounding clear and very close up.";
+const MAX_STEPS: usize = 512;
 
 #[tauri::command]
 async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
@@ -69,7 +70,7 @@ async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         // 6. Generate codes
         let lp = LogitsProcessor::new(0, None, None);
         let codes = model
-            .generate(&prompt_tensor, &desc_tensor, lp, config.max_steps)
+            .generate(&prompt_tensor, &desc_tensor, lp, MAX_STEPS)
             .map_err(|e| e.to_string())?
             .to_dtype(DType::I64)
             .map_err(|e| e.to_string())?;
