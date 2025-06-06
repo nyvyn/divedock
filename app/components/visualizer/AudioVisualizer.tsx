@@ -6,10 +6,11 @@ import React from "react";
 interface AudioVisualizerProps {
     errored: boolean | string;
     listening: boolean;
-    transcribing: boolean;
+    thinking: boolean;
+    speaking: boolean;
 }
 
-export default function AudioVisualizer({ listening, transcribing }: AudioVisualizerProps) {
+export default function AudioVisualizer({ listening, thinking }: AudioVisualizerProps) {
     return (
         <div
             className={clsx(
@@ -18,8 +19,8 @@ export default function AudioVisualizer({ listening, transcribing }: AudioVisual
                 "transition ease-in-out duration-1000 will-change-transform",
                 {
                     "bg-none bg-neutral-700": !listening,
-                    "bg-none bg-blue-500 ": transcribing,
-                    "animate-pulse": listening && !transcribing,
+                    "bg-none bg-blue-500 ": thinking,
+                    "animate-pulse": listening && !thinking,
                 }
             )}
         />

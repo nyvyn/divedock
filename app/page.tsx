@@ -18,7 +18,8 @@ export default function Home() {
             <AudioVisualizer
                 errored={vad.errored}
                 listening={vad.listening}
-                transcribing={scribe.transcribing}
+                thinking={scribe.transcribing}
+                speaking={false}
             />
 
             {/* toggle-listening button */}
