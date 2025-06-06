@@ -74,6 +74,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
             .map_err(|e| e.to_string())?;
 
         // 6. Generate codes
+        println!("synthesize: [blocking] starting generation with max_steps = {}", MAX_STEPS);
         let lp = LogitsProcessor::new(0, None, None);
         let codes = model
             .generate(&prompt_tensor, &desc_tensor, lp, MAX_STEPS)
