@@ -2,6 +2,7 @@ mod transcribe;
 mod synthesize;
 
 use transcribe::*;
+use synthesize::*;
 
 use tauri::{AppHandle};
 
@@ -26,6 +27,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             start_listening,
             stop_listening,
+            synthesize
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
