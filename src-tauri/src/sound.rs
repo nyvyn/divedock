@@ -2,8 +2,8 @@
 
 use kalosm::sound::*;
 use tokio_stream::StreamExt;
-use anyhow::Result;
-use tauri::{AppHandle, Emitter};
+use anyhow::{Result, anyhow};
+use tauri::AppHandle;
 use tauri::async_runtime::{self, JoinHandle};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
@@ -41,7 +41,9 @@ pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
 
 /// Spawn VAD loop (no-op if one already runs)
 pub fn start_vad(app: AppHandle) -> Result<()> {
-    let mut guard = VAD_TASK.lock()?;
+    let mut guard = VAD_TASK
+        .lock()
+        .map_err(|e| anyhow!(e.to_string()))?;
     if guard.is_some() {
         println!("start_vad: already running");
         return Ok(());
@@ -57,7 +59,9 @@ pub fn start_vad(app: AppHandle) -> Result<()> {
 
 /// Abort the running VAD task (if any)
 pub fn stop_vad() -> Result<()> {
-    let mut guard = VAD_TASK.lock()?;
+    let mut guard = VAD_TASK
+        .lock()
+        .map_err(|e| anyhow!(e.to_string()))?;
     if let Some(handle) = guard.take() {
         handle.abort();
         println!("stop_vad: task aborted");
