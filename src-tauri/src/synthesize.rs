@@ -15,11 +15,13 @@ const DEFAULT_DESCRIPTION: &str = "A female speaker delivers a slightly expressi
 const MAX_STEPS: usize = 512;
 
 pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
+    println!("synthesize: begin synthesis for prompt: {}", prompt);
     app.emit("synthesis-started", ())
         .map_err(|e| e.to_string())?;
 
     // Run the Parler-TTS pipeline in a blocking thread
     let pcm: Vec<f32> = task::spawn_blocking(move || -> Result<_, String> {
+        println!("synthesize: [blocking] prompt = {}", prompt);
         // 1. HF-hub API
         let api = Api::new().map_err(|e| e.to_string())?;
         let model_id = "parler-tts/parler-tts-mini-v1";
@@ -33,6 +35,10 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         let model_path = repo.get("model.safetensors").map_err(|e| e.to_string())?;
         let config_path = repo.get("config.json").map_err(|e| e.to_string())?;
         let tokenizer_path = repo.get("tokenizer.json").map_err(|e| e.to_string())?;
+        println!(
+            "synthesize: [blocking] downloaded files model={:?}, config={:?}, tokenizer={:?}",
+            model_path, config_path, tokenizer_path
+        );
 
         // 3. Load tokenizer & config
         let tokenizer = Tokenizer::from_file(&tokenizer_path).map_err(|e| e.to_string())?;
@@ -47,6 +53,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
                 .map_err(|e| e.to_string())?
         };
         let mut model = Model::new(&config, vb).map_err(|e| e.to_string())?;
+        println!("synthesize: [blocking] model initialized");
 
         // 5. Tokenize prompt & description
         let prompt_ids = tokenizer
@@ -74,6 +81,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
             .to_dtype(DType::I64)
             .map_err(|e| e.to_string())?;
 
+        println!("synthesize: [blocking] codes generated, decoding to PCM");
         // 7. Decode to PCM
         let pcm_tensor = model
             .audio_encoder
@@ -85,12 +93,14 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
     .await
     .map_err(|e| e.to_string())??;
 
+    println!("synthesize: playback starting, samples = {}", pcm.len());
     // Play back via rodio
     let (_stream, handle) = OutputStream::try_default().map_err(|e| e.to_string())?;
     let sink = Sink::try_new(&handle).map_err(|e| e.to_string())?;
     let source = SamplesBuffer::new(1, 24000, pcm);
     sink.append(source);
     sink.sleep_until_end();
+    println!("synthesize: playback finished");
 
     app.emit("synthesis-stopped", ())
         .map_err(|e| e.to_string())?;
