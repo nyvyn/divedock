@@ -49,7 +49,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         // 4. Build device & model
         let device = Device::new_metal(0).map_err(|e| e.to_string())?;
         let vb = unsafe {
-            VarBuilder::from_mmaped_safetensors(&[model_path.clone()], DType::F16, &device)
+            VarBuilder::from_mmaped_safetensors(&[model_path.clone()], DType::F32, &device)
                 .map_err(|e| e.to_string())?
         };
         let mut model = Model::new(&config, vb).map_err(|e| e.to_string())?;
