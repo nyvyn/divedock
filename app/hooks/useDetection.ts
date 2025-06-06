@@ -18,6 +18,28 @@ export function useDetection() {
             p.then((f) => unlistenFns.push(f)).catch(console.error);
         };
 
+        /* ---- listeners ---- */
+        add(
+          listen("detection-started", () => {
+            setLoading(false);
+            setListening(true);
+            setSpeaking(false);
+          }),
+        );
+
+        add(
+          listen("detection-speaking", () => {
+            setSpeaking(true);
+          }),
+        );
+
+        add(
+          listen("detection-stopped", () => {
+            setListening(false);
+            setSpeaking(false);
+          }),
+        );
+
         return () => {
             console.log("un-listening");
             unlistenFns.forEach(fn => fn());
@@ -43,20 +65,6 @@ export function useDetection() {
     };
 
     const toggleListening = () => listening ? stopListening() : startListening();
-
-    // event callbacks
-    listen("detection-started", () => {
-        setLoading(false);
-        setListening(true);
-        setSpeaking(false);
-    }).then();
-
-    listen("detection-speaking", () => setSpeaking(true)).then();
-
-    listen("detection-stopped", () => {
-        setListening(false);
-        setSpeaking(false);
-    }).then();
 
     return {loading, errored, speaking, listening, toggleListening};
 }
