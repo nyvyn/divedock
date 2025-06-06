@@ -3,7 +3,7 @@ use candle_core::{DType, Device, Tensor};
 use candle_nn::VarBuilder;
 use candle_transformers::generation::LogitsProcessor;
 use candle_transformers::models::parler_tts::{Config, Model};
-use hf_hub::api::tokio;
+use tokio::task;
 use hf_hub::{api::sync::Api, Repo, RepoType};
 use rodio::{buffer::SamplesBuffer, OutputStream, Sink};
 use serde_json;
@@ -19,7 +19,7 @@ async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
 
     // Run the Parler-TTS pipeline in a blocking thread
-    let pcm: Vec<f32> = tokio::task::spawn_blocking(move || -> Result<_, String> {
+    let pcm: Vec<f32> = task::spawn_blocking(move || -> Result<_, String> {
         // 1. HF-hub API
         let api = Api::new().map_err(|e| e.to_string())?;
         let model_id = "parler-tts/parler-tts-mini-v1";
