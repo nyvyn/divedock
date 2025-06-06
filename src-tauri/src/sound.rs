@@ -43,13 +43,28 @@ pub fn stop_vad() -> Result<()> {
     Ok(())
 }
 
-/// Runs Whisper on the provided audio and streams the transcription to stdout.
-pub async fn transcribe_audio(input: SamplesBuffer<f32>) -> Result<()> {
-    println!("transcribe_realtime: starting");
+//// Runs Whisper on the chunk and emits every recognised line.
+pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Result<()> {
+    println!("transcribe_audio: starting");
 
     let mut tx = input.transcribe(Whisper::new().await?);
-    tx.to_std_out().await?;
-    println!("transcribe_realtime: finished");
+
+    // Stream each transcription line and emit it.
+    while let Some(res) = tx.next().await {
+        // Depending on kalosm’s API the item might be `String` or `Result<String, _>`
+        let text = match res {
+            Ok(t) => t,
+            Err(e) => {
+                println!("transcription error: {e}");
+                continue;
+            }
+        };
+
+        app.emit("speech-transcribed", text.clone()).ok();
+        println!("speech-transcribed: {text}");
+    }
+
+    println!("transcribe_audio: finished");
     Ok(())
 }
 
@@ -69,7 +84,7 @@ pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
             "voice_activity_detection: speaking event emitted | duration = {:?}",
             input.total_duration()
         );
-        transcribe_audio(input).await?;
+        transcribe_audio(app.clone(), input).await?;
     }
 
     Ok(())
