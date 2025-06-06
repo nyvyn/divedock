@@ -49,6 +49,9 @@ pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Resu
 
     let mut tx = input.transcribe(Whisper::new().await?);
 
+    // notify frontend that a new transcription session has begun
+    app.emit("transcription-started", ()).ok();
+
     // Stream each transcription line and emit it.
     while let Some(res) = StreamExt::next(&mut tx).await {
         // Depending on kalosm’s API the item might be `String` or `Result<String, _>`
@@ -60,10 +63,12 @@ pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Resu
             }
         };
 
-        app.emit("speech-transcribed", text.clone()).ok();
-        println!("speech-transcribed: {text}");
+        app.emit("transcription-line", text.clone()).ok();
+        println!("transcription-line: {text}");
     }
 
+    // session finished
+    app.emit("transcription-stopped", ()).ok();
     println!("transcribe_audio: finished");
     Ok(())
 }
