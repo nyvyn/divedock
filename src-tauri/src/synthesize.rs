@@ -1,20 +1,22 @@
 use anyhow::Result;
-use hf_hub::{api::sync::Api, Repo, RepoType};
-use tokenizers::Tokenizer;
-use candle::{Device, DType, Tensor};
+use candle_core::{DType, Device, Tensor};
 use candle_nn::VarBuilder;
 use candle_transformers::generation::LogitsProcessor;
 use candle_transformers::models::parler_tts::{Config, Model};
+use hf_hub::api::tokio;
+use hf_hub::{api::sync::Api, Repo, RepoType};
 use rodio::{buffer::SamplesBuffer, OutputStream, Sink};
 use serde_json;
 use std::{fs::File, io::BufReader};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter};
+use tokenizers::Tokenizer;
 
 const DEFAULT_DESCRIPTION: &str = "A female speaker delivers a slightly expressive and animated speech with a moderate speed and pitch. The recording is of very high quality, with the speaker's voice sounding clear and very close up.";
 
 #[tauri::command]
 async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
-    app.emit_all("synthesis-started", ()).map_err(|e| e.to_string())?;
+    app.emit("synthesis-started", ())
+        .map_err(|e| e.to_string())?;
 
     // Run the Parler-TTS pipeline in a blocking thread
     let pcm: Vec<f32> = tokio::task::spawn_blocking(move || -> Result<_, String> {
@@ -35,7 +37,8 @@ async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         // 3. Load tokenizer & config
         let tokenizer = Tokenizer::from_file(&tokenizer_path).map_err(|e| e.to_string())?;
         let config_file = File::open(&config_path).map_err(|e| e.to_string())?;
-        let config: Config = serde_json::from_reader(BufReader::new(config_file)).map_err(|e| e.to_string())?;
+        let config: Config =
+            serde_json::from_reader(BufReader::new(config_file)).map_err(|e| e.to_string())?;
 
         // 4. Build device & model
         let device = Device::Cpu;
@@ -46,11 +49,16 @@ async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         let mut model = Model::new(&config, vb).map_err(|e| e.to_string())?;
 
         // 5. Tokenize prompt & description
-        let prompt_ids = tokenizer.encode(prompt, true).map_err(|e| e.to_string())?.get_ids().to_vec();
+        let prompt_ids = tokenizer
+            .encode(prompt, true)
+            .map_err(|e| e.to_string())?
+            .get_ids()
+            .to_vec();
         let prompt_tensor = Tensor::new(prompt_ids, &device)
             .and_then(|t| t.unsqueeze(0))
             .map_err(|e| e.to_string())?;
-        let desc_ids = tokenizer.encode(DEFAULT_DESCRIPTION, true)
+        let desc_ids = tokenizer
+            .encode(DEFAULT_DESCRIPTION, true)
             .map_err(|e| e.to_string())?
             .get_ids()
             .to_vec();
@@ -84,6 +92,7 @@ async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
     sink.append(source);
     sink.sleep_until_end();
 
-    app.emit_all("synthesis-stopped", ()).map_err(|e| e.to_string())?;
+    app.emit("synthesis-stopped", ())
+        .map_err(|e| e.to_string())?;
     Ok(())
 }
