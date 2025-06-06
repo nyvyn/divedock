@@ -19,7 +19,10 @@ export function useDetection() {
 
     // helper to save unlisten functions
     const unlisteners: UnlistenFn[] = [];
-    const add = (p: Promise<UnlistenFn>) => p.then(f => unlisteners.push(f));
+    // make sure we don’t return the promise → no lint warning
+    const add = (p: Promise<UnlistenFn>) => {
+      p.then((f) => unlisteners.push(f)).catch(console.error);
+    };
 
     add(listen("detection-started", () => {
       setLoading(false);
