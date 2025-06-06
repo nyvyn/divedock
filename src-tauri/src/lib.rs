@@ -5,12 +5,20 @@ use tauri::{AppHandle};
 
 #[tauri::command]
 async fn mic_detect(app: AppHandle) -> Result<(), String> {
-    vad_until_silence(app).await.map_err(|e| e.to_string())
+    println!("mic_detect command invoked");
+    vad_until_silence(app).await.map_err(|e| {
+        println!("mic_detect error: {e}");
+        e.to_string()
+    })
 }
 
 #[tauri::command]
 async fn mic_transcribe() -> Result<(), String> {
-    transcribe_realtime().await.map_err(|e| e.to_string())
+    println!("mic_transcribe command invoked");
+    transcribe_realtime().await.map_err(|e| {
+        println!("mic_transcribe error: {e}");
+        e.to_string()
+    })
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
