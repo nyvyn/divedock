@@ -8,6 +8,9 @@ use tauri::async_runtime::{self, JoinHandle};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
+static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> =
+    Lazy::new(|| Mutex::new(None));
+
 /// Collects consecutive VAD-positive chunks from the default microphone
 /// and prints their durations until the stream ends or the caller drops the task.
 pub async fn vad_until_silence(app: AppHandle) -> Result<()> {
