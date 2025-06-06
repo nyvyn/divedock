@@ -3,7 +3,10 @@
 use kalosm::sound::*;
 use tokio_stream::StreamExt;
 use anyhow::Result;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle};
+use tauri::async_runtime::{self, JoinHandle};
+use once_cell::sync::Lazy;
+use std::sync::Mutex;
 
 /// Collects consecutive VAD-positive chunks from the default microphone
 /// and prints their durations until the stream ends or the caller drops the task.
@@ -30,6 +33,32 @@ pub async fn vad_until_silence(app: AppHandle) -> Result<()> {
     // stream finished / silence
     app.emit("detection-stopped", ()).ok();
     println!("vad_until_silence: detection-stopped event emitted");
+    Ok(())
+}
+
+/// Spawn VAD loop (no-op if one already runs)
+pub fn start_vad(app: AppHandle) -> Result<()> {
+    let mut guard = VAD_TASK.lock().unwrap();
+    if guard.is_some() {
+        println!("start_vad: already running");
+        return Ok(());
+    }
+    let handle = async_runtime::spawn(async move {
+        if let Err(e) = vad_until_silence(app).await {
+            println!("VAD loop error: {e}");
+        }
+    });
+    *guard = Some(handle);
+    Ok(())
+}
+
+/// Abort the running VAD task (if any)
+pub fn stop_vad() -> Result<()> {
+    let mut guard = VAD_TASK.lock().unwrap();
+    if let Some(handle) = guard.take() {
+        handle.abort();
+        println!("stop_vad: task aborted");
+    }
     Ok(())
 }
 

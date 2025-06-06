@@ -4,12 +4,15 @@ use sound::*;
 use tauri::{AppHandle};
 
 #[tauri::command]
-async fn mic_detect(app: AppHandle) -> Result<(), String> {
-    println!("mic_detect command invoked");
-    vad_until_silence(app).await.map_err(|e| {
-        println!("mic_detect error: {e}");
-        e.to_string()
-    })
+async fn start_listening(app: AppHandle) -> Result<(), String> {
+    println!("start_listening command invoked");
+    start_vad(app).map_err(|e| { println!("start_listening error: {e}"); e.to_string() })
+}
+
+#[tauri::command]
+async fn stop_listening() -> Result<(), String> {
+    println!("stop_listening command invoked");
+    stop_vad().map_err(|e| { println!("stop_listening error: {e}"); e.to_string() })
 }
 
 #[tauri::command]
@@ -28,7 +31,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_macos_permissions::init())
         .invoke_handler(tauri::generate_handler![
-            mic_detect,
+            start_listening,
+            stop_listening,
             mic_transcribe
         ])
         .run(tauri::generate_context!())
