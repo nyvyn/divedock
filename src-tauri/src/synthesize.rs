@@ -84,9 +84,14 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
 
         println!("synthesize: [blocking] codes generated, decoding to PCM");
         // 7. Decode to PCM
+        let codes = codes
+            .unsqueeze(0)
+            .map_err(|e| e.to_string())?
+            .to_device(&device)
+            .map_err(|e| e.to_string())?;
         let pcm_tensor = model
             .audio_encoder
-            .decode_codes(&codes.unsqueeze(0).map_err(|e| e.to_string())?)
+            .decode_codes(&codes)
             .map_err(|e| e.to_string())?;
         let pcm = pcm_tensor.to_vec1::<f32>().map_err(|e| e.to_string())?;
         Ok(pcm)
