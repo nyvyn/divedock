@@ -20,21 +20,24 @@ export function useDetection() {
 
         /* ---- listeners ---- */
         add(
-          listen("detection-started", () => {
-            setSpeaking(true);
-          }),
+            listen("detection-started", () => {
+                console.log("listening");
+                setSpeaking(true);
+            }),
         );
 
         add(
-          listen("detection-speaking", () => {
-            setSpeaking(true);
-          }),
+            listen("detection-speaking", () => {
+                console.log("speaking");
+                setSpeaking(true);
+            }),
         );
 
         add(
-          listen("detection-stopped", () => {
-            setSpeaking(false);
-          }),
+            listen("detection-stopped", () => {
+                console.log("stopped");
+                setSpeaking(false);
+            }),
         );
 
         setLoading(false);
