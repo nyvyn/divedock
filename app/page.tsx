@@ -1,9 +1,11 @@
 "use client";
 
 import AudioVisualizer from "./components/visualizer/AudioVisualizer";
+import { useDetection } from "./hooks/useDetection";
 
 export default function Home() {
 
+    const vad = useDetection();
 
     return (
         <div

@@ -8,8 +8,8 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-async fn mic_vad() -> Result<(), String> {
-    vad_until_silence().await.map_err(|e| e.to_string())
+async fn mic_vad(window: tauri::Window) -> Result<(), String> {
+    vad_until_silence(window).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
