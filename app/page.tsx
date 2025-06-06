@@ -14,16 +14,16 @@ export default function Home() {
         <div
             className="flex items-center justify-center min-h-screen min-w-screen bg-black"
         >
-            <AudioVisualizer errored={vad.errored} loading={vad.loading} speaking={vad.speaking}/>
+            <AudioVisualizer errored={vad.errored} listening={vad.listening} loading={vad.loading}/>
 
             {/* toggle-listening button */}
             <button
                 onClick={!vad.loading ? vad.toggleListening : undefined}
                 disabled={vad.loading}
                 className="
-                  absolute bottom-8 left-1/2 -translate-x-1/2
+                  absolute bottom-4 right-4
                   flex items-center justify-center
-                  h-14 w-14 rounded-full
+                  h-12 w-12 rounded-full
                   bg-blue-600 disabled:bg-blue-400
                   hover:bg-blue-700 text-white
                   shadow-lg transition"

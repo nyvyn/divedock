@@ -21,23 +21,15 @@ pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
     let vad_stream = stream.voice_activity_stream();
     let mut audio_chunks = vad_stream.rechunk_voice_activity();
 
-    // detection has begun
-    app.emit("detection-started", ()).ok();
-    println!("voice_activity_detection: detection-started event emitted");
-
     while let Some(input) = StreamExt::next(&mut audio_chunks).await
     {
-        // user is speaking
-        app.emit("detection-speaking", input.total_duration()).ok();
+        app.emit("speech-detected", input.total_duration()).ok();
         println!(
             "voice_activity_detection: speaking event emitted | duration = {:?}",
             input.total_duration()
         );
     }
 
-    // stream finished / silence
-    app.emit("detection-stopped", ()).ok();
-    println!("vad_until_silence: detection-stopped event emitted");
     Ok(())
 }
 

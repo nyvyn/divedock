@@ -8,7 +8,6 @@ export function useDetection() {
     const [errored, setErrored] = useState<boolean | string>(false);
     const [listening, setListening] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [speaking, setSpeaking] = useState(false);
 
     useEffect(() => {
         // helper to save un-listen functions
@@ -20,23 +19,8 @@ export function useDetection() {
 
         /* ---- listeners ---- */
         add(
-            listen("detection-started", () => {
-                console.log("listening");
-                setSpeaking(true);
-            }),
-        );
-
-        add(
-            listen("detection-speaking", () => {
+            listen("speech-detected", () => {
                 console.log("speaking");
-                setSpeaking(true);
-            }),
-        );
-
-        add(
-            listen("detection-stopped", () => {
-                console.log("stopped");
-                setSpeaking(false);
             }),
         );
 
@@ -69,5 +53,5 @@ export function useDetection() {
 
     const toggleListening = () => listening ? stopListening() : startListening();
 
-    return {loading, errored, speaking, listening, toggleListening};
+    return {errored, listening, loading, toggleListening};
 }
