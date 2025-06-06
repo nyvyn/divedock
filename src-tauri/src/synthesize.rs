@@ -20,7 +20,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
 
     // Run the Parler-TTS pipeline in a blocking thread
-    let pcm: Vec<f32> = task::spawn_blocking(move || -> Result<_, String> {
+    let (pcm, rate): (Vec<f32>, u32) = task::spawn_blocking(move || -> Result<(Vec<f32>, u32), String> {
         println!("synthesize: [blocking] prompt = {}", prompt);
         // 1. HF-hub API
         let api = Api::new().map_err(|e| e.to_string())?;
@@ -95,16 +95,17 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
             .map_err(|e| e.to_string())?;
         let pcm_tensor = pcm_tensor.i((0, 0)).map_err(|e| e.to_string())?;
         let pcm = pcm_tensor.to_vec1::<f32>().map_err(|e| e.to_string())?;
-        Ok(pcm)
+        let rate = config.audio_encoder.sampling_rate as u32;
+        Ok((pcm, rate))
     })
     .await
     .map_err(|e| e.to_string())??;
 
-    println!("synthesize: playback starting, samples = {}", pcm.len());
+    println!("synthesize: playback starting, samples = {}, rate = {}", pcm.len(), rate);
     // Play back via rodio
     let (_stream, handle) = OutputStream::try_default().map_err(|e| e.to_string())?;
     let sink = Sink::try_new(&handle).map_err(|e| e.to_string())?;
-    let source = SamplesBuffer::new(1, 24000, pcm);
+    let source = SamplesBuffer::new(1, rate, pcm);
     sink.append(source);
     sink.sleep_until_end();
     println!("synthesize: playback finished");
