@@ -3,27 +3,25 @@
 use kalosm::sound::*;
 use tokio_stream::StreamExt;
 use anyhow::Result;
-use tauri::Window;
-
+use tauri::{AppHandle, Emitter};
 
 /// Collects consecutive VAD-positive chunks from the default microphone
 /// and prints their durations until the stream ends or the caller drops the task.
-pub async fn vad_until_silence(window: Window) -> Result<()> {
+pub async fn vad_until_silence(app: AppHandle) -> Result<()> {
     let mic = MicInput::default();
     let stream = mic.stream();
-    let mut chunks = stream.voice_activity_stream().rechunk_voice_activity();
+    let mut vad = stream.voice_activity_stream();
 
     // detection has begun
-    window.emit("detection-started", ()).ok();
+    app.emit("detection-started", ()).ok();
 
-    while let Some(chunk) = chunks.next().await {
+    while let Some(input) = vad.next().await {
         // user is speaking
-        let ms = chunk.total_duration().as_millis();
-        window.emit("speaking", ms).ok();
+        app.emit("detection-speaking", input.probability).ok();
     }
 
     // stream finished / silence
-    window.emit("detection-stopped", ()).ok();
+    app.emit("detection-stopped", ()).ok();
     Ok(())
 }
 
