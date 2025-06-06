@@ -50,7 +50,7 @@ pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Resu
     let mut tx = input.transcribe(Whisper::new().await?);
 
     // Stream each transcription line and emit it.
-    while let Some(res) = tx.next().await {
+    while let Some(res) = StreamExt::next(&mut tx).await {
         // Depending on kalosm’s API the item might be `String` or `Result<String, _>`
         let text = match res {
             Ok(t) => t,
