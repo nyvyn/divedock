@@ -15,15 +15,6 @@ async fn stop_listening() -> Result<(), String> {
     stop_vad().map_err(|e| { println!("stop_listening error: {e}"); e.to_string() })
 }
 
-#[tauri::command]
-async fn mic_transcribe() -> Result<(), String> {
-    println!("mic_transcribe command invoked");
-    transcribe_realtime().await.map_err(|e| {
-        println!("mic_transcribe error: {e}");
-        e.to_string()
-    })
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -33,7 +24,6 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             start_listening,
             stop_listening,
-            mic_transcribe
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

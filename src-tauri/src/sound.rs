@@ -7,6 +7,7 @@ use tauri::{AppHandle, Emitter};
 use tauri::async_runtime::{self, JoinHandle};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
+use kalosm::sound::rodio::buffer::SamplesBuffer;
 use kalosm::sound::rodio::Source;
 
 static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> =
@@ -28,6 +29,7 @@ pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
             "voice_activity_detection: speaking event emitted | duration = {:?}",
             input.total_duration()
         );
+        transcribe_audio(input).await?;
     }
 
     Ok(())
@@ -64,11 +66,10 @@ pub fn stop_vad() -> Result<()> {
 }
 
 /// Runs Whisper on the microphone and streams the transcription to stdout.
-pub async fn transcribe_realtime() -> Result<()> {
+pub async fn transcribe_audio(input: SamplesBuffer<f32>) -> Result<()> {
     println!("transcribe_realtime: starting");
-    let mic = MicInput::default();
-    let stream = mic.stream();
-    let mut tx = stream.transcribe(Whisper::new().await?);
+
+    let mut tx = input.transcribe(Whisper::new().await?);
     tx.to_std_out().await?;
     println!("transcribe_realtime: finished");
     Ok(())
