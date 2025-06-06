@@ -1,15 +1,11 @@
 mod sound;
 use sound::*;
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+use tauri::{AppHandle};
 
 #[tauri::command]
-async fn mic_vad(window: tauri::Window) -> Result<(), String> {
-    vad_until_silence(window).await.map_err(|e| e.to_string())
+async fn mic_detect(app: AppHandle) -> Result<(), String> {
+    vad_until_silence(app).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -24,8 +20,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_macos_permissions::init())
         .invoke_handler(tauri::generate_handler![
-            greet,
-            mic_vad,
+            mic_detect,
             mic_transcribe
         ])
         .run(tauri::generate_context!())

@@ -7,11 +7,11 @@ import { listen, UnlistenFn } from "@tauri-apps/api/event";
 export function useDetection() {
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState<boolean | string>(false);
-  const [userSpeaking, setUserSpeaking] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
     // backend VAD task
-    invoke("mic_vad").catch(err => {
+    invoke("mic_detect").catch(err => {
       console.error(err);
       setErrored(err);
       setLoading(false);
@@ -19,28 +19,29 @@ export function useDetection() {
 
     // helper to save un-listen functions
     const unlistenFns: UnlistenFn[] = [];
-    // make sure we don’t return the promise → no lint warning
     const add = (p: Promise<UnlistenFn>) => {
+      console.log("adding listener");
       p.then((f) => unlistenFns.push(f)).catch(console.error);
     };
 
     add(listen("detection-started", () => {
       setLoading(false);
-      setUserSpeaking(false);
+      setSpeaking(false);
     }));
 
-    add(listen("speaking", () => {
-      setUserSpeaking(true);
+    add(listen("detection-speaking", () => {
+      setSpeaking(true);
     }));
 
     add(listen("detection-stopped", () => {
-      setUserSpeaking(false);
+      setSpeaking(false);
     }));
 
     return () => {
+      console.log("un-listening");
       unlistenFns.forEach(fn => fn());
     };
   }, []);
 
-  return { loading, errored, userSpeaking };
+  return { loading, errored, speaking };
 }
