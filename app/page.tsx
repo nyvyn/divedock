@@ -16,7 +16,6 @@ export default function Home() {
             className="flex items-center justify-center min-h-screen min-w-screen bg-black"
         >
             <AudioVisualizer
-                errored={vad.errored}
                 listening={vad.listening}
                 thinking={scribe.transcribing}
                 speaking={false}
