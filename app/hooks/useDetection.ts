@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export function useDetection() {
     const [errored, setErrored] = useState<boolean | string>(false);
     const [listening, setListening] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [speaking, setSpeaking] = useState(false);
 
     useEffect(() => {
@@ -21,9 +21,7 @@ export function useDetection() {
         /* ---- listeners ---- */
         add(
           listen("detection-started", () => {
-            setLoading(false);
-            setListening(true);
-            setSpeaking(false);
+            setSpeaking(true);
           }),
         );
 
@@ -35,10 +33,11 @@ export function useDetection() {
 
         add(
           listen("detection-stopped", () => {
-            setListening(false);
             setSpeaking(false);
           }),
         );
+
+        setLoading(false);
 
         return () => {
             console.log("un-listening");
@@ -49,19 +48,20 @@ export function useDetection() {
     // backend control ─────────
     const startListening = async () => {
         if (listening) return;
-        setLoading(true);
         invoke("start_listening").catch(err => {
             console.error(err);
             setErrored(err);
-            setLoading(false);
         });
+        setListening(true);
     };
 
     const stopListening = async () => {
         if (!listening) return;
-        invoke("stop_listening").catch(console.error);
+        invoke("stop_listening").catch(err => {
+            console.error(err);
+            setErrored(err);
+        });
         setListening(false);
-        setSpeaking(false);
     };
 
     const toggleListening = () => listening ? stopListening() : startListening();

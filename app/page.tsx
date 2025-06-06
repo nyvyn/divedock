@@ -3,8 +3,8 @@
 import AudioVisualizer from "./components/visualizer/AudioVisualizer";
 import { useDetection } from "./hooks/useDetection";
 import { LoadingIcon } from "./components/icons/LoadingIcon";
-import { MicOn } from "./components/icons/MicOn";
-import { MicOff } from "./components/icons/MicOff";
+import { MicOnIcon } from "./components/icons/MicOnIcon.tsx";
+import { MicOffIcon } from "./components/icons/MicOffIcon.tsx";
 
 export default function Home() {
 
@@ -31,16 +31,17 @@ export default function Home() {
                 {vad.loading ? (
                     <LoadingIcon className="size-6 animate-spin" />
                 ) : vad.listening ? (
-                    <MicOn className="size-6" />
+                    <MicOnIcon className="size-6" />
                 ) : (
-                    <MicOff className="size-6" />
+                    <MicOffIcon className="size-6" />
                 )}
                 <span className="sr-only">
                     {vad.loading
                         ? "Loading"
                         : vad.listening
                         ? "Stop listening"
-                        : "Start listening"}
+                        : "Start listening"
+                    }
                 </span>
             </button>
         </div>
