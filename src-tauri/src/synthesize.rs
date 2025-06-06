@@ -12,7 +12,7 @@ use tokenizers::Tokenizer;
 use tokio::task;
 
 const DEFAULT_DESCRIPTION: &str = "A female speaker delivers a slightly expressive and animated speech with a moderate speed and pitch. The recording is of very high quality, with the speaker's voice sounding clear and very close up.";
-const MAX_STEPS: usize = 1;
+const MAX_STEPS: usize = 512;
 
 pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
     println!("synthesize: begin synthesis for prompt: {}", prompt);
