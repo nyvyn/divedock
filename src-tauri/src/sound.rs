@@ -10,12 +10,14 @@ use tauri::{AppHandle, Emitter};
 pub async fn vad_until_silence(app: AppHandle) -> Result<()> {
     let mic = MicInput::default();
     let stream = mic.stream();
-    let mut vad = stream.voice_activity_stream();
+    let mut vad_stream = stream.voice_activity_stream();
 
     // detection has begun
     app.emit("detection-started", ()).ok();
 
-    while let Some(input) = vad.next().await {
+    while let Some(input) =
+        tokio_stream::StreamExt::next(&mut vad_stream).await
+    {
         // user is speaking
         app.emit("detection-speaking", input.probability).ok();
     }
