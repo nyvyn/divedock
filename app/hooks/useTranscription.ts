@@ -11,12 +11,12 @@ export function useTranscription() {
   const [errored, setErrored] = useState<boolean | string>(false);
 
   useEffect(() => {
-    // Array para almacenar los des-suscriptores
+    // Array to store every `UnlistenFn` so we can clean them up later
     const unlistenFns: UnlistenFn[] = [];
     const add = (p: Promise<UnlistenFn>) =>
       p.then((f) => unlistenFns.push(f)).catch(console.error);
 
-    /* ────── listeners ────── */
+    /* ---- listeners ---- */
     add(
       listen("transcription-started", () => {
         setTranscript("");
@@ -42,7 +42,7 @@ export function useTranscription() {
     };
   }, []);
 
-  /*  Comandos para el backend  */
+  // Backend commands
   const startTranscription = () =>
     invoke("mic_transcribe").catch((err) => {
       console.error(err);
