@@ -19,7 +19,8 @@ export default function Home() {
         >
             <AudioVisualizer
                 listening={vad.listening}
-                thinking={scribe.transcribing}
+                transcribing={scribe.transcribing}
+                synthesizing={voice.synthesizing}
                 speaking={voice.speaking}
             />
 

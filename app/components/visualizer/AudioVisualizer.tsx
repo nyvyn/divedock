@@ -7,9 +7,10 @@ interface AudioVisualizerProps {
     listening: boolean;
     transcribing: boolean;
     synthesizing: boolean;
+    speaking: boolean;
 }
 
-export default function AudioVisualizer({ listening, transcribing, synthesizing }: AudioVisualizerProps) {
+export default function AudioVisualizer({ listening, transcribing, synthesizing, speaking }: AudioVisualizerProps) {
     // Default classes for the visualizer
     const baseClasses =
         "size-40 rounded-full blur-sm " + // Using blur-sm as in your latest version
@@ -24,17 +25,20 @@ export default function AudioVisualizer({ listening, transcribing, synthesizing 
                 baseClasses,
                 initialGradient, // This will be the very base if no other state overrides it
                 {
+                     // Speaking State: Bold, rhythmic bounce, and shadow
+                    "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-bounce": speaking,
+
                      // Synthesizing State: Bright, energetic, slight expansion, and a matching shadow
-                    "bg-none bg-amber-500 shadow-amber-400/50 shadow-xl scale-110": synthesizing,
+                    "bg-none bg-amber-500 shadow-amber-400/50 shadow-xl scale-110": !speaking && synthesizing,
 
-                     // Transcribing State: (if not synthesizing) Deeper color, active bounce animation, and shadow
-                    "bg-none bg-indigo-600 shadow-indigo-500/50 shadow-lg animate-bounce": !synthesizing && transcribing,
+                     // Transcribing State: (if not speaking or synthesizing) Deeper color, active bounce animation, and shadow
+                    "bg-none bg-indigo-600 shadow-indigo-500/50 shadow-lg animate-bounce": !speaking && !synthesizing && transcribing,
 
-                    // Listening State: (if not speaking or thinking) Calm blue, gentle pulse, and shadow
-                    "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse": !synthesizing && !transcribing && listening,
+                     // Listening State: (if not speaking, synthesizing, or transcribing) Calm blue, gentle pulse, and shadow
+                    "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse": !speaking && !synthesizing && !transcribing && listening,
 
-                    // Idle State: (if not speaking, thinking, or listening) Muted, less prominent
-                    "bg-none bg-slate-700 opacity-60": !synthesizing && !transcribing && !listening,
+                     // Idle State: (if not speaking, synthesizing, transcribing, or listening) Muted, less prominent
+                    "bg-none bg-slate-700 opacity-60": !speaking && !synthesizing && !transcribing && !listening,
                 }
             )}
         />
