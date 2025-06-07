@@ -23,8 +23,9 @@ pub fn start_vad(app: AppHandle) -> Result<()> {
         println!("start_vad: already running");
         return Ok(());
     }
+    let app_for_task = app.clone();
     let handle = async_runtime::spawn(async move {
-        if let Err(e) = voice_activity_detection(app.clone()).await {
+        if let Err(e) = voice_activity_detection(app_for_task).await {
             println!("VAD loop error: {e}");
         }
     });
