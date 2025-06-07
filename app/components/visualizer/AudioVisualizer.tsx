@@ -19,28 +19,24 @@ export default function AudioVisualizer({ listening, transcribing, synthesizing,
     // Original gradient, will be overridden by specific states below using bg-none
     const initialGradient = "bg-linear-to-b from-red-200 to-red-400 dark:from-red-600 dark:to-red-800";
 
+    // Compute current visualizer state
+    const state =
+        speaking ? 'speaking' :
+        synthesizing ? 'synthesizing' :
+        transcribing ? 'transcribing' :
+        listening ? 'listening' :
+        'idle';
+    const stateClasses: Record<string, string> = {
+        speaking: "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-bounce",
+        synthesizing: "bg-none bg-amber-500 shadow-amber-400/50 shadow-xl scale-110",
+        transcribing: "bg-none bg-indigo-600 shadow-indigo-500/50 shadow-lg animate-bounce",
+        listening: "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse",
+        idle: "bg-none bg-slate-700 opacity-60",
+    };
+
     return (
         <div
-            className={clsx(
-                baseClasses,
-                initialGradient, // This will be the very base if no other state overrides it
-                {
-                     // Speaking State: Bold, rhythmic bounce, and shadow
-                    "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-bounce": speaking,
-
-                     // Synthesizing State: Bright, energetic, slight expansion, and a matching shadow
-                    "bg-none bg-amber-500 shadow-amber-400/50 shadow-xl scale-110": !speaking && synthesizing,
-
-                     // Transcribing State: (if not speaking or synthesizing) Deeper color, active bounce animation, and shadow
-                    "bg-none bg-indigo-600 shadow-indigo-500/50 shadow-lg animate-bounce": !speaking && !synthesizing && transcribing,
-
-                     // Listening State: (if not speaking, synthesizing, or transcribing) Calm blue, gentle pulse, and shadow
-                    "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse": !speaking && !synthesizing && !transcribing && listening,
-
-                     // Idle State: (if not speaking, synthesizing, transcribing, or listening) Muted, less prominent
-                    "bg-none bg-slate-700 opacity-60": !speaking && !synthesizing && !transcribing && !listening,
-                }
-            )}
+            className={clsx(baseClasses, initialGradient, stateClasses[state])}
         />
     );
 }
