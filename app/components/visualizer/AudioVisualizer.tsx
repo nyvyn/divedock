@@ -26,6 +26,7 @@ export default function AudioVisualizer({ listening, transcribing, synthesizing,
         transcribing ? 'transcribing' :
         listening ? 'listening' :
         'idle';
+
     const stateClasses: Record<string, string> = {
         speaking: "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-bounce",
         synthesizing: "bg-none bg-amber-500 shadow-amber-400/50 shadow-xl scale-110",
