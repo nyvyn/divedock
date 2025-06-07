@@ -1,24 +1,30 @@
-use anyhow::Result;
-use natural_tts::models::parler::ParlerModel;
+use anyhow::{anyhow, Result};
 use natural_tts::{Model, NaturalTtsBuilder};
+use natural_tts::models::{SynthesizedAudio, parler::ParlerModel, Spec};
 use std::error::Error;
-use std::panic::{catch_unwind, AssertUnwindSafe};
-use kalosm::sound::rodio::cpal::FromSample;
 use tauri::{AppHandle, Emitter};
 use rodio::{buffer::SamplesBuffer};
 
-pub fn play_audio<T>(data: Vec<T>, rate: u32)
-where
-    T: rodio::Sample + Send + 'static,
-    f32: FromSample<T>,
-{
-    let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
-    let source = SamplesBuffer::new(1, rate, data);
-    let sink = rodio::Sink::try_new(&handle).unwrap();
+pub fn play_audio(audio: SynthesizedAudio<f32>) -> Result<()> {
+    // SynthesizedAudio fields exposed by the crate
+    //     pub spec: Spec,
+    //     pub data: Vec<T>,
+    //     pub duration: Option<i32>,
+    //  [oai_citation:0‡docs.rs](https://github.com/CodersCreative/natural-tts/blob/master/src/lib.rs#L111)
+    let (_stream, handle) = rodio::OutputStream::try_default()?;
+    let data = audio.data;
+    // pull rate / channel count out of the enum
+    let (channels, sample_rate) = match audio.spec {
+        Spec::Wav(wav) => (wav.channels, wav.sample_rate),
+        _ => return Err(anyhow!("unsupported audio format")),
+    };
+    let source = SamplesBuffer::new(channels, sample_rate, data);
+    let sink = rodio::Sink::try_new(&handle)?;
 
     sink.append(source);
 
     sink.sleep_until_end();
+    Ok(())
 }
 
 pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Error>> {
@@ -33,12 +39,8 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
         .build()?;
 
     // perform synthesis (convert text to audio)
-    let synth_res = catch_unwind(AssertUnwindSafe(|| natural.synthesize_auto(prompt.clone())));
-    match synth_res {
-        Ok(Ok(_)) => (),
-        Ok(Err(e)) => println!("synthesize: synthesize_auto error: {}", e),
-        Err(e) => println!("synthesize: panic during synthesize_auto: {:?}", e),
-    }
+    let audio = natural.synthesize_auto(prompt.clone())?;
+    
     app.emit("synthesis-stopped", ())
         .map_err(|e| e.to_string())?;
     println!("synthesize: synthesis finished");
@@ -48,6 +50,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
     println!("synthesize: speaking started");
 
     // play the resulting synthesized audio
+    play_audio(audio)?;
 
     app.emit("speaking-stopped", ())
         .map_err(|e| e.to_string())?;
