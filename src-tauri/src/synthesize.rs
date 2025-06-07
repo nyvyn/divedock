@@ -10,7 +10,7 @@ use std::{fs::File, io::BufReader};
 use tauri::{AppHandle, Emitter};
 use tokenizers::Tokenizer;
 use tokio::task;
-use candle_examples::audio::normalize_loudness;
+use crate::audio::normalize_loudness;
 
 const DEFAULT_DESCRIPTION: &str = "A female speaker delivers a slightly expressive and animated speech with a moderate speed and pitch. The recording is of very high quality, with the speaker's voice sounding clear and very close up.";
 const MAX_STEPS: usize = 512;
@@ -98,7 +98,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         let norm = normalize_loudness(&pcm_tensor, config.audio_encoder.sampling_rate, true)
             .map_err(|e| e.to_string())?;
         let pcm = norm.to_vec1::<f32>().map_err(|e| e.to_string())?;
-        let rate = config.audio_encoder.sampling_rate as u32;
+        let rate = config.audio_encoder.sampling_rate;
         Ok((pcm, rate))
     })
     .await
