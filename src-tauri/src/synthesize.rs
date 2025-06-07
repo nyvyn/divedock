@@ -2,7 +2,7 @@ use anyhow::{anyhow, Result};
 use natural_tts::{Model, NaturalTtsBuilder};
 use natural_tts::models::{SynthesizedAudio, parler::ParlerModel, Spec};
 use std::error::Error;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
 use rodio::{buffer::SamplesBuffer};
 
 pub fn play_audio(audio: SynthesizedAudio<f32>) -> Result<()> {
@@ -39,7 +39,11 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
         .build()?;
 
     // perform synthesis (convert text to audio)
+    // natural-tts saves the tensors to cwd, override that to cache directory
+    let old_dir = std::env::current_dir()?;
+    std::env::set_current_dir(app.path().cache_dir().unwrap())?;
     let audio = natural.synthesize_auto(prompt.clone())?;
+    std::env::set_current_dir(old_dir)?;
     
     app.emit("synthesis-stopped", ())
         .map_err(|e| e.to_string())?;
