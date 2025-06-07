@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { requestMicrophonePermission } from "tauri-plugin-macos-permissions-api";
 import { MicOffIcon } from "./components/icons/MicOffIcon.tsx";
 import { MicOnIcon } from "./components/icons/MicOnIcon.tsx";
@@ -10,11 +12,13 @@ import { useTranscription } from "./hooks/useTranscription.ts";
 
 export default function Home() {
 
-    requestMicrophonePermission().then(hasMicrophonePermission => {
-        if (!hasMicrophonePermission) {
-            alert("Microphone permission denied");
-        }
-    });
+    useEffect(() => {
+        requestMicrophonePermission().then(hasMicrophonePermission => {
+            if (!hasMicrophonePermission) {
+                alert("Microphone permission denied");
+            }
+        });
+    }, []);
 
     const vad = useDetection();
     const scribe = useTranscription();
