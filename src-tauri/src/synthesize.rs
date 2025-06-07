@@ -14,6 +14,7 @@ use crate::audio::normalize_loudness;
 
 const DEFAULT_DESCRIPTION: &str = "A female speaker delivers a slightly expressive and animated speech with a moderate speed and pitch. The recording is of very high quality, with the speaker's voice sounding clear and very close up.";
 const MAX_STEPS: usize = 512;
+const MODEL: &str = "parler-tts/parler-tts-mini-v1.1";
 const SEED: u64 = 0;
 const TEMPERATURE: f64 = 0.0;
 
@@ -27,9 +28,8 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
         println!("synthesize: [blocking] description = {}", DEFAULT_DESCRIPTION);
         // 1. HF-hub API
         let api = Api::new().map_err(|e| e.to_string())?;
-        let model_id = "parler-tts/parler-tts-mini-v1";
         let repo = api.repo(Repo::with_revision(
-            model_id.to_string(),
+            MODEL.to_string(),
             RepoType::Model,
             "main".to_string(),
         ));
