@@ -1,9 +1,9 @@
-use std::error::Error;
 use anyhow::Result;
-use natural_tts::models::tts_rs::TtsModel;
+use natural_tts::models::parler::ParlerModel;
 use natural_tts::{Model, NaturalTtsBuilder};
-use tauri::{AppHandle, Emitter};
+use std::error::Error;
 use std::panic::{catch_unwind, AssertUnwindSafe};
+use tauri::{AppHandle, Emitter};
 
 pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Error>> {
     println!("synthesize: begin synthesis for prompt: {}", prompt);
@@ -12,9 +12,12 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
 
     // Create the NaturalTts struct using the builder pattern.
     let mut natural = NaturalTtsBuilder::default()
-        .tts_model(TtsModel::default())
-        .default_model(Model::TTS)
+        .parler_model(ParlerModel::default())
+        .default_model(Model::Parler)
         .build()?;
+
+
+    println!("synthesize: speaking");
 
     // Use the pre-included function to say a message using the default_model without panicking.
     let say_res = catch_unwind(AssertUnwindSafe(|| natural.say_auto(prompt)));
