@@ -4,8 +4,7 @@ use natural_tts::{Model, NaturalTtsBuilder};
 use std::error::Error;
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use tauri::{AppHandle, Emitter};
-use rodio::{OutputStream, Sink};
-use std::io::Cursor;
+use rodio::{OutputStream, Sink, buffer::SamplesBuffer};
 
 pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Error>> {
     println!("synthesize: begin synthesis for prompt: {}", prompt);
@@ -40,13 +39,13 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
         .map_err(|e| e.to_string())?;
     match natural.synthesize_auto(prompt.clone()) {
         Ok(audio_data) => {
-            let cursor = Cursor::new(audio_data);
-            if let Ok(source) = rodio::Decoder::new(cursor) {
-                sink.append(source);
-                sink.sleep_until_end();
-            } else {
-                println!("synthesize: rodio decode error");
-            }
+            // Stream the PCM samples directly to the speaker
+            let channels = audio_data.num_channels() as u16;
+            let sample_rate = audio_data.sample_rate();
+            let samples = audio_data.as_ref().to_vec();
+            let source = SamplesBuffer::new(channels, sample_rate, samples);
+            sink.append(source);
+            sink.sleep_until_end();
         }
         Err(e) => println!("synthesize: synthesize_auto error: {}", e),
     }
