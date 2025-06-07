@@ -3,6 +3,7 @@
 use kalosm::sound::*;
 use tokio_stream::StreamExt;
 use crate::synthesize::synthesize;
+use crate::synthesize::TtsState;
 use anyhow::{Result, anyhow};
 use tauri::{AppHandle, Emitter};
 use tauri::async_runtime::{self, JoinHandle};
@@ -62,7 +63,7 @@ pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Resu
 
         app.emit("transcription-line", text).ok();
         println!("transcription-line: {text}");
-        if let Err(e) = synthesize(app.clone(), text.to_string()).await {
+        if let Err(e) = synthesize(app.clone(), app.state::<TtsState>(), text.to_string()).await {
             println!("synthesis error: {e}");
         }
     }
