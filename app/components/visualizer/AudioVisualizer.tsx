@@ -31,10 +31,10 @@ export default function AudioVisualizer({ listening, transcribing, synthesizing 
                     "bg-none bg-indigo-600 shadow-indigo-500/50 shadow-lg animate-bounce": !synthesizing && transcribing,
 
                     // Listening State: (if not speaking or thinking) Calm blue, gentle pulse, and shadow
-                    "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse": !speaking && !thinking && listening,
+                    "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse": !synthesizing && !transcribing && listening,
 
                     // Idle State: (if not speaking, thinking, or listening) Muted, less prominent
-                    "bg-none bg-slate-700 opacity-60": !speaking && !thinking && !listening,
+                    "bg-none bg-slate-700 opacity-60": !synthesizing && !transcribing && !listening,
                 }
             )}
         />
