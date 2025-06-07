@@ -1,5 +1,7 @@
 mod transcribe;
 mod synthesize;
+mod audio;
+mod bs1770;
 
 use transcribe::*;
 

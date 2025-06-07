@@ -23,7 +23,7 @@ pub fn normalize_loudness(
     let gain = 10f64.powf(delta_loudness / 20.);
     let wav = (wav * gain)?;
     if loudness_compressor {
-        wav.tanh()
+        Ok(wav.tanh()?)
     } else {
         Ok(wav)
     }

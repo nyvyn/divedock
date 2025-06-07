@@ -13,7 +13,9 @@ use tokio::task;
 use crate::audio::normalize_loudness;
 
 const DEFAULT_DESCRIPTION: &str = "A female speaker delivers a slightly expressive and animated speech with a moderate speed and pitch. The recording is of very high quality, with the speaker's voice sounding clear and very close up.";
-const MAX_STEPS: usize = 5000;
+const MAX_STEPS: usize = 512;
+const SEED: u64 = 0;
+const TEMPERATURE: f64 = 0.0;
 
 pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
     println!("synthesize: begin synthesis for prompt: {}", prompt);
@@ -22,7 +24,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
 
     // Run the Parler-TTS pipeline in a blocking thread
     let (pcm, rate): (Vec<f32>, u32) = task::spawn_blocking(move || -> Result<(Vec<f32>, u32), String> {
-        println!("synthesize: [blocking] prompt = {}", prompt);
+        println!("synthesize: [blocking] description = {}", DEFAULT_DESCRIPTION);
         // 1. HF-hub API
         let api = Api::new().map_err(|e| e.to_string())?;
         let model_id = "parler-tts/parler-tts-mini-v1";
@@ -76,7 +78,9 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
 
         // 6. Generate codes
         println!("synthesize: [blocking] starting generation with max_steps = {}", MAX_STEPS);
-        let lp = LogitsProcessor::new(0, None, None);
+        let lp = LogitsProcessor::new(
+            SEED, Option::from(TEMPERATURE), None
+        );
         let codes = model
             .generate(&prompt_tensor, &desc_tensor, lp, MAX_STEPS)
             .map_err(|e| e.to_string())?
@@ -95,7 +99,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
             .decode_codes(&codes)
             .map_err(|e| e.to_string())?;
         let pcm_tensor = pcm_tensor.i((0, 0)).map_err(|e| e.to_string())?;
-        let norm = normalize_loudness(&pcm_tensor, config.audio_encoder.sampling_rate, true)
+        let norm = normalize_loudness(&pcm_tensor, 24_000, true)
             .map_err(|e| e.to_string())?;
         let pcm = norm.to_vec1::<f32>().map_err(|e| e.to_string())?;
         let rate = config.audio_encoder.sampling_rate;
