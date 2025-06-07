@@ -42,7 +42,8 @@ pub fn stop_vad(app: AppHandle) -> Result<()> {
 }
 
 //// Runs Whisper on the chunk and emits every recognised line.
-pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Result<()> {
+pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Result<String> {
+    let mut collected = String::new();
     println!("transcribe_audio: starting");
 
     let mut tx = input.transcribe(Whisper::new().await?);
@@ -56,15 +57,14 @@ pub async fn transcribe_audio(app: AppHandle, input: SamplesBuffer<f32>) -> Resu
 
         app.emit("transcription-line", text).ok();
         println!("transcription-line: {text}");
-        if let Err(e) = synthesize(app.clone(), app.state::<TtsState>(), text.to_string()).await {
-            println!("synthesis error: {e}");
-        }
+        collected.push_str(text);
+        collected.push(' ');
     }
 
     // session finished
     app.emit("transcription-stopped", ()).ok();
     println!("transcribe_audio: finished");
-    Ok(())
+    Ok(collected)
 }
 
 /// Collects consecutive VAD-positive chunks from the default microphone
