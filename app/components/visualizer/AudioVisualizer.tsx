@@ -4,24 +4,37 @@ import clsx from "clsx";
 import React from "react";
 
 interface AudioVisualizerProps {
-    errored: boolean | string;
-    loading: boolean;
+    listening: boolean;
+    transcribing: boolean;
+    synthesizing: boolean;
     speaking: boolean;
 }
 
-export default function AudioVisualizer({ errored, loading, speaking }: AudioVisualizerProps) {
+export default function AudioVisualizer({listening, transcribing, synthesizing, speaking}: AudioVisualizerProps) {
+    // Default classes for the visualizer
+    const baseClasses =
+        "size-40 rounded-full blur-sm " + // Using blur-sm as in your latest version
+        "transition-all ease-in-out duration-700 will-change-transform"; // Smoother transitions for all properties
+
+    // Compute current visualizer state
+    const state =
+        !listening ? "idle" :
+            speaking ? "speaking" :
+                synthesizing ? "synthesizing" :
+                    transcribing ? "transcribing" :
+                        "listening";
+
+    const stateClasses: Record<string, string> = {
+        listening: "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse",
+        transcribing: "bg-none bg-sky-600 shadow-sky-500/50 shadow-lg animate-bounce",
+        synthesizing: "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-bounce",
+        speaking: "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-pulse",
+        idle: "bg-none bg-slate-700 opacity-60",
+    };
+
     return (
         <div
-            className={clsx(
-                "size-40 rounded-full blur-lg " +
-                "bg-linear-to-b from-red-200 to-red-400 dark:from-red-600 dark:to-red-800 " +
-                "transition ease-in-out duration-300 will-change-transform",
-                {
-                    "opacity-0": loading || errored,
-                    "opacity-30": !loading && !errored && !speaking,
-                    "opacity-60 blur-3xl scale-130": speaking,
-                }
-            )}
+            className={clsx(baseClasses, stateClasses[state])}
         />
     );
 }

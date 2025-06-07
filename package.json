@@ -13,29 +13,15 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@huggingface/transformers": "^3.5.2",
-    "@ricky0123/vad-react": "^0.0.28",
-    "@ricky0123/vad-web": "^0.0.22",
     "@tauri-apps/api": "^2.5.0",
     "@tauri-apps/plugin-fs": "^2.3.0",
     "@tauri-apps/plugin-opener": "^2.2.6",
     "clsx": "^2.1.1",
     "next": "^15.3.3",
-    "onnxruntime-web": "^1.21.0",
     "openai": "^4.92.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tauri-plugin-macos-permissions-api": "^2.3.0"
-  },
-  "overrides": {
-    "@ricky0123/vad-react": {
-      "react": "^19",
-      "react-dom": "^19"
-    },
-    "@ricky0123/vad-web": {
-      "react": "^19",
-      "react-dom": "^19"
-    }
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.8",
