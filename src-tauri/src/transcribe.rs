@@ -1,25 +1,20 @@
-/// Reusable helpers for microphone activity detection and transcription.
-
-use kalosm::sound::*;
-use tokio_stream::StreamExt;
 use crate::synthesize::synthesize;
 use crate::synthesize::TtsState;
-use anyhow::{Result, anyhow};
-use tauri::{AppHandle, Emitter};
-use tauri::async_runtime::{self, JoinHandle};
+use anyhow::{anyhow, Result};
+use kalosm::sound::rodio::buffer::SamplesBuffer;
+use kalosm::sound::rodio::Source;
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
-use kalosm::sound::rodio::buffer::SamplesBuffer;
-use kalosm::sound::rodio::{Source};
+use kalosm::sound::{AsyncSourceTranscribeExt, MicInput, VoiceActivityDetectorExt, VoiceActivityStreamExt, Whisper};
+use tauri::async_runtime::{self, JoinHandle};
+use tauri::{AppHandle, Emitter, Manager};
+use tokio_stream::StreamExt;
 
-static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> =
-    Lazy::new(|| Mutex::new(None));
+static VAD_TASK: Lazy<Mutex<Option<JoinHandle<()>>>> = Lazy::new(|| Mutex::new(None));
 
 /// Spawn VAD loop (no-op if one already runs)
 pub fn start_vad(app: AppHandle) -> Result<()> {
-    let mut guard = VAD_TASK
-        .lock()
-        .map_err(|e| anyhow!(e.to_string()))?;
+    let mut guard = VAD_TASK.lock().map_err(|e| anyhow!(e.to_string()))?;
     if guard.is_some() {
         println!("start_vad: already running");
         return Ok(());
@@ -37,9 +32,7 @@ pub fn start_vad(app: AppHandle) -> Result<()> {
 
 /// Abort the running VAD task (if any)
 pub fn stop_vad(app: AppHandle) -> Result<()> {
-    let mut guard = VAD_TASK
-        .lock()
-        .map_err(|e| anyhow!(e.to_string()))?;
+    let mut guard = VAD_TASK.lock().map_err(|e| anyhow!(e.to_string()))?;
     if let Some(handle) = guard.take() {
         handle.abort();
         println!("stop_vad: task aborted");
@@ -91,6 +84,9 @@ pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
             input.total_duration()
         );
         transcribe_audio(app.clone(), input).await?;
+
+        // Consume and drop the very next VAD-positive chunk (likely echo)
+        let _ = audio_chunks.next().await;  // Option<AudioChunk> ignored which is the synthesis
     }
 
     Ok(())
