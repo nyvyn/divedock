@@ -18,6 +18,16 @@ const MODEL: &str = "parler-tts/parler-tts-mini-v1.1";
 const SEED: u64 = 0;
 const TEMPERATURE: f64 = 0.0;
 
+/// Play arbitrary PCM audio at given sample rate (mono).
+fn play_pcm(pcm: Vec<f32>, rate: u32) -> Result<(), String> {
+    let (_stream, handle) = OutputStream::try_default().map_err(|e| e.to_string())?;
+    let sink = Sink::try_new(&handle).map_err(|e| e.to_string())?;
+    let source = SamplesBuffer::new(1, rate, pcm);
+    sink.append(source);
+    sink.sleep_until_end();
+    Ok(())
+}
+
 pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
     println!("synthesize: begin synthesis for prompt: {}", prompt);
     app.emit("synthesis-started", ())
@@ -109,12 +119,7 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), String> {
     .map_err(|e| e.to_string())??;
 
     println!("synthesize: playback starting, samples = {}, rate = {}", pcm.len(), rate);
-    // Play back via rodio
-    let (_stream, handle) = OutputStream::try_default().map_err(|e| e.to_string())?;
-    let sink = Sink::try_new(&handle).map_err(|e| e.to_string())?;
-    let source = SamplesBuffer::new(1, rate, pcm);
-    sink.append(source);
-    sink.sleep_until_end();
+    play_pcm(pcm, rate)?;
     println!("synthesize: playback finished");
 
     app.emit("synthesis-stopped", ())
