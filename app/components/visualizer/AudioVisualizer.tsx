@@ -19,12 +19,12 @@ export default function AudioVisualizer({ listening, transcribing, synthesizing,
     // Original gradient, will be overridden by specific states below using bg-none
     const initialGradient = "bg-linear-to-b from-red-200 to-red-400 dark:from-red-600 dark:to-red-800";
 
-    // Compute current visualizer state
+    // Compute current visualizer state priority: listening, synthesizing, transcribing, speaking
     const state =
-        speaking ? 'speaking' :
+        listening ? 'listening' :
         synthesizing ? 'synthesizing' :
         transcribing ? 'transcribing' :
-        listening ? 'listening' :
+        speaking ? 'speaking' :
         'idle';
 
     const stateClasses: Record<string, string> = {
