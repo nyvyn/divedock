@@ -16,8 +16,13 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
         .default_model(Model::Parler)
         .build()?;
 
+    app.emit("synthesis-stopped", ())
+        .map_err(|e| e.to_string())?;
+    println!("synthesize: synthesis finished");
 
-    println!("synthesize: speaking");
+    app.emit("speaking-started", ())
+        .map_err(|e| e.to_string())?;
+    println!("synthesize: speaking started");
 
     // Use the pre-included function to say a message using the default_model without panicking.
     let say_res = catch_unwind(AssertUnwindSafe(|| natural.say_auto(prompt)));
@@ -27,8 +32,8 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
         Err(e) => println!("synthesize: panic during say_auto: {:?}", e),
     }
 
-    app.emit("synthesis-stopped", ())
+    app.emit("speaking-stopped", ())
         .map_err(|e| e.to_string())?;
-    println!("synthesize: synthesis finished");
+    println!("synthesize: speaking finished");
     Ok(())
 }
