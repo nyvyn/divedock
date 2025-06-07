@@ -5,11 +5,11 @@ import React from "react";
 
 interface AudioVisualizerProps {
     listening: boolean;
-    thinking: boolean;
-    speaking: boolean;
+    transcribing: boolean;
+    synthesizing: boolean;
 }
 
-export default function AudioVisualizer({ listening, thinking, speaking }: AudioVisualizerProps) {
+export default function AudioVisualizer({ listening, transcribing, synthesizing }: AudioVisualizerProps) {
     // Default classes for the visualizer
     const baseClasses =
         "size-40 rounded-full blur-sm " + // Using blur-sm as in your latest version
@@ -24,11 +24,11 @@ export default function AudioVisualizer({ listening, thinking, speaking }: Audio
                 baseClasses,
                 initialGradient, // This will be the very base if no other state overrides it
                 {
-                    // Speaking State: Bright, energetic, slight expansion, and a matching shadow
-                    "bg-none bg-amber-500 shadow-amber-400/50 shadow-xl scale-110": speaking,
+                     // Synthesizing State: Bright, energetic, slight expansion, and a matching shadow
+                    "bg-none bg-amber-500 shadow-amber-400/50 shadow-xl scale-110": synthesizing,
 
-                    // Thinking State: (if not speaking) Deeper color, active bounce animation, and shadow
-                    "bg-none bg-indigo-600 shadow-indigo-500/50 shadow-lg animate-bounce": !speaking && thinking,
+                     // Transcribing State: (if not synthesizing) Deeper color, active bounce animation, and shadow
+                    "bg-none bg-indigo-600 shadow-indigo-500/50 shadow-lg animate-bounce": !synthesizing && transcribing,
 
                     // Listening State: (if not speaking or thinking) Calm blue, gentle pulse, and shadow
                     "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse": !speaking && !thinking && listening,
