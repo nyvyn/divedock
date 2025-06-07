@@ -19,9 +19,9 @@ export default function AudioVisualizer({listening, transcribing, synthesizing, 
     // Compute current visualizer state
     const state =
         !listening ? "idle" :
-            transcribing ? "transcribing" :
+            speaking ? "speaking" :
                 synthesizing ? "synthesizing" :
-                    speaking ? "speaking" :
+                    transcribing ? "transcribing" :
                         "listening";
 
     const stateClasses: Record<string, string> = {

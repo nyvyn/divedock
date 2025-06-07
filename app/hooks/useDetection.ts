@@ -18,7 +18,7 @@ export function useDetection() {
         /* ---- listeners ---- */
         add(
             listen("speech-detected", () => {
-                console.log("speaking");
+                console.log("speech-detected:");
             }),
         );
         add(

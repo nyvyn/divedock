@@ -4,8 +4,8 @@ import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 
 export function useSynthesis() {
-    const [synthesizing, setSynthesizing] = useState(false);
     const [speaking, setSpeaking] = useState(false);
+    const [synthesizing, setSynthesizing] = useState(false);
 
     useEffect(() => {
         // helper to save un-listen functions
@@ -15,18 +15,6 @@ export function useSynthesis() {
         };
 
         /* ---- listeners ---- */
-        add(
-            listen("synthesis-started", () => {
-                setSynthesizing(true);
-            }),
-        );
-
-        add(
-            listen("synthesis-stopped", () => {
-                setSynthesizing(false);
-            }),
-        );
-
         add(
             listen("speaking-started", () => {
                 setSpeaking(true);
@@ -39,11 +27,23 @@ export function useSynthesis() {
             }),
         );
 
+        add(
+            listen("synthesis-started", () => {
+                setSynthesizing(true);
+            }),
+        );
+
+        add(
+            listen("synthesis-stopped", () => {
+                setSynthesizing(false);
+            }),
+        );
+
         // cleanup
         return () => {
             unlistenFns.forEach((fn) => fn());
         };
     }, []);
 
-    return {synthesizing, speaking};
+    return {speaking, synthesizing};
 }
