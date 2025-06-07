@@ -4,6 +4,8 @@ use natural_tts::{Model, NaturalTtsBuilder};
 use std::error::Error;
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use tauri::{AppHandle, Emitter};
+use rodio::{OutputStream, Sink};
+use std::io::Cursor;
 
 pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Error>> {
     println!("synthesize: begin synthesis for prompt: {}", prompt);
@@ -31,12 +33,22 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
         .map_err(|e| e.to_string())?;
     println!("synthesize: speaking started");
 
-    // Use the pre-included function to say a message using the default_model without panicking.
-    let say_res = catch_unwind(AssertUnwindSafe(|| natural.say_auto(prompt)));
-    match say_res {
-        Ok(Ok(_)) => (),
-        Ok(Err(e)) => println!("synthesize: say_auto error: {}", e),
-        Err(e) => println!("synthesize: panic during say_auto: {:?}", e),
+    // Play synthesized audio directly to the speaker
+    let (_stream, stream_handle) = OutputStream::try_default()
+        .map_err(|e| e.to_string())?;
+    let sink = Sink::try_new(&stream_handle)
+        .map_err(|e| e.to_string())?;
+    match natural.synthesize_auto(prompt.clone()) {
+        Ok(audio_data) => {
+            let cursor = Cursor::new(audio_data);
+            if let Ok(source) = rodio::Decoder::new(cursor) {
+                sink.append(source);
+                sink.sleep_until_end();
+            } else {
+                println!("synthesize: rodio decode error");
+            }
+        }
+        Err(e) => println!("synthesize: synthesize_auto error: {}", e),
     }
 
     app.emit("speaking-stopped", ())
