@@ -6,11 +6,10 @@ import React from "react";
 interface AudioVisualizerProps {
     listening: boolean;
     transcribing: boolean;
-    synthesizing: boolean;
     speaking: boolean;
 }
 
-export default function AudioVisualizer({listening, transcribing, synthesizing, speaking}: AudioVisualizerProps) {
+export default function AudioVisualizer({listening, transcribing, speaking}: AudioVisualizerProps) {
     // Default classes for the visualizer
     const baseClasses =
         "size-40 rounded-full blur-sm " + // Using blur-sm as in your latest version
@@ -20,14 +19,12 @@ export default function AudioVisualizer({listening, transcribing, synthesizing, 
     const state =
         !listening ? "idle" :
             transcribing ? "transcribing" :
-                synthesizing ? "synthesizing" :
-                    speaking ? "speaking" :
-                        "listening";
+                speaking ? "speaking" :
+                    "listening";
 
     const stateClasses: Record<string, string> = {
-        listening: "bg-none bg-sky-600 shadow-sky-500/50 shadow-md animate-pulse",
+        listening: "bg-none bg-sky-600 shadow-sky-500/50 shadow-lg animate-pulse",
         transcribing: "bg-none bg-sky-600 shadow-sky-500/50 shadow-lg animate-bounce",
-        synthesizing: "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-bounce",
         speaking: "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-pulse",
         idle: "bg-none bg-slate-700 opacity-60",
     };
