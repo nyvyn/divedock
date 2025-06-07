@@ -16,6 +16,13 @@ pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Er
         .default_model(Model::Parler)
         .build()?;
 
+    // perform synthesis (convert text to audio)
+    let synth_res = catch_unwind(AssertUnwindSafe(|| natural.synthesize_auto(prompt.clone())));
+    match synth_res {
+        Ok(Ok(_)) => (),
+        Ok(Err(e)) => println!("synthesize: synthesize_auto error: {}", e),
+        Err(e) => println!("synthesize: panic during synthesize_auto: {:?}", e),
+    }
     app.emit("synthesis-stopped", ())
         .map_err(|e| e.to_string())?;
     println!("synthesize: synthesis finished");
