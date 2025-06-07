@@ -10,7 +10,7 @@ interface AudioVisualizerProps {
     speaking: boolean;
 }
 
-export default function AudioVisualizer({ listening, transcribing, synthesizing, speaking }: AudioVisualizerProps) {
+export default function AudioVisualizer({listening, transcribing, synthesizing, speaking}: AudioVisualizerProps) {
     // Default classes for the visualizer
     const baseClasses =
         "size-40 rounded-full blur-sm " + // Using blur-sm as in your latest version
@@ -19,13 +19,13 @@ export default function AudioVisualizer({ listening, transcribing, synthesizing,
     // Original gradient, will be overridden by specific states below using bg-none
     const initialGradient = "bg-linear-to-b from-red-200 to-red-400 dark:from-red-600 dark:to-red-800";
 
-    // Compute current visualizer state priority: listening, synthesizing, transcribing, speaking
+    // Compute current visualizer state
     const state =
-        listening ? 'listening' :
-        synthesizing ? 'synthesizing' :
-        transcribing ? 'transcribing' :
-        speaking ? 'speaking' :
-        'idle';
+        !listening ? "idle" :
+            transcribing ? "transcribing" :
+                synthesizing ? "synthesizing" :
+                    speaking ? "speaking" :
+                        "listening";
 
     const stateClasses: Record<string, string> = {
         speaking: "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-bounce",
