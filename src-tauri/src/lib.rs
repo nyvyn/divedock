@@ -12,9 +12,9 @@ async fn start_listening(app: AppHandle) -> Result<(), String> {
 }
 
 #[tauri::command]
-async fn stop_listening() -> Result<(), String> {
+async fn stop_listening(app: AppHandle) -> Result<(), String> {
     println!("stop_listening command invoked");
-    stop_vad().map_err(|e| { println!("stop_listening error: {e}"); e.to_string() })
+    stop_vad(app).map_err(|e| { println!("stop_listening error: {e}"); e.to_string() })
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

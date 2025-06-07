@@ -24,22 +24,24 @@ pub fn start_vad(app: AppHandle) -> Result<()> {
         return Ok(());
     }
     let handle = async_runtime::spawn(async move {
-        if let Err(e) = voice_activity_detection(app).await {
+        if let Err(e) = voice_activity_detection(app.clone()).await {
             println!("VAD loop error: {e}");
         }
     });
     *guard = Some(handle);
+    app.emit("mic-enabled", ()).ok();
     Ok(())
 }
 
 /// Abort the running VAD task (if any)
-pub fn stop_vad() -> Result<()> {
+pub fn stop_vad(app: AppHandle) -> Result<()> {
     let mut guard = VAD_TASK
         .lock()
         .map_err(|e| anyhow!(e.to_string()))?;
     if let Some(handle) = guard.take() {
         handle.abort();
         println!("stop_vad: task aborted");
+        app.emit("mic-disabled", ()).ok();
     }
     Ok(())
 }

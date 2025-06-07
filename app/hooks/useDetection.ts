@@ -21,6 +21,16 @@ export function useDetection() {
                 console.log("speaking");
             }),
         );
+        add(
+            listen("mic-enabled", () => {
+                setListening(true);
+            }),
+        );
+        add(
+            listen("mic-disabled", () => {
+                setListening(false);
+            }),
+        );
 
         return () => {
             console.log("un-listening");
@@ -35,7 +45,6 @@ export function useDetection() {
             console.error(err);
             setErrored(err);
         });
-        setListening(true);
     };
 
     const stopListening = async () => {
@@ -44,7 +53,6 @@ export function useDetection() {
             console.error(err);
             setErrored(err);
         });
-        setListening(false);
     };
 
     const toggleListening = () => listening ? stopListening() : startListening();
