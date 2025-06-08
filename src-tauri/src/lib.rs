@@ -26,7 +26,7 @@ pub fn run() {
         .plugin(tauri_plugin_macos_permissions::init())
         .setup(|app| {
             let handle = app.handle();
-            app.manage(init_tts(*handle));
+            app.manage(init_tts(handle));
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
