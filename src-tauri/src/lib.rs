@@ -1,10 +1,9 @@
 mod transcribe;
 mod synthesize;
 
-use transcribe::*;
-
 use tauri::{AppHandle, Manager};
 use crate::synthesize::init_tts;
+use crate::transcribe::{start_vad, stop_vad};
 
 #[tauri::command]
 async fn start_listening(app: AppHandle) -> Result<(), String> {
