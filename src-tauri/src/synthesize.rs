@@ -21,19 +21,21 @@ pub fn init_tts(app: AppHandle) -> TtsState {
         ..
     } = tts.supported_features();
     if utterance_callbacks {
-        let app_clone = app.clone();
+        let app_clone_begin = app.clone();
         tts.on_utterance_begin(Some(Box::new(move |utterance| {
-            app_clone.emit("speaking-started", ())
+            app_clone_begin.emit("speaking-started", ())
                 .map_err(|e| e.to_string()).unwrap();
             println!("Started speaking {:?}", utterance)
         }))).unwrap();
+        let app_clone_end = app.clone();
         tts.on_utterance_end(Some(Box::new(move |utterance| {
-            app_clone.emit("speaking-stopped", ())
+            app_clone_end.emit("speaking-stopped", ())
                 .map_err(|e| e.to_string()).unwrap();
             println!("Finished speaking {:?}", utterance)
         }))).unwrap();
+        let app_clone_stop = app.clone();
         tts.on_utterance_stop(Some(Box::new(move |utterance| {
-            app_clone.emit("speaking-stopped", ())
+            app_clone_stop.emit("speaking-stopped", ())
                 .map_err(|e| e.to_string()).unwrap();
             println!("Stopped speaking {:?}", utterance)
         }))).unwrap();
