@@ -19,7 +19,7 @@ pub fn init_tts() -> TtsState {
     TtsState(Mutex::new(tts))
 }
 
-pub async fn synthesize(
+pub async fn synthesize_text(
     app: AppHandle,
     state: tauri::State<'_, TtsState>,
     prompt: String,
