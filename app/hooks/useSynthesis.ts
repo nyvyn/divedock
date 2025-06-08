@@ -16,12 +16,14 @@ export function useSynthesis() {
         /* ---- listeners ---- */
         add(
             listen("synthesis-started", () => {
+                console.log("synthesis-started");
                 setSpeaking(true);
             }),
         );
 
         add(
             listen("synthesis-stopped", () => {
+                console.log("synthesis-stopped");
                 setSpeaking(false);
             }),
         );

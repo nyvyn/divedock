@@ -25,7 +25,7 @@ export default function AudioVisualizer({listening, transcribing, speaking}: Aud
     const stateClasses: Record<string, string> = {
         listening: "bg-none bg-sky-600 shadow-sky-500/50 shadow-lg animate-pulse",
         transcribing: "bg-none bg-sky-600 shadow-sky-500/50 shadow-lg animate-bounce",
-        speaking: "bg-none bg-green-500 shadow-green-400/50 shadow-lg animate-pulse",
+        speaking: "bg-none bg-green-400 shadow-green-400/50 shadow-lg animate-pulse",
         idle: "bg-none bg-slate-700 opacity-60",
     };
 

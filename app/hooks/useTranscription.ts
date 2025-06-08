@@ -18,6 +18,7 @@ export function useTranscription() {
         /* ---- listeners ---- */
         add(
             listen("transcription-started", () => {
+                console.log("transcription-started");
                 setTranscript("");
                 setTranscribing(true);
             }),
@@ -32,6 +33,7 @@ export function useTranscription() {
 
         add(
             listen("transcription-stopped", () => {
+                console.log("transcription-stopped");
                 setTranscribing(false);
             }),
         );

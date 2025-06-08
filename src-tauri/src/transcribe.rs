@@ -1,11 +1,13 @@
-use crate::synthesize::synthesize;
+use crate::synthesize::synthesize_text;
 use crate::synthesize::TtsState;
 use anyhow::{anyhow, Result};
 use kalosm::sound::rodio::buffer::SamplesBuffer;
 use kalosm::sound::rodio::Source;
+use kalosm::sound::{
+    AsyncSourceTranscribeExt, MicInput, VoiceActivityDetectorExt, VoiceActivityStreamExt, Whisper,
+};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
-use kalosm::sound::{AsyncSourceTranscribeExt, MicInput, VoiceActivityDetectorExt, VoiceActivityStreamExt, Whisper};
 use tauri::async_runtime::{self, JoinHandle};
 use tauri::{AppHandle, Emitter, Manager};
 use tokio_stream::StreamExt;
@@ -76,17 +78,29 @@ pub async fn voice_activity_detection(app: AppHandle) -> Result<()> {
     let vad_stream = stream.voice_activity_stream();
     let mut audio_chunks = vad_stream.rechunk_voice_activity();
 
-    while let Some(input) = StreamExt::next(&mut audio_chunks).await
-    {
+    while let Some(input) = StreamExt::next(&mut audio_chunks).await {
         app.emit("speech-detected", input.total_duration()).ok();
         println!(
             "voice_activity_detection: speaking event emitted | duration = {:?}",
             input.total_duration()
         );
-        transcribe_audio(app.clone(), input).await?;
+
+        let text = match transcribe_audio(app.clone(), input).await {
+            Ok(text) => text,
+            Err(e) => {
+                println!("Error transcribing audio: {:?}", e);
+                return Ok(());
+            }
+        };
+
+        if let Err(e) =
+            synthesize_text(app.clone(), app.state::<TtsState>(), text.to_string()).await
+        {
+            println!("Error synthesizing text: {e}");
+        }
 
         // Consume and drop the very next VAD-positive chunk (likely echo)
-        let _ = audio_chunks.next().await;  // Option<AudioChunk> ignored which is the synthesis
+        let _ = audio_chunks.next().await; // Option<AudioChunk> ignored which is the synthesis
     }
 
     Ok(())
