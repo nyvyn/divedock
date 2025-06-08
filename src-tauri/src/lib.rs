@@ -1,9 +1,9 @@
 mod transcribe;
 mod synthesize;
 
-use transcribe::*;
-
-use tauri::{AppHandle};
+use tauri::{AppHandle, Manager};
+use crate::synthesize::init_tts;
+use crate::transcribe::{start_vad, stop_vad};
 
 #[tauri::command]
 async fn start_listening(app: AppHandle) -> Result<(), String> {
@@ -23,6 +23,11 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_macos_permissions::init())
+        .setup(|app| {
+            let handle = app.handle();
+            app.manage(init_tts(handle.clone()));
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             start_listening,
             stop_listening,

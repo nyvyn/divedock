@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 export function useSynthesis() {
     const [speaking, setSpeaking] = useState(false);
-    const [synthesizing, setSynthesizing] = useState(false);
 
     useEffect(() => {
         // helper to save un-listen functions
@@ -17,25 +16,15 @@ export function useSynthesis() {
         /* ---- listeners ---- */
         add(
             listen("speaking-started", () => {
+                console.log("speaking-started");
                 setSpeaking(true);
             }),
         );
 
         add(
             listen("speaking-stopped", () => {
+                console.log("speaking-stopped");
                 setSpeaking(false);
-            }),
-        );
-
-        add(
-            listen("synthesis-started", () => {
-                setSynthesizing(true);
-            }),
-        );
-
-        add(
-            listen("synthesis-stopped", () => {
-                setSynthesizing(false);
             }),
         );
 
@@ -45,5 +34,5 @@ export function useSynthesis() {
         };
     }, []);
 
-    return {speaking, synthesizing};
+    return {speaking};
 }

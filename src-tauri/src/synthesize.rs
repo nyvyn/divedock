@@ -1,63 +1,66 @@
-use anyhow::{anyhow, Result};
-use natural_tts::{Model, NaturalTtsBuilder};
-use natural_tts::models::{SynthesizedAudio, parler::ParlerModel, Spec};
+use anyhow::Result;
 use std::error::Error;
-use tauri::{AppHandle, Emitter, Manager};
-use rodio::{buffer::SamplesBuffer};
+use std::sync::Mutex;
+use tauri::{AppHandle, Emitter};
+use tts::{Features, Tts};
 
-pub fn play_audio(audio: SynthesizedAudio<f32>) -> Result<()> {
-    // SynthesizedAudio fields exposed by the crate
-    //     pub spec: Spec,
-    //     pub data: Vec<T>,
-    //     pub duration: Option<i32>,
-    //  [oai_citation:0‡docs.rs](https://github.com/CodersCreative/natural-tts/blob/master/src/lib.rs#L111)
-    let (_stream, handle) = rodio::OutputStream::try_default()?;
-    let data = audio.data;
-    // pull rate / channel count out of the enum
-    let (channels, sample_rate) = match audio.spec {
-        Spec::Wav(wav) => (wav.channels, wav.sample_rate),
-        _ => return Err(anyhow!("unsupported audio format")),
-    };
-    let source = SamplesBuffer::new(channels, sample_rate, data);
-    let sink = rodio::Sink::try_new(&handle)?;
+pub struct TtsState(Mutex<Tts>);
 
-    sink.append(source);
+pub fn init_tts(app: AppHandle) -> TtsState {
+    let mut tts = Tts::default().unwrap();       // picks the best backend for the OS
 
-    sink.sleep_until_end();
-    Ok(())
+    let Features { voice, .. } = tts.supported_features();
+    if voice {
+        let voices = tts.voices().unwrap();          // Vec<tts::Voice>
+        let ava = voices.iter().find(|v| v.name() == "Ava").unwrap();
+        tts.set_voice(&ava).unwrap();            // use the chosen voice
+    }
+
+    let Features {
+        utterance_callbacks,
+        ..
+    } = tts.supported_features();
+    if utterance_callbacks {
+        let app_clone_begin = app.clone();
+        tts.on_utterance_begin(Some(Box::new(move |utterance| {
+            app_clone_begin.emit("speaking-started", ())
+                .map_err(|e| e.to_string()).unwrap();
+            println!("Started speaking {:?}", utterance)
+        }))).unwrap();
+        let app_clone_end = app.clone();
+        tts.on_utterance_end(Some(Box::new(move |utterance| {
+            app_clone_end.emit("speaking-stopped", ())
+                .map_err(|e| e.to_string()).unwrap();
+            println!("Finished speaking {:?}", utterance)
+        }))).unwrap();
+        let app_clone_stop = app.clone();
+        tts.on_utterance_stop(Some(Box::new(move |utterance| {
+            app_clone_stop.emit("speaking-stopped", ())
+                .map_err(|e| e.to_string()).unwrap();
+            println!("Stopped speaking {:?}", utterance)
+        }))).unwrap();
+    }
+
+    TtsState(Mutex::new(tts))
 }
 
-pub async fn synthesize(app: AppHandle, prompt: String) -> Result<(), Box<dyn Error>> {
-    println!("synthesize: begin synthesis for prompt: {}", prompt);
+pub async fn synthesize_text(
+    app: AppHandle,
+    state: tauri::State<'_, TtsState>,
+    prompt: String,
+) -> Result<(), Box<dyn Error>> {
     app.emit("synthesis-started", ())
         .map_err(|e| e.to_string())?;
-
-    // Create the NaturalTts struct using the builder pattern.
-    let mut natural = NaturalTtsBuilder::default()
-        .parler_model(ParlerModel::default())
-        .default_model(Model::Parler)
-        .build()?;
-
-    // perform synthesis (convert text to audio)
-    // natural-tts saves the tensors to cwd, override that to cache directory
-    let old_dir = std::env::current_dir()?;
-    std::env::set_current_dir(app.path().cache_dir().unwrap())?;
-    let audio = natural.synthesize_auto(prompt.clone())?;
-    std::env::set_current_dir(old_dir)?;
-    
-    app.emit("synthesis-stopped", ())
-        .map_err(|e| e.to_string())?;
-    println!("synthesize: synthesis finished");
-
-    app.emit("speaking-started", ())
-        .map_err(|e| e.to_string())?;
-    println!("synthesize: speaking started");
+    println!("synthesize: started");
 
     // play the resulting synthesized audio
-    play_audio(audio)?;
+    let mut tts = state.0.lock().unwrap();
+    if let Err(e) = tts.speak(prompt, false) {
+        eprintln!("TTS failed: {}", e);
+    }
 
-    app.emit("speaking-stopped", ())
+    app.emit("synthesis-stopped", ())
         .map_err(|e| e.to_string())?;
-    println!("synthesize: speaking finished");
+    println!("synthesize: finished");
     Ok(())
 }

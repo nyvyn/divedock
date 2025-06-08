@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+
+import { requestMicrophonePermission } from "tauri-plugin-macos-permissions-api";
 import { MicOffIcon } from "./components/icons/MicOffIcon.tsx";
 import { MicOnIcon } from "./components/icons/MicOnIcon.tsx";
 import AudioVisualizer from "./components/visualizer/AudioVisualizer";
@@ -8,6 +11,14 @@ import { useSynthesis } from "./hooks/useSynthesis.ts";
 import { useTranscription } from "./hooks/useTranscription.ts";
 
 export default function Home() {
+
+    useEffect(() => {
+        requestMicrophonePermission().then(hasMicrophonePermission => {
+            if (!hasMicrophonePermission) {
+                alert("Microphone permission denied");
+            }
+        });
+    }, []);
 
     const vad = useDetection();
     const scribe = useTranscription();
@@ -20,7 +31,6 @@ export default function Home() {
             <AudioVisualizer
                 listening={vad.listening}
                 transcribing={scribe.transcribing}
-                synthesizing={voice.synthesizing}
                 speaking={voice.speaking}
             />
 
