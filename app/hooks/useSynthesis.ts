@@ -15,15 +15,15 @@ export function useSynthesis() {
 
         /* ---- listeners ---- */
         add(
-            listen("synthesis-started", () => {
-                console.log("synthesis-started");
+            listen("speaking-started", () => {
+                console.log("speaking-started");
                 setSpeaking(true);
             }),
         );
 
         add(
-            listen("synthesis-stopped", () => {
-                console.log("synthesis-stopped");
+            listen("speaking-stopped", () => {
+                console.log("speaking-stopped");
                 setSpeaking(false);
             }),
         );
